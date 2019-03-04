@@ -1,0 +1,2 @@
+docker tag usermanagement-server DESTINATION_HOST/usermanagement-server
+docker push DESTINATION_HOST/usermanagement-server

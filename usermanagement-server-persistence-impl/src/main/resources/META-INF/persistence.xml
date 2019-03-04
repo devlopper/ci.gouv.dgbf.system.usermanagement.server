@@ -1,0 +1,20 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd" version="2.0">
+  
+    <persistence-unit name="usermanagementPersistenceUnit" transaction-type="JTA">
+    	<jta-data-source>${data.source.jndi.name}</jta-data-source>
+    	<exclude-unlisted-classes>true</exclude-unlisted-classes>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Role</class>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.User</class>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserNaturalPerson</class>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserLegalPerson</class>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Account</class>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount</class>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleType</class>
+		<properties>
+			<property name="hibernate.hbm2ddl.auto" value="${hibernate.hbm2ddl.auto}"/>
+			<property name="hibernate.show_sql" value="false"/>
+			<property name="hibernate.format_sql" value="false"/>
+		</properties>
+
+    </persistence-unit>  
+</persistence>
