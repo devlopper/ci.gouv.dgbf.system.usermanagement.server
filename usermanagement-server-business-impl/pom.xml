@@ -25,6 +25,12 @@
 			<artifactId>usermanagement-server-persistence-impl</artifactId>
 			<version>0.0.1</version>
 		</dependency>
+		<!-- Single Sign On API -->
+		<dependency>
+		    <groupId>org.keycloak</groupId>
+		    <artifactId>keycloak-admin-client</artifactId>
+		    <version>4.8.3.Final</version>
+		</dependency>
 	</dependencies>	
 	
 	<profiles>
