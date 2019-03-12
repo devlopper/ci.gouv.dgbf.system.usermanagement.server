@@ -24,7 +24,7 @@
     <container qualifier="widlfly-managed" default="true">
         <configuration>
            <property name="jbossHome">${jboss.home}</property>
-           <property name="javaVmArguments">-Djboss.socket.binding.port-offset=2000</property>
+           <property name="javaVmArguments">-Djboss.socket.binding.port-offset=2000 ${java.vm.arguments}</property>
            <property name="managementPort">11990</property>
         </configuration>
     </container>
