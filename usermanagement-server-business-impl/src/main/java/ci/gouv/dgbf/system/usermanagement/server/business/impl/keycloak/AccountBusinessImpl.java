@@ -24,7 +24,7 @@ public class AccountBusinessImpl extends AbstractAccountBusinessImpl implements 
 		user.setEnabled(Boolean.TRUE);
 		user.setUsername(account.getCode());
 		
-		UsersResource userRessource = __inject__(KeycloakHelper.class).getClient().realm("sib").users();
+		UsersResource userRessource = __inject__(KeycloakHelper.class).getUsersResource();
 
 		Response response = userRessource.create(user);
 		String userId = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
@@ -40,7 +40,7 @@ public class AccountBusinessImpl extends AbstractAccountBusinessImpl implements 
 	
 	@Override
 	public AccountBusiness delete(Account account, Properties properties) {
-		UsersResource userRessource = __inject__(KeycloakHelper.class).getClient().realm("sib").users();		
+		UsersResource userRessource = __inject__(KeycloakHelper.class).getUsersResource();		
 		UserRepresentation userRepresentation = __injectCollectionHelper__().getFirst(userRessource.search(account.getCode()));
 		userRessource.delete(userRepresentation.getId());
 		return this;

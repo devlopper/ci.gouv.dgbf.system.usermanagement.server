@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 import org.cyk.utility.clazz.ClassHelper;
 
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.AccountBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.RoleTypeBusiness;
 
 @Singleton
 public class ProducerImpl extends org.cyk.utility.__kernel__.object.dynamic.AbstractProducerImpl implements Producer,Serializable {
@@ -28,7 +29,7 @@ public class ProducerImpl extends org.cyk.utility.__kernel__.object.dynamic.Abst
 	
 	@Override
 	protected Class<?> __getQualifierClass__(Class<?> aClass) {
-		if(__inject__(ClassHelper.class).isInstanceOfOne(aClass,AccountBusiness.class))
+		if(Boolean.TRUE.equals(__inject__(ClassHelper.class).isInstanceOfOne(aClass,RoleTypeBusiness.class,AccountBusiness.class)))
 			return getSingleSignOnQualifierClass();
 		return super.__getQualifierClass__(aClass);
 	}
@@ -37,6 +38,12 @@ public class ProducerImpl extends org.cyk.utility.__kernel__.object.dynamic.Abst
 	@Produces @Singleton
 	public AccountBusiness getAccountBusiness() {
 		return __produce__(AccountBusiness.class);
+	}
+	
+	@Override
+	@Produces @Singleton
+	public RoleTypeBusiness getRoleTypeBusiness() {
+		return __produce__(RoleTypeBusiness.class);
 	}
 
 }

@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.AccountBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.impl.Producer;
+import ci.gouv.dgbf.system.usermanagement.server.business.impl.keycloak.Keycloak;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Account;
 
 public class AccountFunctionIntegrationTest extends AbstractBusinessArquillianIntegrationTest {
@@ -24,7 +25,7 @@ public class AccountFunctionIntegrationTest extends AbstractBusinessArquillianIn
 		Class<?> singleSignOnQualifierClass = __inject__(Producer.class).getSingleSignOnQualifierClass();
 		if(singleSignOnQualifierClass == null || Default.class.equals(singleSignOnQualifierClass)) {
 			__inject__(TestBusinessCreate.class).addObjects(account).execute();
-		}else {
+		}else if(Keycloak.class.equals(singleSignOnQualifierClass)) {
 			__inject__(AccountBusiness.class).create(account);
 			__inject__(AccountBusiness.class).delete(account);	
 		}
