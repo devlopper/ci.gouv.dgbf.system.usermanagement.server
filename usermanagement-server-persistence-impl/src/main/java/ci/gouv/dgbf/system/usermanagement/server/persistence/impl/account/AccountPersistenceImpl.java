@@ -5,7 +5,7 @@ import java.io.Serializable;
 import javax.inject.Singleton;
 
 import org.cyk.utility.__kernel__.computation.ComparisonOperator;
-import org.cyk.utility.server.persistence.jpa.AbstractPersistenceEntityImpl;
+import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
 import org.cyk.utility.server.persistence.query.PersistenceQuery;
 import org.cyk.utility.server.persistence.query.PersistenceQueryRepository;
 import org.cyk.utility.sql.builder.QueryStringBuilderSelect;

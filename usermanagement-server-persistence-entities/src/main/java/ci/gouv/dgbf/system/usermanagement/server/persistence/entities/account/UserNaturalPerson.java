@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
-import org.cyk.utility.server.persistence.jpa.AbstractEntity;
+import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByString;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +21,7 @@ import lombok.experimental.Accessors;
 
 @Entity @Getter @Setter @Accessors(chain=true) @Access(AccessType.FIELD) @ToString
 @Table(name=UserNaturalPerson.TABLE_NAME)
-public class UserNaturalPerson extends AbstractEntity implements Serializable {
+public class UserNaturalPerson extends AbstractIdentifiedByString implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne @JoinColumn(name=COLUMN_USER) @NotNull private User user;
@@ -35,11 +35,6 @@ public class UserNaturalPerson extends AbstractEntity implements Serializable {
 	@Transient private String function;
 	
 	/**/
-	
-	@Override
-	public UserNaturalPerson setCode(String code) {
-		return (UserNaturalPerson) super.setCode(code);
-	}
 	
 	/**/
 	

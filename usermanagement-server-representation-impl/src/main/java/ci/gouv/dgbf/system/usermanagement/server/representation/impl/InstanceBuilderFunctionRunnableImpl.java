@@ -19,7 +19,7 @@ public class InstanceBuilderFunctionRunnableImpl extends AbstractInstanceBuilder
 
 	@Override
 	protected void __copy__(Object source, Object destination) {
-		if(source instanceof UserAccountDto && destination instanceof UserAccount) {
+		/*if(source instanceof UserAccountDto && destination instanceof UserAccount) {
 			UserAccountDto representation = (UserAccountDto) source;
 			UserAccount persistence = (UserAccount) destination;
 			persistence.setCode(representation.getCode());
@@ -53,8 +53,9 @@ public class InstanceBuilderFunctionRunnableImpl extends AbstractInstanceBuilder
 			AccountDto representation = (AccountDto) destination;
 			representation.setIdentifier(persistence.getIdentifier().toString());
 			representation.setCode(persistence.getCode());
-		}else
+		}else*/
 			super.__copy__(source, destination);
+		
 	}
 	
 }

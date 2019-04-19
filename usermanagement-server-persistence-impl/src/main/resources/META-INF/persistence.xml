@@ -3,12 +3,6 @@
     <persistence-unit name="usermanagementPersistenceUnit" transaction-type="JTA">
     	<jta-data-source>${data.source.jndi.name}</jta-data-source>
     	<exclude-unlisted-classes>true</exclude-unlisted-classes>
-    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Role</class>
-    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.User</class>
-    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserNaturalPerson</class>
-    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserLegalPerson</class>
-    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Account</class>
-    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleType</class>
 		<properties>
 			<property name="hibernate.hbm2ddl.auto" value="${hibernate.hbm2ddl.auto}"/>

@@ -35,4 +35,14 @@ public class KeycloakIntegrationTest extends AbstractBusinessArquillianIntegrati
 			assertThat(roleRepresentations.stream().map(index -> index.getName()).collect(Collectors.toList())).containsExactly("ADMINISTRATIF","BUDGETAIRE");
 		}
 	}
+	
+	/*@Test
+	public void getClientAuthorizationScopes() throws Exception{
+		Properties properties = new Properties();
+		Map<String,List<String>> attributes = new HashMap<>();
+		attributes.put("entity", (List<String>) __inject__(CollectionHelper.class).instanciate(List.class,"type"));
+		properties.setAttributes(attributes);
+		Collection<RoleRepresentation> roleRepresentations = __inject__(KeycloakHelper.class).getRoles(properties);
+		__inject__(KeycloakHelper.class).getRealmResource().clients().findAll().get(0).getAuthorizationSettings().
+	}*/
 }

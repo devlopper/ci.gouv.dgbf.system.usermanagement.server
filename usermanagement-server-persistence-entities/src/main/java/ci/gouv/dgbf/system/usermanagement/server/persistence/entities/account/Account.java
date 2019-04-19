@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.cyk.utility.server.persistence.jpa.AbstractEntity;
+import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByStringAndCoded;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,12 +18,17 @@ import lombok.experimental.Accessors;
 
 @Entity @Getter @Setter @Accessors(chain=true) @Access(AccessType.FIELD) @ToString
 @Table(name=Account.TABLE_NAME)
-public class Account extends AbstractEntity implements Serializable {
+public class Account extends AbstractIdentifiedByStringAndCoded implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name=COLUMN_PASS) @NotNull private String pass;
 	
 	/**/
+	
+	@Override
+	public Account setIdentifier(String identifier) {
+		return (Account) super.setIdentifier(identifier);
+	}
 	
 	@Override
 	public Account setCode(String code) {

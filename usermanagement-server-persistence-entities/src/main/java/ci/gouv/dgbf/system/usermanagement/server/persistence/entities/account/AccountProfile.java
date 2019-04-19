@@ -10,7 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.cyk.utility.server.persistence.jpa.AbstractEntity;
+import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByString;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,18 +19,13 @@ import lombok.experimental.Accessors;
 
 @Entity @Getter @Setter @Accessors(chain=true) @Access(AccessType.FIELD) @ToString
 @Table(name=AccountProfile.TABLE_NAME)
-public class AccountProfile extends AbstractEntity implements Serializable {
+public class AccountProfile extends AbstractIdentifiedByString implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne @JoinColumn(name=COLUMN_ACCOUNT) @NotNull private Account account;
 	@ManyToOne @JoinColumn(name=COLUMN_PROFILE) @NotNull private Profile profile;
 	
 	/**/
-	
-	@Override
-	public AccountProfile setCode(String code) {
-		return (AccountProfile) super.setCode(code);
-	}
 	
 	/**/
 	

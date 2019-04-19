@@ -30,7 +30,7 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 	
 	@Override
 	public BusinessServiceProvider<UserAccount> create(UserAccount userAccount, Properties properties) {
-		User user = userAccount.getUser();
+		/*User user = userAccount.getUser();
 		if(user == null)
 			throw new RuntimeException("Veuillez spécifier un utilisateur.");
 		String electronicMailAddress = user.getElectronicMailAddress();
@@ -56,7 +56,7 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 		__sendMail__("SIB - Création de compte utilisateur", user.getPerson().getFirstName()+" "+user.getPerson().getLastNames()
 				+" , un compte utilisateur a été créé avec succès. Le nom utilisateur est : "+account.getCode()
 				+" et le mot de passe est : "+account.getPass(), Arrays.asList(electronicMailAddress), Boolean.FALSE);
-		
+		*/
 		return this;
 	}
 	

@@ -25,17 +25,17 @@ public class RoleTypeFunctionIntegrationTest extends AbstractRepresentationArqui
 		RoleType roleType = new RoleType().setCode(code).setName("n01ToEdit");
 		__inject__(RoleTypeBusiness.class).create(roleType);
 		
-		RoleTypeDto roleTypeDto = (RoleTypeDto) __inject__(RoleTypeRepresentation.class).getOne(code, "business").getEntity();
+		RoleTypeDto roleTypeDto = (RoleTypeDto) __inject__(RoleTypeRepresentation.class).getOne(code, "business",null).getEntity();
 		assertionHelper.assertEquals("n01ToEdit", roleTypeDto.getName());
 		
 		roleTypeDto.setName("n01");
 		__inject__(RoleTypeRepresentation.class).updateOne(roleTypeDto, null);
-		RoleTypeDto updatedRoleTypeDto = (RoleTypeDto) __inject__(RoleTypeRepresentation.class).getOne(code, "business").getEntity();
+		RoleTypeDto updatedRoleTypeDto = (RoleTypeDto) __inject__(RoleTypeRepresentation.class).getOne(code, "business",null).getEntity();
 		assertionHelper.assertEquals("n01ToEdit", updatedRoleTypeDto.getName());
 		
 		roleTypeDto.setName("n01");
 		__inject__(RoleTypeRepresentation.class).updateOne(roleTypeDto, "name");
-		updatedRoleTypeDto = (RoleTypeDto) __inject__(RoleTypeRepresentation.class).getOne(code, "business").getEntity();
+		updatedRoleTypeDto = (RoleTypeDto) __inject__(RoleTypeRepresentation.class).getOne(code, "business",null).getEntity();
 		assertionHelper.assertEquals("n01", updatedRoleTypeDto.getName());
 		
 		//__inject__(TestRepresentationUpdate.class).addObjects(roleType).execute();

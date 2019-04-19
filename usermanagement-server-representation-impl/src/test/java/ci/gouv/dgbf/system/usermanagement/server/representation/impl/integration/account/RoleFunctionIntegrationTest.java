@@ -38,14 +38,14 @@ public class RoleFunctionIntegrationTest extends AbstractRepresentationArquillia
 		String roleCode01 = __getRandomCode__();
 		__inject__(RoleBusiness.class).create(new Role().setCode(roleCode01).setName("n01ToEdit").setType(__inject__(RoleTypePersistence.class).readOneByBusinessIdentifier(typeCode01)));
 		
-		RoleDto roleDto = (RoleDto) __inject__(RoleRepresentation.class).getOne(roleCode01, ValueUsageType.BUSINESS.name()).getEntity();
+		RoleDto roleDto = (RoleDto) __inject__(RoleRepresentation.class).getOne(roleCode01, ValueUsageType.BUSINESS.name(),null).getEntity();
 		assertionHelper.assertEquals("n01ToEdit", roleDto.getName());
 		assertionHelper.assertEquals(typeCode01, roleDto.getType());
 		
 		roleDto.setName("n01");
 		//roleDto.setType(typeCode02);
 		__inject__(RoleRepresentation.class).updateOne(roleDto, "name,type");
-		RoleDto updatedRoleDto = (RoleDto) __inject__(RoleRepresentation.class).getOne(roleCode01, ValueUsageType.BUSINESS.name()).getEntity();
+		RoleDto updatedRoleDto = (RoleDto) __inject__(RoleRepresentation.class).getOne(roleCode01, ValueUsageType.BUSINESS.name(),null).getEntity();
 		assertionHelper.assertEquals("n01", updatedRoleDto.getName());
 		assertionHelper.assertEquals(typeCode02, updatedRoleDto.getType());
 		

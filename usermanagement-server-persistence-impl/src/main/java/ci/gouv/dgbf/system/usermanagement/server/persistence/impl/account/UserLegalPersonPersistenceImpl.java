@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.inject.Singleton;
 
-import org.cyk.utility.server.persistence.jpa.AbstractPersistenceEntityImpl;
+import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserLegalPersonPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserLegalPerson;

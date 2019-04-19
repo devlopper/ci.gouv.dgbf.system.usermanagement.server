@@ -11,7 +11,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
-import org.cyk.utility.server.persistence.jpa.AbstractEntity;
+import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByString;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -23,18 +23,13 @@ import lombok.experimental.Accessors;
 uniqueConstraints= {
 		@UniqueConstraint(name=UserAccount.UNIQUE_CONSTRAINT_USER_ACCOUNT_NAME,columnNames= {UserAccount.COLUMN_USER,UserAccount.COLUMN_ACCOUNT}
 		)})
-public class UserAccount extends AbstractEntity implements Serializable {
+public class UserAccount extends AbstractIdentifiedByString implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne @JoinColumn(name=COLUMN_USER) @NotNull private User user;
 	@ManyToOne @JoinColumn(name=COLUMN_ACCOUNT) @NotNull private Account account;
 	
 	/**/
-	
-	@Override
-	public UserAccount setCode(String code) {
-		return (UserAccount) super.setCode(code);
-	}
 	
 	/**/
 	
