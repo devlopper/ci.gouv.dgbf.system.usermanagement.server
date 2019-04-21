@@ -14,9 +14,10 @@ public class UserAccountFunctionIntegrationTest extends AbstractRepresentationAr
 	
 	@Test
 	public void createOneUserAccount() throws Exception{
-		UserDto user = new UserDto().setElectronicMailAddress("kycdev@gmail.com").setPerson(new UserNaturalPersonDto().setFirstName("Zadi").setLastNames("Representation"));
+		/*UserDto user = new UserDto().setElectronicMailAddress("kycdev@gmail.com").setPerson(new UserNaturalPersonDto().setFirstName("Zadi").setLastNames("Representation"));
 		UserAccountDto userAccount = new UserAccountDto().setCode("ua01").setUser(user);
 		__inject__(TestRepresentationCreate.class).addObjects(userAccount).execute();
+		*/
 	}
 	
 	@Override

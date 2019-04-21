@@ -5,11 +5,9 @@ import java.io.Serializable;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.annotation.WebListener;
 
-import org.cyk.utility.__kernel__.DependencyInjection;
 import org.cyk.utility.server.deployment.AbstractServletContextListener;
 
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RolePersistence;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.Keycloak;
+import ci.gouv.dgbf.system.usermanagement.server.representation.impl.ApplicationScopeLifeCycleListener;
 
 @WebListener
 public class ServletContextListener extends AbstractServletContextListener implements Serializable {
@@ -17,7 +15,7 @@ public class ServletContextListener extends AbstractServletContextListener imple
 
 	@Override
 	protected void __listenContextInitialized__(ServletContextEvent servletContextEvent) {
-		DependencyInjection.setQualifierClass(RolePersistence.class, Keycloak.Class.class);
+		__inject__(ApplicationScopeLifeCycleListener.class).initialize(null);
 	}
 	
 	@Override

@@ -56,6 +56,12 @@ public class RolePersistenceImpl extends AbstractRolePersistenceImpl implements 
 	}
 	
 	@Override
+	public Role readOne(Object identifier, Properties properties) {
+		RoleRepresentation roleRepresentation = __inject__(KeycloakHelper.class).getRolesResource().get((String)identifier).toRepresentation();
+		return new Role().setIdentifier(roleRepresentation.getId()).setCode(roleRepresentation.getName());
+	}
+	
+	@Override
 	public PersistenceServiceProvider<Role> update(Role role, Properties properties) {
 		RolesResource rolesResource = __inject__(KeycloakHelper.class).getRolesResource();
 		try{

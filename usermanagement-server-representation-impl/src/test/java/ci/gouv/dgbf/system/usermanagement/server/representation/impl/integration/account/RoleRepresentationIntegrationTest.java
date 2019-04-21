@@ -14,12 +14,14 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Ro
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.RoleRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.RoleDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.RoleTypeDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.impl.ApplicationScopeLifeCycleListener;
 
-public class RoleFunctionIntegrationTest extends AbstractRepresentationArquillianIntegrationTestWithDefaultDeploymentAsSwram {
+public class RoleRepresentationIntegrationTest extends AbstractRepresentationArquillianIntegrationTestWithDefaultDeploymentAsSwram {
 	private static final long serialVersionUID = 1L;
 	
 	@Test
 	public void createOneRole() throws Exception{
+		__inject__(ApplicationScopeLifeCycleListener.class).initialize(null);
 		String typeCode = __getRandomCode__();
 		RoleType type = new RoleType().setCode(typeCode).setName(__getRandomCode__());
 		__inject__(RoleTypeBusiness.class).create(type);
