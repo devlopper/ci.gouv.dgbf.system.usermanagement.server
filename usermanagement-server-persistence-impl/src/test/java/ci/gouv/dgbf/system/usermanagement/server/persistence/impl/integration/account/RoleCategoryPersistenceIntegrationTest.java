@@ -27,7 +27,7 @@ public class RoleCategoryPersistenceIntegrationTest extends AbstractPersistenceA
 	*/
 	
 	@Test
-	public void readRoleCategories() throws Exception{
+	public void read() throws Exception{
 		DependencyInjection.setQualifierClass(RoleCategoryPersistence.class, Keycloak.Class.class);
 		Collection<RoleCategory> roleCategories = __inject__(RoleCategoryPersistence.class).read();
 		assertThat(roleCategories.stream().map(x -> x.getRole().getCode()).collect(Collectors.toList())).contains("ADMINISTRATIF","BUDGETAIRE");

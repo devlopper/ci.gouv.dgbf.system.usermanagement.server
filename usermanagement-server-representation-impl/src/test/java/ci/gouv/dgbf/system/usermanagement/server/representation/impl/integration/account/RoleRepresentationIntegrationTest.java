@@ -1,5 +1,10 @@
 package ci.gouv.dgbf.system.usermanagement.server.representation.impl.integration.account;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 import org.cyk.utility.server.representation.AbstractEntityCollection;
 import org.cyk.utility.server.representation.test.TestRepresentationCreate;
 import org.cyk.utility.server.representation.test.arquillian.AbstractRepresentationArquillianIntegrationTestWithDefaultDeploymentAsSwram;
@@ -8,6 +13,7 @@ import org.junit.Test;
 
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.RoleBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.RoleTypeBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RolePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RoleTypePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Role;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleType;
@@ -26,8 +32,23 @@ public class RoleRepresentationIntegrationTest extends AbstractRepresentationArq
 		RoleType type = new RoleType().setCode(typeCode).setName(__getRandomCode__());
 		__inject__(RoleTypeBusiness.class).create(type);
 		
-		RoleDto role = new RoleDto().setCode(__getRandomCode__()).setName(__getRandomCode__()).setType(new RoleTypeDto().setCode(typeCode));
-		__inject__(TestRepresentationCreate.class).addObjects(role).execute();
+		String code = __getRandomCode__();
+		RoleDto role = new RoleDto().setCode(code).setName(__getRandomCode__()).setType(new RoleTypeDto().setCode(typeCode));
+		__inject__(TestRepresentationCreate.class).addObjects(role).addTryEndRunnables(new Runnable() {
+			@Override
+			public void run() {
+				RoleDto role = (RoleDto) __inject__(RoleRepresentation.class).getOne(code,"business", null).getEntity();
+				assertionHelper.assertEquals(code, role.getCode());
+				assertionHelper.assertFalse("role has not an identifier",role.getIdentifier().isEmpty());
+			}
+		}).execute();
+	}
+	
+	@Test
+	public void read() throws Exception{
+		@SuppressWarnings("unchecked")
+		Collection<RoleDto> roleDtos = (Collection<RoleDto>) __inject__(RoleRepresentation.class).getMany(null, null, null).getEntity();
+		assertThat(roleDtos.stream().map(x -> x.getCode()).collect(Collectors.toList())).contains("ADMINISTRATIF","BUDGETAIRE","AS","RBOP","DIRECTEUR");
 	}
 	
 	//@Test

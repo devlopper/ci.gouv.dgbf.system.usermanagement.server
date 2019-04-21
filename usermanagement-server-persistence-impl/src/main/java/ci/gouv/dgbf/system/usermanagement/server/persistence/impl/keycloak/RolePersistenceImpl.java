@@ -7,11 +7,14 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
 import javax.ws.rs.NotFoundException;
 
+import org.cyk.utility.__kernel__.DependencyInjection;
 import org.cyk.utility.__kernel__.properties.Properties;
+import org.cyk.utility.collection.CollectionHelper;
 import org.cyk.utility.server.persistence.PersistenceServiceProvider;
 import org.keycloak.admin.client.resource.RoleResource;
 import org.keycloak.admin.client.resource.RolesResource;
@@ -51,14 +54,28 @@ public class RolePersistenceImpl extends AbstractRolePersistenceImpl implements 
 		Collection<Role> roles = new ArrayList<>();
 		Collection<RoleRepresentation> roleRepresentations = __inject__(KeycloakHelper.class).getRoles();
 		for(RoleRepresentation index : roleRepresentations)
-			roles.add(new Role().setCode(index.getName()));
+			roles.add(__instanciate__(index));
 		return roles;
 	}
 	
 	@Override
 	public Role readOne(Object identifier, Properties properties) {
+		//we do not know how to find role by system identifier. So we will only find it by business identifier
 		RoleRepresentation roleRepresentation = __inject__(KeycloakHelper.class).getRolesResource().get((String)identifier).toRepresentation();
-		return new Role().setIdentifier(roleRepresentation.getId()).setCode(roleRepresentation.getName());
+		return __instanciate__(roleRepresentation);
+	}
+	
+	public static Role __instanciate__(RoleRepresentation roleRepresentation) {
+		//we can only find role by name so our identifier will be the name for now
+		return new Role()
+				.setIdentifier(roleRepresentation.getName())
+				.setCode(roleRepresentation.getName())
+				.setName(DependencyInjection.inject(CollectionHelper.class).getFirst(roleRepresentation.getAttributes().get("name")))
+				;
+	}
+	
+	public static Collection<Role> __instanciate__(Collection<RoleRepresentation> roleRepresentations) {
+		return roleRepresentations == null ? null : roleRepresentations.stream().map(x -> __instanciate__(x)).collect(Collectors.toList());
 	}
 	
 	@Override

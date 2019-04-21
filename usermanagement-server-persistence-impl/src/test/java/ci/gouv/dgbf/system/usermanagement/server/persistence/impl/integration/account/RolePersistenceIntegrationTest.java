@@ -27,7 +27,7 @@ public class RolePersistenceIntegrationTest extends AbstractPersistenceArquillia
 	}
 	
 	@Test
-	public void readOneRole() throws Exception{
+	public void read() throws Exception{
 		Collection<Role> roles = __inject__(RolePersistence.class).read();
 		assertThat(roles.stream().map(x -> x.getCode()).collect(Collectors.toList())).contains("ADMINISTRATIF","BUDGETAIRE","AS","RBOP","DIRECTEUR","AS_MIN_21");
 	}

@@ -69,7 +69,7 @@ public class PopulateKeycloak extends AbstractObject {
 		PopulateKeycloak populateKeycloak = new PopulateKeycloak();
 		RolesResource rolesResource = client.realm(realmName).roles();
 		
-		//populateKeycloak.deleteRoles(rolesResource);
+		populateKeycloak.deleteRoles(rolesResource);
 		populateKeycloak.saveRoles(roleArrayInstance, ministereArrayInstance,programmeArrayInstance,uaArrayInstance,rolesResource);
 		
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
@@ -169,6 +169,8 @@ public class PopulateKeycloak extends AbstractObject {
 			String name = functionName+locationName+locationArrayInstance.get(index, 0);
 			saveRole(rolesResource, code, name, type);
 			rolesResource.get(code).addComposites(Arrays.asList(rolesResource.get(functionCode).toRepresentation()));
+			//TODO to be removed. it is there just for test
+			break;
 		}
 	}
 	
