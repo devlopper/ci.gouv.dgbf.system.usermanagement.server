@@ -77,8 +77,8 @@ public class PopulateKeycloak extends AbstractObject {
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		ArrayInstanceTwoDimensionString serviceArrayInstance = reader.execute().getOutput();
 		
-		//populateKeycloak.deleteClients(client.realm(realmName).clients());
-		//populateKeycloak.saveClients(serviceArrayInstance,client.realm(realmName).clients());
+		populateKeycloak.deleteClients(client.realm(realmName).clients());
+		populateKeycloak.saveClients(serviceArrayInstance,client.realm(realmName).clients());
 		
 		weld.shutdown();
 	}
@@ -242,4 +242,13 @@ public class PopulateKeycloak extends AbstractObject {
 				clientsResource.get(index.getId()).remove();
 		System.out.println("OK");
 	}
+	
+	/*private void deleteScopes(ClientsResource clientsResource) {
+		clientsResource.get("").
+		System.out.print("Deleting all clients... ");
+		for(ClientRepresentation index : clientsResource.findAll())
+			if(index.getAttributes()!=null && __inject__(StringHelper.class).isNotBlank(index.getAttributes().get("uuid")))
+				clientsResource.get(index.getId()).remove();
+		System.out.println("OK");
+	}*/
 }

@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.helper.Helper;
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.ClientsResource;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.admin.client.resource.UsersResource;
@@ -18,6 +19,8 @@ public interface KeycloakHelper extends Helper {
 	RealmResource getRealmResource();
 	RolesResource getRolesResource();
 	UsersResource getUsersResource();
+	ClientsResource getClientsResource();
+	
 	Collection<RoleRepresentation> getRoles(Properties properties);
 	Collection<RoleRepresentation> getRoles();
 	Collection<RoleRepresentation> getRolesByProperty(String name,String...values);
