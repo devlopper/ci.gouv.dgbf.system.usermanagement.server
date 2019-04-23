@@ -11,6 +11,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RoleFun
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RolePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RolePostePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.ServicePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.Keycloak;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
@@ -21,7 +22,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 	@Override
 	public void __initialize__(Object object) {
 		__setQualifierClassTo__(Keycloak.Class.class, RolePersistence.class,RoleCategoryPersistence.class,RoleFunctionPersistence.class,RolePostePersistence.class
-				,ServicePersistence.class);
+				,ServicePersistence.class,UserAccountPersistence.class);
 		__inject__(KeycloakHelper.class).setClient(__inject__(KeycloakHelper.class).getClient());
 	}
 	

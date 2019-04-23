@@ -4,7 +4,7 @@ import javax.ws.rs.core.Response;
 
 import org.cyk.utility.server.representation.AbstractEntityCollection;
 import org.cyk.utility.server.representation.test.TestRepresentationCreate;
-import org.cyk.utility.server.representation.test.arquillian.AbstractRepresentationArquillianIntegrationTestWithDefaultDeploymentAsSwram;
+import org.cyk.utility.server.representation.test.arquillian.AbstractRepresentationArquillianIntegrationTestWithDefaultDeployment;
 import org.junit.Test;
 
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.AccountBusiness;
@@ -12,7 +12,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Ac
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.AccountRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.AccountDto;
 
-public class AccountFunctionIntegrationTest extends AbstractRepresentationArquillianIntegrationTestWithDefaultDeploymentAsSwram {
+public class AccountFunctionIntegrationTest extends AbstractRepresentationArquillianIntegrationTestWithDefaultDeployment {
 	private static final long serialVersionUID = 1L;
 	
 	@Test

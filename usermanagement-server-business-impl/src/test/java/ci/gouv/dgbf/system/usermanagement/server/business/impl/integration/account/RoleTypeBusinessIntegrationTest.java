@@ -1,12 +1,12 @@
 package ci.gouv.dgbf.system.usermanagement.server.business.impl.integration.account;
 
 import org.cyk.utility.server.business.test.TestBusinessCreate;
-import org.cyk.utility.server.business.test.arquillian.AbstractBusinessArquillianIntegrationTestWithDefaultDeploymentAsSwram;
+import org.cyk.utility.server.business.test.arquillian.AbstractBusinessArquillianIntegrationTestWithDefaultDeployment;
 import org.junit.Test;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleType;
 
-public class RoleTypeBusinessIntegrationTest extends AbstractBusinessArquillianIntegrationTestWithDefaultDeploymentAsSwram {
+public class RoleTypeBusinessIntegrationTest extends AbstractBusinessArquillianIntegrationTestWithDefaultDeployment {
 	private static final long serialVersionUID = 1L;
 	
 	/* Create */

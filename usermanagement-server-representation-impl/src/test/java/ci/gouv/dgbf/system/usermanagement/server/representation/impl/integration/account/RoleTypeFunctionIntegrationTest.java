@@ -2,7 +2,7 @@ package ci.gouv.dgbf.system.usermanagement.server.representation.impl.integratio
 
 import org.cyk.utility.server.representation.AbstractEntityCollection;
 import org.cyk.utility.server.representation.test.TestRepresentationCreate;
-import org.cyk.utility.server.representation.test.arquillian.AbstractRepresentationArquillianIntegrationTestWithDefaultDeploymentAsSwram;
+import org.cyk.utility.server.representation.test.arquillian.AbstractRepresentationArquillianIntegrationTestWithDefaultDeployment;
 import org.junit.Test;
 
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.RoleTypeBusiness;
@@ -10,7 +10,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Ro
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.RoleTypeRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.RoleTypeDto;
 
-public class RoleTypeFunctionIntegrationTest extends AbstractRepresentationArquillianIntegrationTestWithDefaultDeploymentAsSwram {
+public class RoleTypeFunctionIntegrationTest extends AbstractRepresentationArquillianIntegrationTestWithDefaultDeployment {
 	private static final long serialVersionUID = 1L;
 	
 	@Test

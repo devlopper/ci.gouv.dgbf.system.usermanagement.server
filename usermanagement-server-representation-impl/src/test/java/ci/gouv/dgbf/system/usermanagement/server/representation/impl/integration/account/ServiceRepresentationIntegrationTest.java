@@ -6,14 +6,14 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.cyk.utility.server.representation.AbstractEntityCollection;
-import org.cyk.utility.server.representation.test.arquillian.AbstractRepresentationArquillianIntegrationTestWithDefaultDeploymentAsSwram;
+import org.cyk.utility.server.representation.test.arquillian.AbstractRepresentationArquillianIntegrationTestWithDefaultDeployment;
 import org.junit.Test;
 
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.ServiceRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.ServiceDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.impl.ApplicationScopeLifeCycleListener;
 
-public class ServiceRepresentationIntegrationTest extends AbstractRepresentationArquillianIntegrationTestWithDefaultDeploymentAsSwram {
+public class ServiceRepresentationIntegrationTest extends AbstractRepresentationArquillianIntegrationTestWithDefaultDeployment {
 	private static final long serialVersionUID = 1L;
 	
 	@Test

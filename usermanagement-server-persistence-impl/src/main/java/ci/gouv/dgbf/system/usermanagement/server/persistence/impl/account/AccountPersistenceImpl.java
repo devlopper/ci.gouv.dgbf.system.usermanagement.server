@@ -17,17 +17,18 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Ac
 public class AccountPersistenceImpl extends AbstractPersistenceEntityImpl<Account> implements AccountPersistence,Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private String readByCodeByPass;
+	//private String readByCodeByPass;
 	
 	@Override
 	protected void __listenPostConstructPersistenceQueries__() {
 		super.__listenPostConstructPersistenceQueries__();
-		addQueryCollectInstances(readByCodeByPass, __instanciateQuerySelect__()
+		/*addQueryCollectInstances(readByCodeByPass, __instanciateQuerySelect__()
 				.getWherePredicateBuilderAsGroup().addOperandBuilderByAttribute(Account.FIELD_CODE,ComparisonOperator.EQ).and()
 				.addOperandBuilderByAttribute(Account.FIELD_PASS,ComparisonOperator.EQ)
 				.getParentAsWhereClause().getParentAs(QueryStringBuilderSelect.class));
+		*/
 	}
-	
+	/*
 	@Override
 	protected Object[] __getQueryParameters__(String queryIdentifier, Object... objects) {
 		PersistenceQuery persistenceQuery = __inject__(PersistenceQueryRepository.class).getBySystemIdentifier(queryIdentifier);
@@ -37,6 +38,7 @@ public class AccountPersistenceImpl extends AbstractPersistenceEntityImpl<Accoun
 		
 		return super.__getQueryParameters__(queryIdentifier, objects);
 	}
+	*/
 	
 	@Override
 	public Account readByCodeByPass(String code, String pass) {

@@ -1,13 +1,14 @@
 package ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
-import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
@@ -18,7 +19,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-@Entity @Getter @Setter @Accessors(chain=true) @Access(AccessType.FIELD) @ToString
+//@javax.persistence.Entity 
+@Getter @Setter @Accessors(chain=true) @Access(AccessType.FIELD) @ToString
 @Table(name=UserAccount.TABLE_NAME,
 uniqueConstraints= {
 		@UniqueConstraint(name=UserAccount.UNIQUE_CONSTRAINT_USER_ACCOUNT_NAME,columnNames= {UserAccount.COLUMN_USER,UserAccount.COLUMN_ACCOUNT}
@@ -28,8 +30,24 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 
 	@ManyToOne @JoinColumn(name=COLUMN_USER) @NotNull private User user;
 	@ManyToOne @JoinColumn(name=COLUMN_ACCOUNT) @NotNull private Account account;
+	@Transient private Collection<Role> roles;
 	
 	/**/
+	
+	/**/
+	
+	@Override
+	public UserAccount setIdentifier(String identifier) {
+		return (UserAccount) super.setIdentifier(identifier);
+	}
+	
+	public User getUser(Boolean injectIfNull) {
+		return (User) __getInjectIfNull__(FIELD_USER, injectIfNull);
+	}
+	
+	public Account getAccount(Boolean injectIfNull) {
+		return (Account) __getInjectIfNull__(FIELD_ACCOUNT, injectIfNull);
+	}
 	
 	/**/
 	

@@ -4,14 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.business.test.TestBusinessCreate;
-import org.cyk.utility.server.business.test.arquillian.AbstractBusinessArquillianIntegrationTestWithDefaultDeploymentAsSwram;
+import org.cyk.utility.server.business.test.arquillian.AbstractBusinessArquillianIntegrationTestWithDefaultDeployment;
 import org.junit.Test;
 
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.RoleBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Role;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleType;
 
-public class RoleBusinessIntegrationTest extends AbstractBusinessArquillianIntegrationTestWithDefaultDeploymentAsSwram {
+public class RoleBusinessIntegrationTest extends AbstractBusinessArquillianIntegrationTestWithDefaultDeployment {
 	private static final long serialVersionUID = 1L;
 	
 	/* Create */

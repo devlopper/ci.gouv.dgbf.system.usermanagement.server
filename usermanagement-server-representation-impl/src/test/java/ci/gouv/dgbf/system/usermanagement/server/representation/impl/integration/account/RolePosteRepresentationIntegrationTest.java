@@ -6,13 +6,13 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.cyk.utility.server.representation.AbstractEntityCollection;
-import org.cyk.utility.server.representation.test.arquillian.AbstractRepresentationArquillianIntegrationTestWithDefaultDeploymentAsSwram;
+import org.cyk.utility.server.representation.test.arquillian.AbstractRepresentationArquillianIntegrationTestWithDefaultDeployment;
 import org.junit.Test;
 
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.RolePosteRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.RolePosteDto;
 
-public class RolePosteRepresentationIntegrationTest extends AbstractRepresentationArquillianIntegrationTestWithDefaultDeploymentAsSwram {
+public class RolePosteRepresentationIntegrationTest extends AbstractRepresentationArquillianIntegrationTestWithDefaultDeployment {
 	private static final long serialVersionUID = 1L;
 	
 	@Test
