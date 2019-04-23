@@ -46,6 +46,7 @@ public class UserAccountPersistenceImpl extends AbstractUserAccountPersistenceIm
 
 		Response response = usersRessource.create(userRepresentation);
 		String userIdentifier = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
+		userAccount.setIdentifier(userIdentifier);
 		UserResource userResource = usersRessource.get(userIdentifier);
 		
 		Collection<Role> roles = userAccount.getRoles();

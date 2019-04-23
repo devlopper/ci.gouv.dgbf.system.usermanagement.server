@@ -1,6 +1,7 @@
 package ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.persistence.Access;
@@ -12,6 +13,8 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
+import org.cyk.utility.array.ArrayHelper;
+import org.cyk.utility.collection.CollectionHelper;
 import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByString;
 
 import lombok.Getter;
@@ -47,6 +50,22 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	
 	public Account getAccount(Boolean injectIfNull) {
 		return (Account) __getInjectIfNull__(FIELD_ACCOUNT, injectIfNull);
+	}
+	
+	public UserAccount addRoles(Collection<Role> roles) {
+		if(__inject__(CollectionHelper.class).isNotEmpty(roles)) {
+			if(this.roles == null)
+				this.roles = new ArrayList<>();
+			this.roles.addAll(roles);
+		}
+		return this;
+	}
+	
+	public UserAccount addRoles(Role...roles) {
+		if(__inject__(ArrayHelper.class).isNotEmpty(roles)) {
+			addRoles(__inject__(CollectionHelper.class).instanciate(roles));
+		}
+		return this;
 	}
 	
 	/**/
