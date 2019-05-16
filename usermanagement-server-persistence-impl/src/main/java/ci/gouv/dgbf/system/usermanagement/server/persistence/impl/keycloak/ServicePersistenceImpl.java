@@ -103,9 +103,14 @@ public class ServicePersistenceImpl extends AbstractServicePersistenceImpl imple
 	public PersistenceServiceProvider<Service> delete(Service service, Properties properties) {
 		try{
 			__inject__(KeycloakHelper.class).getClientsResource().get(service.getIdentifier()).remove();
-		}catch(NotFoundException exception) {
-			
+		}catch(Exception exception) {
+			System.out.println("ServicePersistenceImpl.delete() ::: "+exception+" ::: ID = "+service.getIdentifier());
 		}
 		return this;
+	}
+	
+	@Override
+	public Long count(Properties arg0) {
+		return null;
 	}
 }

@@ -35,4 +35,9 @@ public class RoleFunctionPersistenceImpl extends AbstractRoleFunctionPersistence
 		return roles == null ? null : roles.stream().map(x -> __instanciate__(x)).collect(Collectors.toList());
 	}
 	
+	@Override
+	public Long count(Properties arg0) {
+		return null;
+	}
+	
 }

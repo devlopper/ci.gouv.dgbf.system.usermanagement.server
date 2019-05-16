@@ -98,4 +98,9 @@ public class RolePersistenceImpl extends AbstractRolePersistenceImpl implements 
 		}
 		return this;
 	}
+	
+	@Override
+	public Long count(Properties arg0) {
+		return null;
+	}
 }

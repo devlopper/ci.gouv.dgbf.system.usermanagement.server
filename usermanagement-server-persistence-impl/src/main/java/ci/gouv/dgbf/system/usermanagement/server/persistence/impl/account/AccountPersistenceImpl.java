@@ -42,7 +42,7 @@ public class AccountPersistenceImpl extends AbstractPersistenceEntityImpl<Accoun
 	
 	@Override
 	public Account readByCodeByPass(String code, String pass) {
-		return __readOne__(____getQueryParameters____(code,pass));
+		return __readOne__(____getQueryParameters____(null,code,pass));
 	}
 	
 
