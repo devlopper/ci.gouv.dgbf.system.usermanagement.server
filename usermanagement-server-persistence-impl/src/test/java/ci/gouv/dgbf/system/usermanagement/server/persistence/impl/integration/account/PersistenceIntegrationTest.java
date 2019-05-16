@@ -20,7 +20,6 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleCategory;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RolePoste;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Service;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.Keycloak;
@@ -29,21 +28,12 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.Keycl
 public class PersistenceIntegrationTest extends AbstractPersistenceArquillianIntegrationTestWithDefaultDeployment {
 	private static final long serialVersionUID = 1L;
 	
-	/* Role Type*/
-	
-	@Test
-	public void roleType_create() throws Exception{
-		RoleType roleType = new RoleType().setCode(__getRandomCode__()).setName(__getRandomName__());
-		__inject__(TestPersistenceCreate.class).addObjects(roleType).execute();
-	}
-	
 	/* Role */
 	
 	@Test
 	public void role_create() throws Exception{
-		RoleType type = new RoleType().setCode(__getRandomCode__()).setName(__getRandomName__());
-		Role role = new Role().setType(type).setCode(__getRandomCode__()).setName(__getRandomName__());
-		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(type).addObjects(role).execute();
+		Role role = new Role().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(TestPersistenceCreate.class).addObjects(role).execute();
 	}
 	
 	@Test
@@ -74,6 +64,10 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		DependencyInjection.setQualifierClass(RoleFunctionPersistence.class, Keycloak.Class.class);
 		Collection<RoleFunction> roleFunctions = __inject__(RoleFunctionPersistence.class).read();
 		assertThat(roleFunctions.stream().map(x -> x.getRole().getCode()).collect(Collectors.toList())).contains("RP","RBOP","AS","AC","CB","CF","DIRECTEUR");
+		RoleFunction administrateur = __inject__(RoleFunctionPersistence.class).readOneBySystemIdentifier("ADMINISTRATEUR");
+		assertThat(administrateur).isNotNull();
+		assertThat(administrateur.getCategory()).isNotNull();
+		assertThat(administrateur.getCategory().getIdentifier()).isEqualTo("ADMINISTRATIF");
 	}
 	
 	/* Role Poste */
@@ -83,6 +77,11 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		DependencyInjection.setQualifierClass(RolePostePersistence.class, Keycloak.Class.class);
 		Collection<RolePoste> rolePostes = __inject__(RolePostePersistence.class).read();
 		assertThat(rolePostes.stream().map(x -> x.getRole().getCode()).collect(Collectors.toList())).contains("AS_MIN_21");
+		
+		RolePoste asMin21 = __inject__(RolePostePersistence.class).readOneBySystemIdentifier("AS_MIN_21");
+		assertThat(asMin21).isNotNull();
+		assertThat(asMin21.getFunction()).isNotNull();
+		assertThat(asMin21.getFunction().getIdentifier()).isEqualTo("AS");
 	}
 	
 	/* Service */

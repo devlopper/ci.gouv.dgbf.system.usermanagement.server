@@ -43,12 +43,14 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			representation.setIdentifier(persistence.getIdentifier());
 			representation.setCode(persistence.getRole().getCode());
 			representation.setName(persistence.getRole().getName()); 
+			representation.setCategory(__inject__(InstanceHelper.class).buildOne(RoleCategoryDto.class, persistence.getCategory())); 
 		}else if(source instanceof RolePoste && destination instanceof RolePosteDto) {
 			RolePoste persistence = (RolePoste) source;
 			RolePosteDto representation = (RolePosteDto) destination;
 			representation.setIdentifier(persistence.getIdentifier());
 			representation.setCode(persistence.getRole().getCode());
 			representation.setName(persistence.getRole().getName()); 
+			representation.setFunction(__inject__(InstanceHelper.class).buildOne(RoleFunctionDto.class, persistence.getFunction())); 
 		}else if(source instanceof UserAccount && destination instanceof UserAccountDto) {
 			UserAccount persistence = (UserAccount) source;
 			UserAccountDto representation = (UserAccountDto) destination;

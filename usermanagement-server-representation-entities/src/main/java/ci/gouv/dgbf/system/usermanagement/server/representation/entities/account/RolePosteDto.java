@@ -16,5 +16,6 @@ public class RolePosteDto extends AbstractEntityFromPersistenceEntity implements
 	private static final long serialVersionUID = 1L;
 	
 	private String name;
+	private RoleFunctionDto function;
 	
 }

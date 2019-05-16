@@ -44,7 +44,8 @@ public class RolePersistenceImpl extends AbstractRolePersistenceImpl implements 
 		RoleRepresentation roleRepresentation = roleResource.toRepresentation();
 		Map<String,List<String>> attributes = new LinkedHashMap<>();
 		attributes.put("name", Arrays.asList(role.getName()));
-		attributes.put("type", Arrays.asList(role.getType().getCode()));
+		if(role.getType() != null)
+			attributes.put("type", Arrays.asList(role.getType().getCode()));
 		roleRepresentation.setAttributes(attributes);
 		roleResource.update(roleRepresentation);
 	}

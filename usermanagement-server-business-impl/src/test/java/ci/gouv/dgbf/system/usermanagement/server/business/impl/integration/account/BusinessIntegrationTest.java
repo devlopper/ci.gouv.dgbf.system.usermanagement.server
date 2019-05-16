@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.business.test.TestBusinessCreate;
 import org.cyk.utility.server.business.test.arquillian.AbstractBusinessArquillianIntegrationTestWithDefaultDeployment;
+import org.cyk.utility.stream.distributed.Topic;
 import org.cyk.utility.time.TimeHelper;
 import org.cyk.utility.value.ValueUsageType;
 import org.junit.Test;
@@ -14,7 +15,6 @@ import ci.gouv.dgbf.system.usermanagement.server.business.api.account.ServiceBus
 import ci.gouv.dgbf.system.usermanagement.server.business.impl.ApplicationScopeLifeCycleListener;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RolePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Role;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Service;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 
@@ -25,21 +25,14 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	
 	@Test
 	public void create_role() throws Exception{
-		RoleType type = new RoleType().setCode(__getRandomCode__()).setName(__getRandomName__());
-		Role role = new Role().setCode(__getRandomCode__()).setName(__getRandomCode__()).setType(type);
-		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(type).addObjects(role).execute();
+		Role role = new Role().setCode(__getRandomCode__()).setName(__getRandomCode__());
+		__inject__(TestBusinessCreate.class).addObjects(role).execute();
 	}
 	
 	@Test
 	public void find_roleByBusinessIdentifier() throws Exception{
 		Role role = __inject__(RoleBusiness.class).findOne("ADMINISTRATIF", new Properties());
 		assertThat(role.getCode()).isEqualTo("ADMINISTRATIF");
-	}
-	
-	@Test
-	public void create_roleType() throws Exception{
-		RoleType roleType = new RoleType().setCode(__getRandomCode__()).setName(__getRandomCode__());
-		__inject__(TestBusinessCreate.class).addObjects(roleType).execute();			
 	}
 	
 	@Test
@@ -58,13 +51,16 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	
 	@Test
 	public void create_userAccount() throws Exception{
-		startServersZookeeperAndKafka();
-		
-		__inject__(TimeHelper.class).pause(1000l * 15);
+		if(Boolean.TRUE.equals(Topic.MAIL.getIsConsumerStarted())) {
+			startServersZookeeperAndKafka();
+			__inject__(TimeHelper.class).pause(1000l * 15);
+		}
 		
 		__inject__(ApplicationScopeLifeCycleListener.class).initialize(null);
 		
-		__inject__(TimeHelper.class).pause(1000l * 15);
+		if(Boolean.TRUE.equals(Topic.MAIL.getIsConsumerStarted())) {
+			__inject__(TimeHelper.class).pause(1000l * 15);
+		}
 		
 		UserAccount userAccount = new UserAccount();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress("kycdev@gmail.com");
@@ -72,8 +68,9 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		userAccount.addRoles(__inject__(RolePersistence.class).readOneByBusinessIdentifier("CE"));
 		__inject__(TestBusinessCreate.class).addObjects(userAccount).execute();
 		
-		__inject__(TimeHelper.class).pause(1000l * 25);
-		
-		stopServersKafkaAndZookeeper();	
+		if(Boolean.TRUE.equals(Topic.MAIL.getIsConsumerStarted())) {
+			__inject__(TimeHelper.class).pause(1000l * 25);
+			stopServersKafkaAndZookeeper();	
+		}
 	}
 }

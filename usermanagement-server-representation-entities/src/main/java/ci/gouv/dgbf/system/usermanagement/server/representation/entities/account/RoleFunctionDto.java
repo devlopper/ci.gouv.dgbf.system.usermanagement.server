@@ -16,5 +16,5 @@ public class RoleFunctionDto extends AbstractEntityFromPersistenceEntity impleme
 	private static final long serialVersionUID = 1L;
 	
 	private String name;
-	
+	private RoleCategoryDto category;
 }

@@ -24,7 +24,7 @@ import lombok.experimental.Accessors;
 public class RoleFunction extends AbstractIdentifiedByString implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@ManyToOne @JoinColumn(name=COLUMN_CATEGORY) @NotNull private RoleFunction category;
+	@ManyToOne @JoinColumn(name=COLUMN_CATEGORY) @NotNull private RoleCategory category;
 	@ManyToOne @JoinColumn(name=COLUMN_ROLE) @NotNull private Role role;
 	
 	/**/
