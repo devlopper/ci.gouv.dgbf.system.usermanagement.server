@@ -17,10 +17,11 @@ public class AccountDto extends AbstractEntityFromPersistenceEntity implements S
 	private static final long serialVersionUID = 1L;
 
 	private String pass;
+
 	
 	@Override
-	public AccountDto setCode(String code) {
-		return (AccountDto) super.setCode(code);
+	public AccountDto setIdentifier(String code) {
+		return (AccountDto) super.setIdentifier(code);
 	}
 	
 }

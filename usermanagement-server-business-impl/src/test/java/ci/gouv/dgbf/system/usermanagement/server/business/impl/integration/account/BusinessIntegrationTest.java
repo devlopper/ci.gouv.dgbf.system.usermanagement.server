@@ -72,7 +72,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		userAccount.addRoles(__inject__(RolePersistence.class).readOneByBusinessIdentifier("CE"));
 		__inject__(TestBusinessCreate.class).addObjects(userAccount).execute();
 		
-		__inject__(TimeHelper.class).pause(1000l * 15);
+		__inject__(TimeHelper.class).pause(1000l * 25);
 		
 		stopServersKafkaAndZookeeper();	
 	}

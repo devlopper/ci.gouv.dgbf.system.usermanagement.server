@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.cyk.utility.server.representation.AbstractEntityCollection;
 import org.cyk.utility.server.representation.test.TestRepresentationCreate;
 import org.cyk.utility.server.representation.test.arquillian.AbstractRepresentationArquillianIntegrationTestWithDefaultDeployment;
+import org.cyk.utility.time.TimeHelper;
 import org.junit.Test;
 
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.RoleTypeBusiness;
@@ -24,6 +25,7 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.RolePosteDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.RoleTypeDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.ServiceDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.impl.ApplicationScopeLifeCycleListener;
 
 public class RepresentationIntegrationTest extends AbstractRepresentationArquillianIntegrationTestWithDefaultDeployment {
@@ -118,10 +120,23 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 	
 	@Test
 	public void create_userAccount() throws Exception{
-		/*UserDto user = new UserDto().setElectronicMailAddress("kycdev@gmail.com").setPerson(new UserNaturalPersonDto().setFirstName("Zadi").setLastNames("Representation"));
-		UserAccountDto userAccount = new UserAccountDto().setCode("ua01").setUser(user);
-		__inject__(TestRepresentationCreate.class).addObjects(userAccount).execute();
-		*/
+		startServersZookeeperAndKafka();
+		
+		__inject__(TimeHelper.class).pause(1000l * 15);
+		
+		__inject__(ApplicationScopeLifeCycleListener.class).initialize(null);
+		
+		__inject__(TimeHelper.class).pause(1000l * 15);
+		
+		UserAccountDto userAccount = new UserAccountDto();
+		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress("kycdev@gmail.com");
+		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
+		userAccount.addRoles("CE");
+		__inject__(TestRepresentationCreate.class).addObjects(userAccount).setIsCatchThrowable(Boolean.FALSE).execute();
+		
+		__inject__(TimeHelper.class).pause(1000l * 25);
+		
+		stopServersKafkaAndZookeeper();	
 	}
 	
 	@Override
