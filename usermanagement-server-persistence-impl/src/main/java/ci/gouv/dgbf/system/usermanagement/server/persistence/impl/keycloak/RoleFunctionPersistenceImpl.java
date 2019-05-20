@@ -33,7 +33,7 @@ public class RoleFunctionPersistenceImpl extends AbstractRoleFunctionPersistence
 	}
 	
 	public static RoleFunction __instanciate__(Role role,Collection<RoleCategory> categories) {
-		RoleFunction function = new RoleFunction().setIdentifier(role.getIdentifier()).setRole(role);
+		RoleFunction function = new RoleFunction().setIdentifier(role.getIdentifier());//.setRole(role);
 		if(__inject__(CollectionHelper.class).isNotEmpty(categories)) {
 			Collection<String> categoriesIdentifiers = categories.stream().map(RoleCategory::getIdentifier).collect(Collectors.toList());
 			Collection<RoleRepresentation> composites = __inject__(KeycloakHelper.class).getRolesResource().get(role.getIdentifier()).getRoleComposites();

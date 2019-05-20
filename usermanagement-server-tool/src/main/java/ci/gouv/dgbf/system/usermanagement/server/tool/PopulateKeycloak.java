@@ -144,13 +144,13 @@ public class PopulateKeycloak extends AbstractObject {
 			
 			if("FONCTION".equals(type) && StringUtils.startsWith(functionsArrayInstance.get(index, 4), "oui"))
 				savePosts(code, name, "_MIN_", " du ministère ", ministriesArrayInstance, rolesResource);
-			/*
+			
 			if("FONCTION".equals(type) && StringUtils.startsWith(functionsArrayInstance.get(index, 5), "oui"))
 				savePosts(code, name, "_PROG_", " du programme ", programmeArrayInstance, rolesResource);
 			
 			if("FONCTION".equals(type) && StringUtils.startsWith(functionsArrayInstance.get(index, 8), "oui"))
 				savePosts(code, name, "_UA_", " de l'unité administrative ", uaArrayInstance, rolesResource);
-			*/
+			
 		}
 		
 		System.out.println("Synchronising compositions");

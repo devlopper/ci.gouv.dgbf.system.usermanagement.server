@@ -24,4 +24,11 @@ public interface KeycloakHelper extends Helper {
 	Collection<RoleRepresentation> getRoles(Properties properties);
 	Collection<RoleRepresentation> getRoles();
 	Collection<RoleRepresentation> getRolesByProperty(String name,String...values);
+	
+	KeycloakHelper createRole(String code,String name,String type,Collection<String> parentsCodes);
+	KeycloakHelper createRole(String code,String name,String type,String...parentsCodes);
+	KeycloakHelper deleteRole(String code);
+	
+	String createUserAccount(String firstName,String lastNames,String electronicMailAddress,String userName,String pass,Collection<String> rolesCodes);
+	KeycloakHelper deleteUserAccount(String identifier);
 }

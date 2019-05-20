@@ -28,10 +28,10 @@ public class ServicePersistenceImpl extends AbstractServicePersistenceImpl imple
 	@Override
 	public PersistenceServiceProvider<Service> create(Service service, Properties properties) {
 		ClientRepresentation clientRepresentation = new ClientRepresentation();
-		clientRepresentation.setClientId(service.getCode());
-		clientRepresentation.setName(service.getName());
-		clientRepresentation.setDescription(service.getDescription());
-		clientRepresentation.setBaseUrl(service.getUniformResourceLocator());
+		//clientRepresentation.setClientId(service.getCode());
+		//clientRepresentation.setName(service.getName());
+		//clientRepresentation.setDescription(service.getDescription());
+		//clientRepresentation.setBaseUrl(service.getUniformResourceLocator());
 		
 		Map<String,String> attributes = new LinkedHashMap<>();
 		attributes.put("uuid", UUID.randomUUID().toString());
@@ -67,10 +67,10 @@ public class ServicePersistenceImpl extends AbstractServicePersistenceImpl imple
 		if(clientRepresentation != null) {
 			service = new Service()
 					.setIdentifier(clientRepresentation.getId())
-					.setCode(clientRepresentation.getClientId())
-					.setName(clientRepresentation.getName())
-					.setDescription(clientRepresentation.getDescription())
-					.setUniformResourceLocator(clientRepresentation.getBaseUrl())
+					//.setCode(clientRepresentation.getClientId())
+					//.setName(clientRepresentation.getName())
+					//.setDescription(clientRepresentation.getDescription())
+					//.setUniformResourceLocator(clientRepresentation.getBaseUrl())
 					;
 		}
 		return service;
@@ -85,10 +85,10 @@ public class ServicePersistenceImpl extends AbstractServicePersistenceImpl imple
 		ClientsResource clientsResource = __inject__(KeycloakHelper.class).getClientsResource();
 		ClientResource clientResource = clientsResource.get(service.getIdentifier());
 		ClientRepresentation clientRepresentation = clientResource.toRepresentation();
-		clientRepresentation.setClientId(service.getCode());
-		clientRepresentation.setName(service.getName());
-		clientRepresentation.setDescription(service.getDescription());
-		clientRepresentation.setBaseUrl(service.getUniformResourceLocator());
+		//clientRepresentation.setClientId(service.getCode());
+		//clientRepresentation.setName(service.getName());
+		//clientRepresentation.setDescription(service.getDescription());
+		//clientRepresentation.setBaseUrl(service.getUniformResourceLocator());
 		clientResource.update(clientRepresentation);
 		
 		try{

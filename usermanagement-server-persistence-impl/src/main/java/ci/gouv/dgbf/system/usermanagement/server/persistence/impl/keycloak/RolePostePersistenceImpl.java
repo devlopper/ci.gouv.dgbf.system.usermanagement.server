@@ -33,7 +33,7 @@ public class RolePostePersistenceImpl extends AbstractRolePostePersistenceImpl i
 	}
 	
 	public static RolePoste __instanciate__(Role role,Collection<RoleFunction> functions) {
-		RolePoste rolePoste = new RolePoste().setIdentifier(role.getIdentifier()).setRole(role);
+		RolePoste rolePoste = new RolePoste().setIdentifier(role.getIdentifier());//.setRole(role);
 		if(__inject__(CollectionHelper.class).isNotEmpty(functions)) {
 			Collection<String> functionsIdentifiers = functions.stream().map(RoleFunction::getIdentifier).collect(Collectors.toList());
 			Collection<RoleRepresentation> composites = __inject__(KeycloakHelper.class).getRolesResource().get(role.getIdentifier()).getRoleComposites();

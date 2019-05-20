@@ -2,25 +2,36 @@ package ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import javax.inject.Singleton;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
 
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.collection.CollectionHelper;
 import org.cyk.utility.helper.AbstractHelper;
+import org.cyk.utility.string.StringHelper;
 import org.cyk.utility.system.SystemHelper;
+import org.cyk.utility.value.ValueHelper;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.ClientsResource;
 import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.RoleResource;
 import org.keycloak.admin.client.resource.RolesResource;
+import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
+import org.keycloak.representations.idm.UserRepresentation;
 
 @Singleton
 public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper,Serializable {
@@ -118,5 +129,108 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 		keycloakProperties.setAttributes(attributes);
 		return __inject__(KeycloakHelper.class).getRoles(keycloakProperties);
 	}
+
+	/**/
 	
+	@Override
+	public KeycloakHelper createRole(String code,String name, String type,Collection<String> parentsCodes) {
+		if(getRolesResource().get(code) == null) {
+			RoleRepresentation roleRepresentation = new RoleRepresentation();
+			roleRepresentation.setName(code);
+			roleRepresentation.setDescription(name);
+			
+			RolesResource rolesResource = __inject__(KeycloakHelper.class).getRolesResource();
+			rolesResource.create(roleRepresentation);
+			
+			updateAttributes(code,name,type, rolesResource.get(code));
+			saveRoleComposites(code, parentsCodes);	
+		}
+		return this;
+	}
+	
+	@Override
+	public KeycloakHelper createRole(String code, String name, String type, String... parentsCodes) {
+		return createRole(code, name, type, __inject__(CollectionHelper.class).instanciate(parentsCodes));
+	}
+	
+	@Override
+	public KeycloakHelper deleteRole(String code) {
+		try {
+			getRolesResource().deleteRole(code);
+		} catch (NotFoundException exception) {
+			
+		}
+		return this;
+	}
+	
+	private void updateAttributes(String code,String name,String type,RoleResource roleResource) {
+		RoleRepresentation roleRepresentation = roleResource.toRepresentation();
+		Map<String,List<String>> attributes = new LinkedHashMap<>();
+		attributes.put("name", Arrays.asList(name));
+		if(__inject__(StringHelper.class).isNotBlank(type))
+			attributes.put("type", Arrays.asList(type));
+		roleRepresentation.setAttributes(attributes);
+		roleResource.update(roleRepresentation);
+	}
+	
+	private void saveRoleComposites(String code,Collection<String> parentsCodes) {
+		if(Boolean.TRUE.equals(__inject__(CollectionHelper.class ).isNotEmpty(parentsCodes))) {
+			RolesResource rolesResource = getRolesResource();
+			List<RoleRepresentation> composites = new ArrayList<>();
+			for(String indexParentCode : parentsCodes) {
+				RoleResource roleResource;
+				try {
+					roleResource = rolesResource.get(indexParentCode);
+					if(roleResource!=null)
+						composites.add(roleResource.toRepresentation());
+				} catch (NotFoundException exception) {
+					
+				}
+			}
+			if(__inject__(CollectionHelper.class).isNotEmpty(composites))
+				rolesResource.get(code).addComposites(composites);	
+		}
+	}
+	
+	@Override
+	public String createUserAccount(String firstName, String lastNames, String electronicMailAddress,String userName, String pass,Collection<String> rolesCodes) {
+		UserRepresentation userRepresentation = new UserRepresentation();
+		userRepresentation.setEnabled(true);
+		userRepresentation.setUsername(userName);
+		userRepresentation.setFirstName(firstName);
+		userRepresentation.setLastName(lastNames);
+		userRepresentation.setEmail(electronicMailAddress);
+		
+		UsersResource usersRessource = getUsersResource();
+
+		Response response = usersRessource.create(userRepresentation);
+		String identifier = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
+		UserResource userResource = usersRessource.get(identifier);
+		
+		if(__inject__(CollectionHelper.class).isNotEmpty(rolesCodes)) 
+			rolesCodes.forEach(new Consumer<String>() {
+				@Override
+				public void accept(String roleCode) {
+					RoleRepresentation roleRepresentation = getRealmResource().roles().get(roleCode).toRepresentation();
+					userResource.roles().realmLevel().add(Arrays.asList(roleRepresentation));
+				}
+			});
+
+		CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
+		credentialRepresentation.setTemporary(Boolean.TRUE);
+		credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
+		credentialRepresentation.setValue(__inject__(ValueHelper.class).defaultToIfNull(pass, "1234"));
+		userResource.resetPassword(credentialRepresentation);
+		return identifier;
+	}
+	
+	@Override
+	public KeycloakHelper deleteUserAccount(String identifier) {
+		try{
+			getUsersResource().get(identifier).remove();
+		}catch(NotFoundException exception) {
+			
+		}
+		return this;
+	}
 }

@@ -4,28 +4,24 @@ import java.io.Serializable;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
-import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByString;
+import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByStringAndCodedAndNamed;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-//@javax.persistence.Entity
-@Getter @Setter @Accessors(chain=true) @Access(AccessType.FIELD)
-@Table(name=RolePoste.TABLE_NAME,uniqueConstraints= {
-		@UniqueConstraint(name=RolePoste.UNIQUE_CONSTRAINT_FUNCTION_ROLE_NAME,columnNames= {RolePoste.FIELD_FUNCTION,RolePoste.COLUMN_ROLE})
-})
-public class RolePoste extends AbstractIdentifiedByString implements Serializable {
+@Entity @Getter @Setter @Accessors(chain=true) @Access(AccessType.FIELD)
+@Table(name=RolePoste.TABLE_NAME)
+public class RolePoste extends AbstractIdentifiedByStringAndCodedAndNamed implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne @JoinColumn(name=COLUMN_FUNCTION) @NotNull private RoleFunction function;
-	@ManyToOne @JoinColumn(name=COLUMN_ROLE) @NotNull private Role role;
 	
 	/**/
 	
@@ -34,15 +30,22 @@ public class RolePoste extends AbstractIdentifiedByString implements Serializabl
 		return (RolePoste) super.setIdentifier(identifier);
 	}
 	
+	@Override
+	public RolePoste setCode(String code) {
+		return (RolePoste) super.setCode(code);
+	}
+	
+	@Override
+	public RolePoste setName(String name) {
+		return (RolePoste) super.setName(name);
+	}
+	
 	/**/
 	
 	public static final String FIELD_FUNCTION = "fonction";
-	public static final String FIELD_ROLE = "role";
 	
-	public static final String TABLE_NAME = "posterole";
+	public static final String TABLE_NAME = "poste";
 	
 	public static final String COLUMN_FUNCTION = "fonction";
-	public static final String COLUMN_ROLE = "role";
 	
-	public static final String UNIQUE_CONSTRAINT_FUNCTION_ROLE_NAME = FIELD_FUNCTION+ "_"+COLUMN_ROLE;
 }

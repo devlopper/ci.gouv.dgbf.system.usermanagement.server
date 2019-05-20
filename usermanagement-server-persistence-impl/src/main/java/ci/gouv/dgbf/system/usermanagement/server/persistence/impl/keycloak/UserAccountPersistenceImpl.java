@@ -2,9 +2,7 @@ package ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
@@ -14,15 +12,12 @@ import javax.ws.rs.core.Response;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.persistence.PersistenceServiceProvider;
 import org.cyk.utility.value.ValueUsageType;
-import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
-import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Account;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Role;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.User;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.account.AbstractUserAccountPersistenceImpl;
@@ -41,7 +36,7 @@ public class UserAccountPersistenceImpl extends AbstractUserAccountPersistenceIm
 		userRepresentation.setEmail(userAccount.getUser().getElectronicMailAddress());
 		
 		// Get realm
-		RealmResource realmResource = __inject__(KeycloakHelper.class).getRealmResource();
+		//RealmResource realmResource = __inject__(KeycloakHelper.class).getRealmResource();
 		UsersResource usersRessource = __inject__(KeycloakHelper.class).getUsersResource();
 
 		Response response = usersRessource.create(userRepresentation);
@@ -49,7 +44,7 @@ public class UserAccountPersistenceImpl extends AbstractUserAccountPersistenceIm
 		userAccount.setIdentifier(userIdentifier);
 		UserResource userResource = usersRessource.get(userIdentifier);
 		
-		Collection<Role> roles = userAccount.getRoles();
+		/*Collection<Role> roles = userAccount.getRoles();
 		if(roles != null) 
 			roles.forEach(new Consumer<Role>() {
 				@Override
@@ -57,7 +52,7 @@ public class UserAccountPersistenceImpl extends AbstractUserAccountPersistenceIm
 					RoleRepresentation roleRepresentation = realmResource.roles().get(role.getCode()).toRepresentation();
 					userResource.roles().realmLevel().add(Arrays.asList(roleRepresentation));
 				}
-			});
+			});*/
 
 		CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
 		credentialRepresentation.setTemporary(Boolean.TRUE);

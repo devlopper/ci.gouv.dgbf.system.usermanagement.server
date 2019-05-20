@@ -28,7 +28,7 @@ public class RoleCategoryPersistenceImpl extends AbstractRoleCategoryPersistence
 	}
 	
 	public static RoleCategory __instanciate__(Role role) {
-		return new RoleCategory().setIdentifier(role.getIdentifier()).setRole(role);
+		return new RoleCategory().setIdentifier(role.getIdentifier());//.setRole(role);
 	}
 	
 	public static Collection<RoleCategory> __instanciate__(Collection<Role> roles) {

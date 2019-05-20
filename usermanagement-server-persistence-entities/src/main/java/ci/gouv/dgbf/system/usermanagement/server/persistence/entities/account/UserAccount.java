@@ -1,11 +1,11 @@
 package ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -22,8 +22,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-//@javax.persistence.Entity 
-@Getter @Setter @Accessors(chain=true) @Access(AccessType.FIELD) @ToString
+@Entity @Getter @Setter @Accessors(chain=true) @Access(AccessType.FIELD) @ToString
 @Table(name=UserAccount.TABLE_NAME,
 uniqueConstraints= {
 		@UniqueConstraint(name=UserAccount.UNIQUE_CONSTRAINT_USER_ACCOUNT_NAME,columnNames= {UserAccount.COLUMN_USER,UserAccount.COLUMN_ACCOUNT}
@@ -33,7 +32,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 
 	@ManyToOne @JoinColumn(name=COLUMN_USER) @NotNull private User user;
 	@ManyToOne @JoinColumn(name=COLUMN_ACCOUNT) @NotNull private Account account;
-	@Transient private Collection<Role> roles;
+	@Transient private RolePostes rolePostes;
 	
 	/**/
 	
@@ -52,18 +51,18 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 		return (Account) __getInjectIfNull__(FIELD_ACCOUNT, injectIfNull);
 	}
 	
-	public UserAccount addRoles(Collection<Role> roles) {
-		if(__inject__(CollectionHelper.class).isNotEmpty(roles)) {
-			if(this.roles == null)
-				this.roles = new ArrayList<>();
-			this.roles.addAll(roles);
-		}
+	public RolePostes getRolePostes(Boolean injectIfNull) {
+		return (RolePostes) __getInjectIfNull__(FIELD_ROLE_POSTES, injectIfNull);
+	}
+	
+	public UserAccount addRolePostes(Collection<RolePoste> rolePostes) {
+		getRolePostes(Boolean.TRUE).add(rolePostes);
 		return this;
 	}
 	
-	public UserAccount addRoles(Role...roles) {
-		if(__inject__(ArrayHelper.class).isNotEmpty(roles)) {
-			addRoles(__inject__(CollectionHelper.class).instanciate(roles));
+	public UserAccount addRolePostes(RolePoste...rolePostes) {
+		if(__inject__(ArrayHelper.class).isNotEmpty(rolePostes)) {
+			addRolePostes(__inject__(CollectionHelper.class).instanciate(rolePostes));
 		}
 		return this;
 	}
@@ -72,6 +71,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	
 	public static final String FIELD_USER = "user";
 	public static final String FIELD_ACCOUNT = "account";
+	public static final String FIELD_ROLE_POSTES = "rolePostes";
 	
 	public static final String TABLE_NAME = Account.TABLE_NAME+"_"+User.TABLE_NAME;
 	

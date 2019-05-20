@@ -4,28 +4,24 @@ import java.io.Serializable;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
-import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByString;
+import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByStringAndCodedAndNamed;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-//@javax.persistence.Entity 
-@Getter @Setter @Accessors(chain=true) @Access(AccessType.FIELD)
-@Table(name=RoleFunction.TABLE_NAME,uniqueConstraints= {
-		@UniqueConstraint(name=RoleFunction.UNIQUE_CONSTRAINT_CATEGORY_ROLE_NAME,columnNames= {RoleFunction.FIELD_CATEGORY,RoleFunction.COLUMN_ROLE})
-})
-public class RoleFunction extends AbstractIdentifiedByString implements Serializable {
+@Entity @Getter @Setter @Accessors(chain=true) @Access(AccessType.FIELD)
+@Table(name=RoleFunction.TABLE_NAME)
+public class RoleFunction extends AbstractIdentifiedByStringAndCodedAndNamed implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne @JoinColumn(name=COLUMN_CATEGORY) @NotNull private RoleCategory category;
-	@ManyToOne @JoinColumn(name=COLUMN_ROLE) @NotNull private Role role;
 	
 	/**/
 	
@@ -34,16 +30,22 @@ public class RoleFunction extends AbstractIdentifiedByString implements Serializ
 		return (RoleFunction) super.setIdentifier(identifier);
 	}
 	
+	@Override
+	public RoleFunction setCode(String code) {
+		return (RoleFunction) super.setCode(code);
+	}
+	
+	@Override
+	public RoleFunction setName(String name) {
+		return (RoleFunction) super.setName(name);
+	}
+	
 	/**/
 	
 	public static final String FIELD_CATEGORY = "category";
-	public static final String FIELD_ROLE = "role";
 	
-	public static final String TABLE_NAME = "foncrole";
+	public static final String TABLE_NAME = "fonction";
 	
-	public static final String COLUMN_CATEGORY = "category";
-	public static final String COLUMN_ROLE = "role";
-	
-	public static final String UNIQUE_CONSTRAINT_CATEGORY_ROLE_NAME = FIELD_CATEGORY+ "_"+COLUMN_ROLE;
+	public static final String COLUMN_CATEGORY = "categorie";
 	
 }
