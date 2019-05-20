@@ -12,7 +12,6 @@ import ci.gouv.dgbf.system.usermanagement.server.business.api.account.RoleCatego
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.RoleFunctionBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.RolePosteBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.impl.ApplicationScopeLifeCycleListener;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RolePostePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleCategory;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RolePoste;

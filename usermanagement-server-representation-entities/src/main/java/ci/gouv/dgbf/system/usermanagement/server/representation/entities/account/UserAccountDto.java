@@ -1,8 +1,6 @@
 package ci.gouv.dgbf.system.usermanagement.server.representation.entities.account;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -20,7 +18,7 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 
 	private UserDto user;
 	private AccountDto account;
-	private Collection<String> roles;
+	private RolePosteDtoCollection rolePostes;
 	
 	@Override
 	public UserAccountDto setCode(String code) {
@@ -35,11 +33,11 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 		return (AccountDto) __getInjectIfNull__(FIELD_ACCOUNT, injectIfNull);
 	}
 	
-	public UserAccountDto addRoles(String...codes) {
-		if(roles == null)
-			roles = new ArrayList<>();
-		for(String index : codes)
-			roles.add(index);
+	public UserAccountDto addRolePostes(String...rolePostesCodes) {
+		if(rolePostes == null)
+			this.rolePostes = new RolePosteDtoCollection();
+		for(String index : rolePostesCodes)
+			this.rolePostes.add(new RolePosteDto().setCode(index));
 		return this;
 	}
 	

@@ -18,4 +18,8 @@ public class RolePosteDto extends AbstractEntityFromPersistenceEntity implements
 	private String name;
 	private RoleFunctionDto function;
 	
+	@Override
+	public RolePosteDto setCode(String code) {
+		return (RolePosteDto) super.setCode(code);
+	}
 }

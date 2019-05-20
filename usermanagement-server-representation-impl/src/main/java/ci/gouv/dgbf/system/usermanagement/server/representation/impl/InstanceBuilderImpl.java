@@ -9,9 +9,8 @@ import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.instance.AbstractInstanceBuilderImpl;
 import org.cyk.utility.instance.InstanceHelper;
 
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RolePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RolePostePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Account;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Role;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleCategory;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RolePoste;
@@ -35,21 +34,21 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			RoleCategory persistence = (RoleCategory) source;
 			RoleCategoryDto representation = (RoleCategoryDto) destination;
 			representation.setIdentifier(persistence.getIdentifier());
-			representation.setCode(persistence.getRole().getCode());
-			representation.setName(persistence.getRole().getName()); 
+			representation.setCode(persistence.getCode());
+			representation.setName(persistence.getName()); 
 		}else if(source instanceof RoleFunction && destination instanceof RoleFunctionDto) {
 			RoleFunction persistence = (RoleFunction) source;
 			RoleFunctionDto representation = (RoleFunctionDto) destination;
 			representation.setIdentifier(persistence.getIdentifier());
-			representation.setCode(persistence.getRole().getCode());
-			representation.setName(persistence.getRole().getName()); 
+			representation.setCode(persistence.getCode());
+			representation.setName(persistence.getName()); 
 			representation.setCategory(__inject__(InstanceHelper.class).buildOne(RoleCategoryDto.class, persistence.getCategory())); 
 		}else if(source instanceof RolePoste && destination instanceof RolePosteDto) {
 			RolePoste persistence = (RolePoste) source;
 			RolePosteDto representation = (RolePosteDto) destination;
 			representation.setIdentifier(persistence.getIdentifier());
-			representation.setCode(persistence.getRole().getCode());
-			representation.setName(persistence.getRole().getName()); 
+			representation.setCode(persistence.getCode());
+			representation.setName(persistence.getName()); 
 			representation.setFunction(__inject__(InstanceHelper.class).buildOne(RoleFunctionDto.class, persistence.getFunction())); 
 		}else if(source instanceof UserAccount && destination instanceof UserAccountDto) {
 			UserAccount persistence = (UserAccount) source;
@@ -57,9 +56,9 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			representation.setIdentifier(persistence.getIdentifier());
 			representation.setUser(__inject__(InstanceHelper.class).buildOne(UserDto.class, persistence.getUser()));
 			representation.setAccount(__inject__(InstanceHelper.class).buildOne(AccountDto.class, persistence.getAccount()));
-			if(persistence.getRoles()!=null)
-				for(Role index : persistence.getRoles())
-					representation.addRoles(index.getCode());
+			if(__injectCollectionHelper__().isNotEmpty(persistence.getRolePostes()))
+				for(RolePoste index : persistence.getRolePostes().get())
+					representation.addRolePostes(index.getCode());
 		}
 		//Representation to Persistence
 		else if(source instanceof UserAccountDto && destination instanceof UserAccount) {
@@ -68,9 +67,9 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			persistence.setIdentifier(representation.getIdentifier());
 			persistence.setUser(__inject__(InstanceHelper.class).buildOne(User.class, representation.getUser()));
 			persistence.setAccount(__inject__(InstanceHelper.class).buildOne(Account.class, representation.getAccount()));
-			if(representation.getRoles()!=null)
-				for(String index : representation.getRoles())
-					persistence.addRoles(__inject__(RolePersistence.class).readOneByBusinessIdentifier(index));
+			if(representation.getRolePostes()!=null)
+				for(RolePosteDto index : representation.getRolePostes().getCollection())
+					persistence.addRolePostes(__inject__(RolePostePersistence.class).readOneByBusinessIdentifier(index.getCode()));
 		}
 		
 		else
