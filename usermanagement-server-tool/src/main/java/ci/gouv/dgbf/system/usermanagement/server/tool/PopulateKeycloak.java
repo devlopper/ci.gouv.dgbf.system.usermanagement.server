@@ -123,8 +123,10 @@ public class PopulateKeycloak extends AbstractObject {
 			List<RoleRepresentation> composites = new ArrayList<>();
 			for(String indexParent : parents.split(",")) {
 				RoleResource roleResource = rolesResource.get(indexParent);
-				if(roleResource!=null)
+				if(roleResource!=null) {
+					System.out.println("PopulateKeycloak.saveRoleComposites() ::: "+indexParent);
 					composites.add(roleResource.toRepresentation());
+				}
 			}
 			if(DependencyInjection.inject(CollectionHelper.class).isNotEmpty(composites)) {
 				System.out.print("\t"+code+"... ");
@@ -143,13 +145,13 @@ public class PopulateKeycloak extends AbstractObject {
 			saveRole(rolesResource, code, name, type);
 			
 			if("FONCTION".equals(type) && StringUtils.startsWith(functionsArrayInstance.get(index, 4), "oui"))
-				savePosts(code, name, "_MIN_", " du ministère ", ministriesArrayInstance, rolesResource);
+				savePosts(code, name, "_MINISTERE_", " du ministère ", ministriesArrayInstance, rolesResource);
 			
 			if("FONCTION".equals(type) && StringUtils.startsWith(functionsArrayInstance.get(index, 5), "oui"))
-				savePosts(code, name, "_PROG_", " du programme ", programmeArrayInstance, rolesResource);
+				savePosts(code, name, "_PROGRAMME_", " du programme ", programmeArrayInstance, rolesResource);
 			
 			if("FONCTION".equals(type) && StringUtils.startsWith(functionsArrayInstance.get(index, 8), "oui"))
-				savePosts(code, name, "_UA_", " de l'unité administrative ", uaArrayInstance, rolesResource);
+				savePosts(code, name, "_UNITE_ADMINISTRATIVE_", " de l'unité administrative ", uaArrayInstance, rolesResource);
 			
 		}
 		

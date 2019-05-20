@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.inject.Singleton;
+import javax.transaction.UserTransaction;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
@@ -32,6 +33,13 @@ import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RoleCategoryPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RoleFunctionPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RolePostePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleCategory;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleFunction;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RolePoste;
 
 @Singleton
 public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper,Serializable {
@@ -230,6 +238,92 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 			getUsersResource().get(identifier).remove();
 		}catch(NotFoundException exception) {
 			
+		}
+		return this;
+	}
+
+	/**/
+	
+	@Override
+	public KeycloakHelper load() {
+		loadRoleCategory();
+		loadRoleFunction();
+		loadRolePoste();
+		System.out.println("Data from keycloak loaded into database");
+		return this;
+	}
+	
+	@Override
+	public KeycloakHelper loadRoleCategory() {
+		UserTransaction userTransaction = __inject__(UserTransaction.class);
+		try {
+			userTransaction.begin();
+			for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "CATEGORIE")) {
+				RoleCategory category = __inject__(RoleCategoryPersistence.class).readOneByBusinessIdentifier(index.getName());
+				if(category == null) {
+					category = __inject__(RoleCategory.class).setCode(index.getName()).setName(index.getAttributes().get("name").get(0));
+					__inject__(RoleCategoryPersistence.class).create(category);
+				}
+			}
+			userTransaction.commit();	
+		}catch(Exception exception) {
+			exception.printStackTrace();
+		}
+		return this;
+	}
+	
+	@Override
+	public KeycloakHelper loadRoleFunction() {
+		UserTransaction userTransaction = __inject__(UserTransaction.class);
+		try {
+			userTransaction.begin();
+			for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "FONCTION")) {
+				RoleFunction function = __inject__(RoleFunctionPersistence.class).readOneByBusinessIdentifier(index.getName());
+				if(function == null) {
+					function = __inject__(RoleFunction.class).setCode(index.getName()).setName(index.getAttributes().get("name").get(0));
+					for(RoleRepresentation indexParent : __inject__(KeycloakHelper.class).getRolesResource().get(index.getName()).getRoleComposites()) {
+						RoleCategory category = __inject__(RoleCategoryPersistence.class).readOneByBusinessIdentifier(indexParent.getName());
+						if(category != null) {
+							function.setCategory(category);
+							break;
+						}
+					}
+					if(function.getCategory() != null) {
+						__inject__(RoleFunctionPersistence.class).create(function);	
+					}
+				}
+			}
+			userTransaction.commit();	
+		}catch(Exception exception) {
+			exception.printStackTrace();
+		}
+		
+		return this;
+	}
+	
+	@Override
+	public KeycloakHelper loadRolePoste() {
+		UserTransaction userTransaction = __inject__(UserTransaction.class);
+		try {
+			userTransaction.begin();
+			for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "POSTE")) {
+				RolePoste poste = __inject__(RolePostePersistence.class).readOneByBusinessIdentifier(index.getName());
+				if(poste == null) {
+					poste = __inject__(RolePoste.class).setCode(index.getName()).setName(index.getAttributes().get("name").get(0));
+					for(RoleRepresentation indexParent : __inject__(KeycloakHelper.class).getRolesResource().get(index.getName()).getRoleComposites()) {
+						RoleFunction function = __inject__(RoleFunctionPersistence.class).readOneByBusinessIdentifier(indexParent.getName());
+						if(function != null) {
+							poste.setFunction(function);
+							break;
+						}
+					}
+					if(poste.getFunction()!=null)
+						__inject__(RolePostePersistence.class).create(poste);
+				}
+			}
+			userTransaction.commit();
+		}catch(Exception exception) {
+			exception.printStackTrace();
 		}
 		return this;
 	}

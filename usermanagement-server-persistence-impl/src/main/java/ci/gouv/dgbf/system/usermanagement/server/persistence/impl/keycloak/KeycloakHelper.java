@@ -31,4 +31,9 @@ public interface KeycloakHelper extends Helper {
 	
 	String createUserAccount(String firstName,String lastNames,String electronicMailAddress,String userName,String pass,Collection<String> rolesCodes);
 	KeycloakHelper deleteUserAccount(String identifier);
+	
+	KeycloakHelper load();
+	KeycloakHelper loadRoleCategory();
+	KeycloakHelper loadRoleFunction();
+	KeycloakHelper loadRolePoste();
 }

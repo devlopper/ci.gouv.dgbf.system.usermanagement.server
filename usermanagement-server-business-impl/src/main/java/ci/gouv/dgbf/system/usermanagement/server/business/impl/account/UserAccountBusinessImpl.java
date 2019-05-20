@@ -9,7 +9,9 @@ import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.business.AbstractBusinessEntityImpl;
 import org.cyk.utility.server.business.BusinessFunctionCreator;
 
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.AccountBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 
@@ -20,6 +22,20 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 	@Override
 	protected Class<UserAccount> __getPersistenceEntityClass__() {
 		return UserAccount.class;
+	}
+	
+	@Override
+	protected void __listenExecuteCreateOneBefore__(UserAccount userAccount, Properties properties,BusinessFunctionCreator function) {
+		super.__listenExecuteCreateOneBefore__(userAccount, properties, function);
+		function.addTryBeginRunnables(new Runnable() {
+			@Override
+			public void run() {
+				if(userAccount.getUser() != null)
+					__inject__(UserBusiness.class).create(userAccount.getUser());
+				if(userAccount.getAccount() != null)
+					__inject__(AccountBusiness.class).create(userAccount.getAccount());
+			}
+		});
 	}
 	
 	@Override

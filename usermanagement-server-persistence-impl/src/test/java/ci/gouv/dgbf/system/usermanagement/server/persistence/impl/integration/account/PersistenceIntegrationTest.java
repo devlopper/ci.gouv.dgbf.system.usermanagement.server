@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import org.cyk.utility.server.persistence.test.TestPersistenceCreate;
 import org.cyk.utility.server.persistence.test.arquillian.AbstractPersistenceArquillianIntegrationTestWithDefaultDeployment;
 import org.junit.Test;
-import org.keycloak.representations.idm.RoleRepresentation;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RoleCategoryPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RoleFunctionPersistence;
@@ -32,7 +31,7 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Test
 	public void read_roleCategory() throws Exception{
-		__createCategoryFromKeycloak__();
+		__inject__(KeycloakHelper.class).load();
 		Collection<RoleCategory> roleCategories = __inject__(RoleCategoryPersistence.class).read();
 		assertThat(roleCategories.stream().map(x -> x.getCode()).collect(Collectors.toList())).contains("ADMINISTRATIF","BUDGETAIRE");
 	}
@@ -48,10 +47,10 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Test
 	public void read_roleFunction() throws Exception{
-		__createCategoryFromKeycloak__();
-		__createFunctionFromKeycloak__();
+		__inject__(KeycloakHelper.class).load();
 		Collection<RoleFunction> roleFunctions = __inject__(RoleFunctionPersistence.class).read();
-		assertThat(roleFunctions.stream().map(x -> x.getCode()).collect(Collectors.toList())).contains("AS","AC","CB","CF","DIRECTEUR");
+		assertThat(roleFunctions.stream().map(x -> x.getCode()).collect(Collectors.toList())).contains("ASSISTANT_SAISIE","ADMINISTRATEUR_CREDITS","CONTROLEUR_BUDGETAIRE"
+				,"CONTROLEUR_FINANCIER","DIRECTEUR");
 		RoleFunction administrateur = __inject__(RoleFunctionPersistence.class).readOneByBusinessIdentifier("ADMINISTRATEUR");
 		assertThat(administrateur).isNotNull();
 		assertThat(administrateur.getCategory()).isNotNull();
@@ -70,16 +69,14 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Test
 	public void read_rolePoste() throws Exception{
-		__createCategoryFromKeycloak__();
-		__createFunctionFromKeycloak__();
-		__createPosteFromKeycloak__();
+		__inject__(KeycloakHelper.class).load();
 		Collection<RolePoste> rolePostes = __inject__(RolePostePersistence.class).read();
-		assertThat(rolePostes.stream().map(x -> x.getCode()).collect(Collectors.toList())).contains("AS_MIN_21");
+		assertThat(rolePostes.stream().map(x -> x.getCode()).collect(Collectors.toList())).contains("ASSISTANT_SAISIE_MINISTERE_21");
 		
-		RolePoste asMin21 = __inject__(RolePostePersistence.class).readOneByBusinessIdentifier("AS_MIN_21");
+		RolePoste asMin21 = __inject__(RolePostePersistence.class).readOneByBusinessIdentifier("ASSISTANT_SAISIE_MINISTERE_21");
 		assertThat(asMin21).isNotNull();
 		assertThat(asMin21.getFunction()).isNotNull();
-		assertThat(asMin21.getFunction().getCode()).isEqualTo("AS");
+		assertThat(asMin21.getFunction().getCode()).isEqualTo("ASSISTANT_SAISIE");
 	}
 	
 	/* User Account*/
@@ -103,56 +100,5 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	/**/
 	
-	private void __createCategoryFromKeycloak__() throws Exception{
-		userTransaction.begin();
-		for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "CATEGORIE")) {
-			RoleCategory category = __inject__(RoleCategoryPersistence.class).readOneByBusinessIdentifier(index.getName());
-			if(category == null) {
-				category = __inject__(RoleCategory.class).setCode(index.getName()).setName(index.getAttributes().get("name").get(0));
-				__inject__(RoleCategoryPersistence.class).create(category);
-			}
-		}
-		userTransaction.commit();
-	}
 	
-	private void __createFunctionFromKeycloak__() throws Exception{
-		userTransaction.begin();
-		for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "FONCTION")) {
-			RoleFunction function = __inject__(RoleFunctionPersistence.class).readOneByBusinessIdentifier(index.getName());
-			if(function == null) {
-				function = __inject__(RoleFunction.class).setCode(index.getName()).setName(index.getAttributes().get("name").get(0));
-				for(RoleRepresentation indexParent : __inject__(KeycloakHelper.class).getRolesResource().get(index.getName()).getRoleComposites()) {
-					RoleCategory category = __inject__(RoleCategoryPersistence.class).readOneByBusinessIdentifier(indexParent.getName());
-					if(category != null) {
-						function.setCategory(category);
-						break;
-					}
-				}
-				if(function.getCategory() != null) {
-					__inject__(RoleFunctionPersistence.class).create(function);	
-				}
-			}
-		}
-		userTransaction.commit();
-	}
-	
-	private void __createPosteFromKeycloak__() throws Exception{
-		userTransaction.begin();
-		for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "POSTE")) {
-			RolePoste poste = __inject__(RolePostePersistence.class).readOneByBusinessIdentifier(index.getName());
-			if(poste == null) {
-				poste = __inject__(RolePoste.class).setCode(index.getName()).setName(index.getAttributes().get("name").get(0));
-				for(RoleRepresentation indexParent : __inject__(KeycloakHelper.class).getRolesResource().get(index.getName()).getRoleComposites()) {
-					RoleFunction function = __inject__(RoleFunctionPersistence.class).readOneByBusinessIdentifier(indexParent.getName());
-					if(function != null) {
-						poste.setFunction(function);
-						break;
-					}
-				}
-				if(poste.getFunction()!=null)
-					__inject__(RolePostePersistence.class).create(poste);
-			}
-		}
-		userTransaction.commit();
-	}
 }
