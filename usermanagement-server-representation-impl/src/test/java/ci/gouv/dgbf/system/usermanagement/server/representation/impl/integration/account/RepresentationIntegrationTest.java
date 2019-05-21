@@ -33,21 +33,21 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 	@Test
 	public void read_roleCategory() throws Exception{
 		@SuppressWarnings("unchecked")
-		Collection<RoleCategoryDto> roleCategoryDtos = (Collection<RoleCategoryDto>) __inject__(RoleCategoryRepresentation.class).getMany(0l, 1000l, null,null).getEntity();
+		Collection<RoleCategoryDto> roleCategoryDtos = (Collection<RoleCategoryDto>) __inject__(RoleCategoryRepresentation.class).getMany(Boolean.FALSE,null, null, null,null).getEntity();
 		assertThat(roleCategoryDtos.stream().map(x -> x.getCode()).collect(Collectors.toList())).contains("ADMINISTRATIF","BUDGETAIRE");
 	}
 	
 	@Test
 	public void read_roleFunction() throws Exception{
 		@SuppressWarnings("unchecked")
-		Collection<RoleFunctionDto> roleFunctionDtos = (Collection<RoleFunctionDto>) __inject__(RoleFunctionRepresentation.class).getMany(0l, 1000l, null,null).getEntity();
+		Collection<RoleFunctionDto> roleFunctionDtos = (Collection<RoleFunctionDto>) __inject__(RoleFunctionRepresentation.class).getMany(Boolean.FALSE,null, null, null,null).getEntity();
 		assertThat(roleFunctionDtos.stream().map(x -> x.getCode()).collect(Collectors.toList())).contains("ASSISTANT","DIRECTEUR");
 	}
 	
 	@Test
 	public void read_rolePoste() throws Exception{
 		@SuppressWarnings("unchecked")
-		Collection<RolePosteDto> rolePosteDtos = (Collection<RolePosteDto>) __inject__(RolePosteRepresentation.class).getMany(0l, 1000l, null,null).getEntity();
+		Collection<RolePosteDto> rolePosteDtos = (Collection<RolePosteDto>) __inject__(RolePosteRepresentation.class).getMany(Boolean.FALSE,null, null, null,null).getEntity();
 		assertThat(rolePosteDtos.stream().map(x -> x.getCode()).collect(Collectors.toList())).contains("ASSISTANT_SAISIE_MINISTERE_21","CONTROLEUR_FINANCIER_MINISTERE_21");
 	}
 	
