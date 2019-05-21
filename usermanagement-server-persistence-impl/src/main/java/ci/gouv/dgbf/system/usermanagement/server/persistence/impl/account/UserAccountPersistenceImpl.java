@@ -22,7 +22,7 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 	public PersistenceServiceProvider<UserAccount> create(UserAccount userAccount, Properties properties) {
 		String identifier = __inject__(KeycloakHelper.class).createUserAccount(userAccount.getUser().getFirstName(), userAccount.getUser().getLastNames()
 				, userAccount.getUser().getElectronicMailAddress(), userAccount.getAccount().getIdentifier(),  userAccount.getAccount().getPass()
-				,  __injectCollectionHelper__().isEmpty(userAccount.getRolePostes()) ? null : userAccount.getRolePostes().get().stream().map(RolePoste::getIdentifier).collect(Collectors.toList()));
+				,  __injectCollectionHelper__().isEmpty(userAccount.getRolePostes()) ? null : userAccount.getRolePostes().get().stream().map(RolePoste::getCode).collect(Collectors.toList()));
 		userAccount.setIdentifier(identifier);
 		super.create(userAccount, properties);
 		return this;

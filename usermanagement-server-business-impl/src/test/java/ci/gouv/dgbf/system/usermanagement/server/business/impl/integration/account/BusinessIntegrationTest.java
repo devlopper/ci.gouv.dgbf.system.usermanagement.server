@@ -17,7 +17,6 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RolePoste;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Service;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
 public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrationTestWithDefaultDeployment {
 	private static final long serialVersionUID = 1L;
@@ -25,7 +24,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	@Override
 	protected void __listenBeforeCallCountIsZero__() throws Exception {
 		super.__listenBeforeCallCountIsZero__();
-		__inject__(KeycloakHelper.class).load();
+		__inject__(ApplicationScopeLifeCycleListener.class).initialize(null);
 	}
 	
 	@Test
@@ -86,7 +85,6 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	
 	@Test
 	public void create_userAccount() throws Exception{
-		__inject__(KeycloakHelper.class).load();
 		if(Boolean.TRUE.equals(Topic.MAIL.getIsConsumerStarted())) {
 			startServersZookeeperAndKafka();
 			__inject__(TimeHelper.class).pause(1000l * 15);

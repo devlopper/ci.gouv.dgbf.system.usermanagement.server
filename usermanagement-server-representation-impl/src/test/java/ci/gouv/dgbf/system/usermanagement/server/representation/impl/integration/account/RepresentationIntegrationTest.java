@@ -12,7 +12,6 @@ import org.cyk.utility.stream.distributed.Topic;
 import org.cyk.utility.time.TimeHelper;
 import org.junit.Test;
 
-import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.RoleCategoryRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.RoleFunctionRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.RolePosteRepresentation;
@@ -28,7 +27,6 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 	@Override
 	protected void __listenBeforeCallCountIsZero__() throws Exception {
 		super.__listenBeforeCallCountIsZero__();
-		__inject__(KeycloakHelper.class).load();
 		__inject__(ApplicationScopeLifeCycleListener.class).initialize(null);
 	}
 	
@@ -60,8 +58,6 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 			__inject__(TimeHelper.class).pause(1000l * 15);
 		}
 		
-		__inject__(ApplicationScopeLifeCycleListener.class).initialize(null);
-		
 		if(Boolean.TRUE.equals(Topic.MAIL.getIsConsumerStarted())) {
 			__inject__(TimeHelper.class).pause(1000l * 15);
 		}
@@ -69,7 +65,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		UserAccountDto userAccount = new UserAccountDto();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress("kycdev@gmail.com");
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
-		userAccount.addRolePostes("CE");
+		userAccount.addRolePostes("ASSISTANT_SAISIE_MINISTERE_21");
 		__inject__(TestRepresentationCreate.class).addObjects(userAccount).setIsCatchThrowable(Boolean.FALSE).execute();
 		
 		if(Boolean.TRUE.equals(Topic.MAIL.getIsConsumerStarted())) {

@@ -68,8 +68,9 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			persistence.setUser(__inject__(InstanceHelper.class).buildOne(User.class, representation.getUser()));
 			persistence.setAccount(__inject__(InstanceHelper.class).buildOne(Account.class, representation.getAccount()));
 			if(representation.getRolePostes()!=null)
-				for(RolePosteDto index : representation.getRolePostes().getCollection())
+				for(RolePosteDto index : representation.getRolePostes().getCollection()) {
 					persistence.addRolePostes(__inject__(RolePostePersistence.class).readOneByBusinessIdentifier(index.getCode()));
+				}
 		}
 		
 		else

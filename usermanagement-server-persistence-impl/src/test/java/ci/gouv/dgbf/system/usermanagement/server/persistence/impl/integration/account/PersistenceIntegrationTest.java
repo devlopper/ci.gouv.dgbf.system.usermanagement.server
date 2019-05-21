@@ -16,10 +16,17 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RolePoste;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.ApplicationScopeLifeCycleListener;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
 public class PersistenceIntegrationTest extends AbstractPersistenceArquillianIntegrationTestWithDefaultDeployment {
 	private static final long serialVersionUID = 1L;
+	
+	@Override
+	protected void __listenBeforeCallCountIsZero__() throws Exception {
+		super.__listenBeforeCallCountIsZero__();
+		__inject__(ApplicationScopeLifeCycleListener.class).initialize(null);
+	}
 	
 	/* Role Category */
 	
@@ -31,7 +38,6 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Test
 	public void read_roleCategory() throws Exception{
-		__inject__(KeycloakHelper.class).load();
 		Collection<RoleCategory> roleCategories = __inject__(RoleCategoryPersistence.class).read();
 		assertThat(roleCategories.stream().map(x -> x.getCode()).collect(Collectors.toList())).contains("ADMINISTRATIF","BUDGETAIRE");
 	}
@@ -47,7 +53,6 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Test
 	public void read_roleFunction() throws Exception{
-		__inject__(KeycloakHelper.class).load();
 		Collection<RoleFunction> roleFunctions = __inject__(RoleFunctionPersistence.class).read();
 		assertThat(roleFunctions.stream().map(x -> x.getCode()).collect(Collectors.toList())).contains("ASSISTANT_SAISIE","ADMINISTRATEUR_CREDITS","CONTROLEUR_BUDGETAIRE"
 				,"CONTROLEUR_FINANCIER","DIRECTEUR");
@@ -69,7 +74,6 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Test
 	public void read_rolePoste() throws Exception{
-		__inject__(KeycloakHelper.class).load();
 		Collection<RolePoste> rolePostes = __inject__(RolePostePersistence.class).read();
 		assertThat(rolePostes.stream().map(x -> x.getCode()).collect(Collectors.toList())).contains("ASSISTANT_SAISIE_MINISTERE_21");
 		
