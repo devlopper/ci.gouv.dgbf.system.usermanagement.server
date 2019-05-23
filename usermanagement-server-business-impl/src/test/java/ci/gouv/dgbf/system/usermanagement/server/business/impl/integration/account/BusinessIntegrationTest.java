@@ -8,15 +8,15 @@ import org.cyk.utility.stream.distributed.Topic;
 import org.cyk.utility.time.TimeHelper;
 import org.junit.Test;
 
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.RoleCategoryBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.RoleFunctionBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.RolePosteBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.RoleCategoryBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.RoleFunctionBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.RolePosteBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.impl.ApplicationScopeLifeCycleListener;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleCategory;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleFunction;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RolePoste;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Service;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleFunction;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
 
 public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrationTestWithDefaultDeployment {
 	private static final long serialVersionUID = 1L;

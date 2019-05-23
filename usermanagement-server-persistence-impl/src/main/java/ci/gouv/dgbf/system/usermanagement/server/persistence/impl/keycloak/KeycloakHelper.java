@@ -36,4 +36,6 @@ public interface KeycloakHelper extends Helper {
 	KeycloakHelper loadRoleCategory();
 	KeycloakHelper loadRoleFunction();
 	KeycloakHelper loadRolePoste();
+	
+	String ROLE_ATTRIBUTE_NAME = "nom";
 }

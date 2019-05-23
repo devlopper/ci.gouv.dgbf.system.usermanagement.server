@@ -10,8 +10,8 @@ import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
 import org.cyk.utility.server.persistence.PersistenceServiceProvider;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountPersistence;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RolePoste;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
 @Singleton

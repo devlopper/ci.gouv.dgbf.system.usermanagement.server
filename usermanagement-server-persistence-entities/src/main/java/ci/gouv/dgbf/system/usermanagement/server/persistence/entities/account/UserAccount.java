@@ -17,6 +17,8 @@ import org.cyk.utility.array.ArrayHelper;
 import org.cyk.utility.collection.CollectionHelper;
 import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByString;
 
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePostes;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

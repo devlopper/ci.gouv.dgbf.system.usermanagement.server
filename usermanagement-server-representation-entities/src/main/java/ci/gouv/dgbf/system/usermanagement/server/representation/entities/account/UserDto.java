@@ -20,11 +20,5 @@ public class UserDto extends AbstractEntityFromPersistenceEntity implements Seri
 	private String lastNames;
 	
 	private String electronicMailAddress;
-	private UserNaturalPersonDto person;
-	
-	@Override
-	public UserDto setCode(String code) {
-		return (UserDto) super.setCode(code);
-	}
 	
 }

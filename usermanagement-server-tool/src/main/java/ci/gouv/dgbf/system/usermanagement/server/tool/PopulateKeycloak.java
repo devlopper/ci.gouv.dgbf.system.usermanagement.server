@@ -10,7 +10,9 @@ import javax.ws.rs.NotFoundException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.cyk.utility.__kernel__.DependencyInjection;
+import org.cyk.utility.__kernel__.constant.ConstantCharacter;
 import org.cyk.utility.__kernel__.object.dynamic.AbstractObject;
+import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.array.ArrayInstanceTwoDimensionString;
 import org.cyk.utility.collection.CollectionHelper;
 import org.cyk.utility.file.excel.FileExcelSheetDataArrayReader;
@@ -83,7 +85,7 @@ public class PopulateKeycloak extends AbstractObject {
 		weld.shutdown();
 	}
 	
-	private void saveRole(RolesResource rolesResource,String code,String name,String type) {
+	private void saveRole(RolesResource rolesResource,String code,String name,String type,Properties properties) {
 		RoleResource roleResource = rolesResource.get(code);
 		RoleRepresentation roleRepresentation = null;
 		if(roleResource == null)
@@ -97,8 +99,16 @@ public class PopulateKeycloak extends AbstractObject {
 			}
 		
 		Map<String,List<String>> attributes = new LinkedHashMap<>();
-		attributes.put("name", Arrays.asList(name));
+		attributes.put("nom", Arrays.asList(name));
 		attributes.put("type", Arrays.asList(type));
+		if(properties != null) {
+			Map<Object,Object> map = properties.__getMap__();
+			if(map != null) {
+				for(Map.Entry<Object, Object> index : map.entrySet())
+					if(index.getKey()!=null && index.getValue()!=null)
+						attributes.put(index.getKey().toString(), Arrays.asList(index.getValue().toString()));
+			}
+		}
 
 		roleRepresentation.setName(code);
 		roleRepresentation.setDescription(name);
@@ -142,16 +152,16 @@ public class PopulateKeycloak extends AbstractObject {
 			String code = functionsArrayInstance.get(index, 0);
 			String type = functionsArrayInstance.get(index, 2);
 			String name = functionsArrayInstance.get(index, 1);
-			saveRole(rolesResource, code, name, type);
+			saveRole(rolesResource, code, name, type,null);
 			
 			if("FONCTION".equals(type) && StringUtils.startsWith(functionsArrayInstance.get(index, 4), "oui"))
-				savePosts(code, name, "_MINISTERE_", " du ministère ", ministriesArrayInstance, rolesResource);
+				savePosts(code, name, "MINISTERE", " du ministère ", ministriesArrayInstance, rolesResource);
 			
 			if("FONCTION".equals(type) && StringUtils.startsWith(functionsArrayInstance.get(index, 5), "oui"))
-				savePosts(code, name, "_PROGRAMME_", " du programme ", programmeArrayInstance, rolesResource);
+				savePosts(code, name, "PROGRAMME", " du programme ", programmeArrayInstance, rolesResource);
 			
 			if("FONCTION".equals(type) && StringUtils.startsWith(functionsArrayInstance.get(index, 8), "oui"))
-				savePosts(code, name, "_UNITE_ADMINISTRATIVE_", " de l'unité administrative ", uaArrayInstance, rolesResource);
+				savePosts(code, name, "UNITE_ADMINISTRATIVE", " de l'unité administrative ", uaArrayInstance, rolesResource);
 			
 		}
 		
@@ -166,10 +176,11 @@ public class PopulateKeycloak extends AbstractObject {
 	private void savePosts(String functionCode,String functionName,String locationCode,String locationName,ArrayInstanceTwoDimensionString locationArrayInstance,RolesResource rolesResource) {
 		System.out.println("Synchronising posts of function "+functionCode);		
 		for(Integer index  = 0; index < locationArrayInstance.getFirstDimensionElementCount(); index = index + 1) {
-			String code = functionCode+locationCode+locationArrayInstance.get(index, 0);
+			String locationIdentifier = locationArrayInstance.get(index, 0);
+			String code = functionCode+ConstantCharacter.UNDESCORE+locationCode+ConstantCharacter.UNDESCORE+locationIdentifier;
 			String type = "POSTE";
-			String name = functionName+locationName+locationArrayInstance.get(index, 0);
-			saveRole(rolesResource, code, name, type);
+			String name = functionName+locationName+locationIdentifier;
+			saveRole(rolesResource, code, name, type,new Properties().set(locationCode,locationIdentifier));
 			rolesResource.get(code).addComposites(Arrays.asList(rolesResource.get(functionCode).toRepresentation()));
 			//TODO to be removed. it is there just for test
 			break;

@@ -34,12 +34,12 @@ import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RoleCategoryPersistence;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RoleFunctionPersistence;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RolePostePersistence;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleCategory;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleFunction;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RolePoste;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.RoleCategoryPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.RoleFunctionPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.RolePostePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleFunction;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
 
 @Singleton
 public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper,Serializable {
@@ -174,7 +174,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	private void updateAttributes(String code,String name,String type,RoleResource roleResource) {
 		RoleRepresentation roleRepresentation = roleResource.toRepresentation();
 		Map<String,List<String>> attributes = new LinkedHashMap<>();
-		attributes.put("name", Arrays.asList(name));
+		attributes.put(ROLE_ATTRIBUTE_NAME, Arrays.asList(name));
 		if(__inject__(StringHelper.class).isNotBlank(type))
 			attributes.put("type", Arrays.asList(type));
 		roleRepresentation.setAttributes(attributes);
@@ -261,7 +261,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 			for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "CATEGORIE")) {
 				RoleCategory category = __inject__(RoleCategoryPersistence.class).readOneByBusinessIdentifier(index.getName());
 				if(category == null) {
-					category = __inject__(RoleCategory.class).setCode(index.getName()).setName(index.getAttributes().get("name").get(0));
+					category = __inject__(RoleCategory.class).setCode(index.getName()).setName(index.getAttributes().get(ROLE_ATTRIBUTE_NAME).get(0));
 					__inject__(RoleCategoryPersistence.class).create(category);
 				}
 			}
@@ -280,7 +280,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 			for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "FONCTION")) {
 				RoleFunction function = __inject__(RoleFunctionPersistence.class).readOneByBusinessIdentifier(index.getName());
 				if(function == null) {
-					function = __inject__(RoleFunction.class).setCode(index.getName()).setName(index.getAttributes().get("name").get(0));
+					function = __inject__(RoleFunction.class).setCode(index.getName()).setName(index.getAttributes().get(ROLE_ATTRIBUTE_NAME).get(0));
 					for(RoleRepresentation indexParent : __inject__(KeycloakHelper.class).getRolesResource().get(index.getName()).getRoleComposites()) {
 						RoleCategory category = __inject__(RoleCategoryPersistence.class).readOneByBusinessIdentifier(indexParent.getName());
 						if(category != null) {
@@ -309,7 +309,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 			for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "POSTE")) {
 				RolePoste poste = __inject__(RolePostePersistence.class).readOneByBusinessIdentifier(index.getName());
 				if(poste == null) {
-					poste = __inject__(RolePoste.class).setCode(index.getName()).setName(index.getAttributes().get("name").get(0));
+					poste = __inject__(RolePoste.class).setCode(index.getName()).setName(index.getAttributes().get(ROLE_ATTRIBUTE_NAME).get(0));
 					for(RoleRepresentation indexParent : __inject__(KeycloakHelper.class).getRolesResource().get(index.getName()).getRoleComposites()) {
 						RoleFunction function = __inject__(RoleFunctionPersistence.class).readOneByBusinessIdentifier(indexParent.getName());
 						if(function != null) {

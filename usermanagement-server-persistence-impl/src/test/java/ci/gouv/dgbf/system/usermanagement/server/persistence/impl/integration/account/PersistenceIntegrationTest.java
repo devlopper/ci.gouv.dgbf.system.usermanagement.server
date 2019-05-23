@@ -9,13 +9,13 @@ import org.cyk.utility.server.persistence.test.TestPersistenceCreate;
 import org.cyk.utility.server.persistence.test.arquillian.AbstractPersistenceArquillianIntegrationTestWithDefaultDeployment;
 import org.junit.Test;
 
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RoleCategoryPersistence;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RoleFunctionPersistence;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RolePostePersistence;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleCategory;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleFunction;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RolePoste;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.RoleCategoryPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.RoleFunctionPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.RolePostePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleFunction;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.ApplicationScopeLifeCycleListener;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 

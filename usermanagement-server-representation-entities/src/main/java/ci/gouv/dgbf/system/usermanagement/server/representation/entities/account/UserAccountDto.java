@@ -6,6 +6,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.cyk.utility.server.representation.AbstractEntityFromPersistenceEntity;
 
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RolePosteDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RolePosteDtoCollection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,11 +22,6 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 	private AccountDto account;
 	private RolePosteDtoCollection rolePostes;
 	
-	@Override
-	public UserAccountDto setCode(String code) {
-		return (UserAccountDto) super.setCode(code);
-	}
-	
 	public UserDto getUser(Boolean injectIfNull) {
 		return (UserDto) __getInjectIfNull__(FIELD_USER, injectIfNull);
 	}
@@ -36,8 +33,11 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 	public UserAccountDto addRolePostes(String...rolePostesCodes) {
 		if(rolePostes == null)
 			this.rolePostes = new RolePosteDtoCollection();
-		for(String index : rolePostesCodes)
-			this.rolePostes.add(new RolePosteDto().setCode(index));
+		for(String index : rolePostesCodes) {
+			RolePosteDto role = new RolePosteDto();
+			role.setCode(index);
+			this.rolePostes.add(role);
+		}
 		return this;
 	}
 	

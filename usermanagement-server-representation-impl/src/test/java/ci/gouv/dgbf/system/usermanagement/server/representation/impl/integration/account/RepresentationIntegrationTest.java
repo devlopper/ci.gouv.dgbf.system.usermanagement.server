@@ -12,13 +12,13 @@ import org.cyk.utility.stream.distributed.Topic;
 import org.cyk.utility.time.TimeHelper;
 import org.junit.Test;
 
-import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.RoleCategoryRepresentation;
-import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.RoleFunctionRepresentation;
-import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.RolePosteRepresentation;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.RoleCategoryDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.RoleFunctionDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.RolePosteDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.RoleCategoryRepresentation;
+import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.RoleFunctionRepresentation;
+import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.RolePosteRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RoleCategoryDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RoleFunctionDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RolePosteDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.impl.ApplicationScopeLifeCycleListener;
 
 public class RepresentationIntegrationTest extends AbstractRepresentationArquillianIntegrationTestWithDefaultDeployment {

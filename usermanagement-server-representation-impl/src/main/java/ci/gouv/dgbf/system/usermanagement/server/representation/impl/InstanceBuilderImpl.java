@@ -9,19 +9,19 @@ import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.instance.AbstractInstanceBuilderImpl;
 import org.cyk.utility.instance.InstanceHelper;
 
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.RolePostePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.RolePostePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Account;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleCategory;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RoleFunction;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.RolePoste;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.User;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleFunction;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.AccountDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.RoleCategoryDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.RoleFunctionDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.RolePosteDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RoleCategoryDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RoleFunctionDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RolePosteDto;
 
 @System @Server @Representation
 public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements Serializable {
