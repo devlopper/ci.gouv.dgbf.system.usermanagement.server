@@ -2,6 +2,7 @@ package ci.gouv.dgbf.system.usermanagement.server.persistence.entities;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.cyk.utility.field.FieldValueCopy;
 import org.cyk.utility.request.RequestProcessor;
 import org.cyk.utility.test.arquillian.AbstractArquillianUnitTest;
 import org.junit.Test;
@@ -20,9 +21,14 @@ public class EntitiesUnitTest extends AbstractArquillianUnitTest {
 				.execute().getOutput();
 		assertThat(dto.getLink()).isEqualTo("2521444c-0058-4ab7-b18e-c5d27f785da3");
 		assertThat(dto.getName()).isEqualTo("TRANSPORT TERRESTRE");
+		Program program = new Program().setIdentifier("myid");
+		__inject__(FieldValueCopy.class).setSource(dto).setDestination(program).setIsOverridable(Boolean.FALSE).execute();
+		assertThat(program.getIdentifier()).isEqualTo("myid");
+		assertThat(program.getLink()).isEqualTo("2521444c-0058-4ab7-b18e-c5d27f785da3");
+		assertThat(program.getName()).isEqualTo("TRANSPORT TERRESTRE");
 	}
 	
-	@Test
+	//@Test
 	public void get_administrativeUnit() {
 		AdministrativeUnit dto = (AdministrativeUnit) __inject__(RequestProcessor.class)
 				.setUniformResourceIdentifierString("http://10.3.4.20:32201/sib/classification-administrative/api/v1/unites-administratives/code/9918390")

@@ -17,11 +17,9 @@ public class ProgramPersistenceImpl extends AbstractPersistenceEntityImpl<Progra
 	@Override
 	protected void __processAfterRead__(Program program) {
 		super.__processAfterRead__(program);
-		Program remote = (Program) __inject__(RequestProcessor.class)
-				.setUniformResourceIdentifierString("http://10.3.4.20:32202/sib/classification-par-programme/api/v1/programmes/code/"+program.getIdentifier())
-				.setResponseEntityClass(Program.class)
-				.execute().getOutput();
-		program.setName(remote.getName());
+		__inject__(RequestProcessor.class)
+				.setUniformResourceIdentifierStringFormat("http://10.3.4.20:32202/sib/classification-par-programme/api/v1/programmes/code/%s")
+				.setResponseEntity(program).execute();
 	}
 	
 }
