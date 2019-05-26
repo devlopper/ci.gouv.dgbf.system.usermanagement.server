@@ -20,28 +20,6 @@
 			<artifactId>jee-utility-server-persistence</artifactId>
 			<version>0.0.1</version>
 		</dependency>
-		
-		<dependency>
-		    <groupId>org.glassfish.jersey.core</groupId>
-		    <artifactId>jersey-client</artifactId>
-		    <version>2.26</version>
-		    <scope>provided</scope>
-		</dependency>
-		
-		<dependency>
-		    <groupId>org.glassfish.jersey.inject</groupId>
-		    <artifactId>jersey-hk2</artifactId>
-		    <version>2.26</version>
-		    <scope>provided</scope>
-		</dependency>
-		
-		<dependency>
-		    <groupId>org.glassfish.jersey.media</groupId>
-		    <artifactId>jersey-media-json-jackson</artifactId>
-		    <version>2.26</version>
-		    <scope>provided</scope>
-		</dependency>
-		
 	</dependencies>
 	
 	<repositories>
