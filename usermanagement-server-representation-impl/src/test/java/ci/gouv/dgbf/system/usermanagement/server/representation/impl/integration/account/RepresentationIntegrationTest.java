@@ -38,6 +38,12 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 	}
 	
 	@Test
+	public void count_roleCategory() throws Exception{
+		Long count = (Long) __inject__(RoleCategoryRepresentation.class).count(null).getEntity();
+		assertThat(count).isEqualTo(2);
+	}
+	
+	@Test
 	public void read_roleFunction() throws Exception{
 		@SuppressWarnings("unchecked")
 		Collection<RoleFunctionDto> roleFunctionDtos = (Collection<RoleFunctionDto>) __inject__(RoleFunctionRepresentation.class).getMany(Boolean.FALSE,null, null, null,null).getEntity();

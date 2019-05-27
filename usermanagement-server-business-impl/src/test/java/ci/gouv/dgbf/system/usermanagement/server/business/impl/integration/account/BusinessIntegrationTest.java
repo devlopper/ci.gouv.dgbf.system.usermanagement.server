@@ -40,6 +40,12 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	}
 	
 	@Test
+	public void count_roleCategory() throws Exception{
+		Long count = __inject__(RoleCategoryBusiness.class).count();
+		assertThat(count).isEqualTo(2);
+	}
+	
+	@Test
 	public void create_roleFunction() throws Exception{
 		RoleFunction role = new RoleFunction().setCode(__getRandomCode__()).setName(__getRandomCode__())
 				.setCategory(__inject__(RoleCategoryBusiness.class).findOneByBusinessIdentifier("ADMINISTRATIF"));

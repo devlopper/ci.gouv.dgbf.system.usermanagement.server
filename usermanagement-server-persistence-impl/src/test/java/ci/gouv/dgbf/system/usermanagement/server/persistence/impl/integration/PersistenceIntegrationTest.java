@@ -1,4 +1,4 @@
-package ci.gouv.dgbf.system.usermanagement.server.persistence.impl.integration.account;
+package ci.gouv.dgbf.system.usermanagement.server.persistence.impl.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,6 +40,12 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	public void read_roleCategory() throws Exception{
 		Collection<RoleCategory> roleCategories = __inject__(RoleCategoryPersistence.class).read();
 		assertThat(roleCategories.stream().map(x -> x.getCode()).collect(Collectors.toList())).contains("ADMINISTRATIF","BUDGETAIRE");
+	}
+	
+	@Test
+	public void count_roleCategory() throws Exception{
+		Long count = __inject__(RoleCategoryPersistence.class).count();
+		assertThat(count).isEqualTo(2);
 	}
 	
 	/* Role Function */
