@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.persistence.test.TestPersistenceCreate;
 import org.cyk.utility.server.persistence.test.arquillian.AbstractPersistenceArquillianIntegrationTestWithDefaultDeployment;
 import org.junit.Test;
@@ -66,6 +67,20 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		assertThat(administrateur).isNotNull();
 		assertThat(administrateur.getCategory()).isNotNull();
 		assertThat(administrateur.getCategory().getCode()).isEqualTo("ADMINISTRATIF");
+	}
+	
+	@Test
+	public void count_roleFunction() throws Exception{
+		Long count = __inject__(RoleFunctionPersistence.class).count();
+		assertThat(count).isEqualTo(16);
+	}
+	
+	@Test
+	public void count_roleFunction_from5() throws Exception{
+		Properties properties = new Properties();
+		properties.setFilters(null).setIsQueryResultPaginated(Boolean.TRUE).setQueryFirstTupleIndex(5).setQueryNumberOfTuple(5).setQueryIdentifier(null);
+		Long count = __inject__(RoleFunctionPersistence.class).count(properties);
+		assertThat(count).isEqualTo(16);
 	}
 	
 	/* Role Poste */

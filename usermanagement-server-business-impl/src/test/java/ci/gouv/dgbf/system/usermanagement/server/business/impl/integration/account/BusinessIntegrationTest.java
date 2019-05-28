@@ -2,6 +2,7 @@ package ci.gouv.dgbf.system.usermanagement.server.business.impl.integration.acco
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.business.test.TestBusinessCreate;
 import org.cyk.utility.server.business.test.arquillian.AbstractBusinessArquillianIntegrationTestWithDefaultDeployment;
 import org.cyk.utility.stream.distributed.Topic;
@@ -58,6 +59,20 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		assertThat(role.getCode()).isEqualTo("ASSISTANT");
 		assertThat(role.getCategory()).isNotNull();
 		assertThat(role.getCategory().getCode()).isEqualTo("ADMINISTRATIF");
+	}
+	
+	@Test
+	public void count_roleFunction() throws Exception{
+		Long count = __inject__(RoleFunctionBusiness.class).count();
+		assertThat(count).isEqualTo(16);
+	}
+	
+	@Test
+	public void count_roleFunction_from5() throws Exception{
+		Properties properties = new Properties();
+		properties.setFilters(null).setIsQueryResultPaginated(Boolean.TRUE).setQueryFirstTupleIndex(5).setQueryNumberOfTuple(5).setQueryIdentifier(null);
+		Long count = __inject__(RoleFunctionBusiness.class).count(properties);
+		assertThat(count).isEqualTo(16);
 	}
 	
 	@Test
