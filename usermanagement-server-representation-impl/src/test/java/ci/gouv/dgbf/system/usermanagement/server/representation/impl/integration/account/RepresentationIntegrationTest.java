@@ -59,7 +59,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		assertThat(rolePosteDtos.stream().map(x -> x.getCode()).collect(Collectors.toList())).contains("ASSISTANT_SAISIE_MINISTERE_21","CONTROLEUR_FINANCIER_MINISTERE_21");
 	}
 	
-	//@Test
+	@Test
 	public void create_userAccount() throws Exception{
 		if(Boolean.TRUE.equals(Topic.MAIL.getIsConsumerStarted())) {
 			startServersZookeeperAndKafka();
