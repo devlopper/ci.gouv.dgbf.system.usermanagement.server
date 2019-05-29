@@ -51,7 +51,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		Collection<Ministry> ministries = new ArrayList<>();
 		for(Integer index  = 0; index < ministryArrayInstance.getFirstDimensionElementCount() && index < 30; index = index + 1)
 			ministries.add(new Ministry().setIdentifier(ministryArrayInstance.get(index, 0)));
-		System.out.println("Creating ministry");
+		__logInfo__("Creating ministry");
 		__inject__(MinistryBusiness.class).createMany(ministries);
 		
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
@@ -61,7 +61,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		Collection<Program> programs = new ArrayList<>();
 		for(Integer index  = 0; index < programArrayInstance.getFirstDimensionElementCount() && index < 30; index = index + 1)
 			programs.add(new Program().setIdentifier(programArrayInstance.get(index, 0)));
-		System.out.println("Creating program");
+		__logInfo__("Creating program");
 		__inject__(ProgramBusiness.class).createMany(programs);
 		
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
@@ -71,7 +71,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		Collection<AdministrativeUnit> administrativeUnits = new ArrayList<>();
 		for(Integer index  = 0; index < administrativeUnitArrayInstance.getFirstDimensionElementCount() && index < 30; index = index + 1)
 			administrativeUnits.add(new AdministrativeUnit().setIdentifier(administrativeUnitArrayInstance.get(index, 0)));
-		System.out.println("Creating administrative unit");
+		__logInfo__("Creating administrative unit");
 		__inject__(AdministrativeUnitBusiness.class).createMany(administrativeUnits);
 	}
 }

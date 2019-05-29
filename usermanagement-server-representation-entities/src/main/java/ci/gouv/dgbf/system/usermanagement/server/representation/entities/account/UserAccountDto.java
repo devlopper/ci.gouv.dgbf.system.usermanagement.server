@@ -41,9 +41,14 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 		return this;
 	}
 	
+	public RolePosteDtoCollection getRolePostes(Boolean instanciateIfNull) {
+		return (RolePosteDtoCollection) __getInstanciateIfNull__(FIELD_ROLE_POSTES, instanciateIfNull);
+	}
+	
 	/**/
 	
 	public static final String FIELD_USER = "user";
 	public static final String FIELD_ACCOUNT = "account";
+	public static final String FIELD_ROLE_POSTES = "rolePostes";
 	
 }

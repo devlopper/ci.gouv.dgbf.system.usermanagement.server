@@ -2,6 +2,8 @@ package ci.gouv.dgbf.system.usermanagement.server.business.impl.integration.acco
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.stream.Collectors;
+
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.business.test.TestBusinessCreate;
 import org.cyk.utility.server.business.test.arquillian.AbstractBusinessArquillianIntegrationTestWithDefaultDeployment;
@@ -9,10 +11,12 @@ import org.cyk.utility.stream.distributed.Topic;
 import org.cyk.utility.time.TimeHelper;
 import org.junit.Test;
 
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.RoleCategoryBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.RoleFunctionBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.RolePosteBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.impl.ApplicationScopeLifeCycleListener;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.RolePostePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Service;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory;
@@ -120,8 +124,21 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		UserAccount userAccount = new UserAccount();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress("kycdev@gmail.com");
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
-		//userAccount.addRolePostes(__inject__(RolePostePersistence.class).readOneByBusinessIdentifier("CONTROLEUR_FINANCIER_MINISTERE_21"));
-		__inject__(TestBusinessCreate.class).addObjects(userAccount).execute();
+		userAccount.addRolePostes(__inject__(RolePostePersistence.class).readOneByBusinessIdentifier("CONTROLEUR_FINANCIER_MINISTERE_21"));
+		__inject__(TestBusinessCreate.class).addObjects(userAccount).addTryEndRunnables(new Runnable() {
+			@Override
+			public void run() {
+				UserAccount userAccount01 = __inject__(UserAccountBusiness.class).findOneBySystemIdentifier(userAccount.getIdentifier());
+				assertThat(userAccount01).isNotNull();
+				assertThat(userAccount01.getRolePostes()).isNull();
+				
+				userAccount01 = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_ROLE_POSTES));
+				assertThat(userAccount01).isNotNull();
+				assertThat(userAccount01.getRolePostes()).isNotNull();
+				assertThat(userAccount01.getRolePostes().get()).isNotEmpty();
+				assertThat(userAccount01.getRolePostes().get().stream().map(RolePoste::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
+			}
+		}).execute();
 		
 		if(Boolean.TRUE.equals(Topic.MAIL.getIsConsumerStarted())) {
 			__inject__(TimeHelper.class).pause(1000l * 25);

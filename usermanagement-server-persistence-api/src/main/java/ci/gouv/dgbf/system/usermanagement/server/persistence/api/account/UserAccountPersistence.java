@@ -6,4 +6,6 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Us
 
 public interface UserAccountPersistence extends PersistenceEntity<UserAccount> {
 
+	UserAccount readByAccountIdentifier(String accountIdentifier);
+	
 }

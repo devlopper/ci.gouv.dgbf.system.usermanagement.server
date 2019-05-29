@@ -111,8 +111,8 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		UserAccount userAccount = new UserAccount();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomCode__()+"@mail.com");
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
-		//userAccount.addRolePostes(__inject__(RolePostePersistence.class).readOneByBusinessIdentifier("AS_MIN_21"));
-		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(userAccount.getUser(),userAccount.getAccount()).addObjects(userAccount).setIsCatchThrowable(Boolean.FALSE).execute();
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(userAccount.getUser(),userAccount.getAccount()).addObjects(userAccount)
+			.setIsCatchThrowable(Boolean.FALSE).execute();
 	}
 	
 	/**/

@@ -12,6 +12,8 @@ import org.cyk.utility.stream.distributed.Topic;
 import org.cyk.utility.time.TimeHelper;
 import org.junit.Test;
 
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
+import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.UserAccountRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.RoleCategoryRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.RoleFunctionRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.RolePosteRepresentation;
@@ -72,7 +74,20 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress("kycdev@gmail.com");
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
 		userAccount.addRolePostes("ASSISTANT_SAISIE_MINISTERE_21");
-		__inject__(TestRepresentationCreate.class).addObjects(userAccount).setIsCatchThrowable(Boolean.FALSE).execute();
+		__inject__(TestRepresentationCreate.class).addObjects(userAccount).setIsCatchThrowable(Boolean.FALSE).addTryEndRunnables(new Runnable() {
+			@Override
+			public void run() {
+				UserAccountDto userAccount01 = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null, null).getEntity();
+				assertThat(userAccount01).isNotNull();
+				assertThat(userAccount01.getRolePostes()).isNull();
+				
+				userAccount01 = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),null,UserAccount.FIELD_ROLE_POSTES).getEntity();
+				assertThat(userAccount01).isNotNull();
+				assertThat(userAccount01.getRolePostes()).isNotNull();
+				assertThat(userAccount01.getRolePostes().getCollection()).isNotEmpty();
+				assertThat(userAccount01.getRolePostes().getCollection().stream().map(RolePosteDto::getCode).collect(Collectors.toList())).contains("ASSISTANT_SAISIE_MINISTERE_21");
+			}
+		}).execute();
 		
 		if(Boolean.TRUE.equals(Topic.MAIL.getIsConsumerStarted())) {
 			__inject__(TimeHelper.class).pause(1000l * 25);

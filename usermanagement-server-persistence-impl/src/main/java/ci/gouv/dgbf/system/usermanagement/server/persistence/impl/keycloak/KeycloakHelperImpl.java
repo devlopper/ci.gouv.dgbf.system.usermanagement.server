@@ -58,7 +58,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 			String username = __inject__(SystemHelper.class).getPropertyThrowIfBlank("keycloak.credential.username");
 			String password = __inject__(SystemHelper.class).getPropertyThrowIfBlank("keycloak.credential.password");
 			
-			System.out.println("KEYCLOAK CLIENT TO BE CREATED\nurl:"+url+"\nrealm:"+realmName+"\nclient identifier:"+clientIdentifier+"\nclient secret:"+clientSecret
+			__logInfo__("KEYCLOAK CLIENT TO BE CREATED\nurl:"+url+"\nrealm:"+realmName+"\nclient identifier:"+clientIdentifier+"\nclient secret:"+clientSecret
 					+"\nusername:"+username+"\npassword:"+password);
 			
 			client = KeycloakBuilder.builder().serverUrl(url).realm(realmName).grantType(OAuth2Constants.PASSWORD).clientId(clientIdentifier) //
@@ -249,7 +249,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 		loadRoleCategory();
 		loadRoleFunction();
 		loadRolePoste();
-		System.out.println("Data from keycloak loaded into database");
+		__logInfo__("Data from keycloak loaded into database");
 		return this;
 	}
 	
