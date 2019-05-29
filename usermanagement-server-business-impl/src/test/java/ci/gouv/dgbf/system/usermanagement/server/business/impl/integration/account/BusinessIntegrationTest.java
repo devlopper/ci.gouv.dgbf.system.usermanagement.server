@@ -147,4 +147,31 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 			
 		}
 	}
+	
+	@Test
+	public void update_userAccount() throws Exception{
+		UserAccount userAccount = new UserAccount();
+		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress("kycdev@gmail.com");
+		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
+		userAccount.addRolePostes(__inject__(RolePostePersistence.class).readOneByBusinessIdentifier("CONTROLEUR_FINANCIER_MINISTERE_21"));
+		__inject__(UserAccountBusiness.class).create(userAccount);
+		
+		userAccount = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(), new Properties().setFields(UserAccount.FIELD_ROLE_POSTES));
+		assertThat(userAccount).isNotNull();
+		assertThat(userAccount.getRolePostes()).isNotNull();
+		assertThat(userAccount.getRolePostes().get()).isNotEmpty();
+		assertThat(userAccount.getRolePostes().get().stream().map(RolePoste::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
+		
+		userAccount.addRolePostes(__inject__(RolePostePersistence.class).readOneByBusinessIdentifier("ASSISTANT_SAISIE_MINISTERE_21"));
+		__inject__(UserAccountBusiness.class).update(userAccount,new Properties().setFields(UserAccount.FIELD_ROLE_POSTES));
+		
+		userAccount = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(), new Properties().setFields(UserAccount.FIELD_ROLE_POSTES));
+		assertThat(userAccount).isNotNull();
+		assertThat(userAccount.getRolePostes()).isNotNull();
+		assertThat(userAccount.getRolePostes().get()).isNotEmpty();
+		assertThat(userAccount.getRolePostes().get().stream().map(RolePoste::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21"
+				,"ASSISTANT_SAISIE_MINISTERE_21");
+		
+		__inject__(UserAccountBusiness.class).delete(userAccount);
+	}
 }

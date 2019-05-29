@@ -13,11 +13,14 @@ import org.cyk.utility.__kernel__.constant.ConstantCharacter;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.business.AbstractBusinessEntityImpl;
 import org.cyk.utility.server.business.BusinessFunctionCreator;
+import org.cyk.utility.server.business.BusinessFunctionModifier;
 import org.cyk.utility.server.business.BusinessFunctionRemover;
 import org.cyk.utility.string.Strings;
 
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.AccountBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountRolePosteBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountRolePostePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
@@ -39,8 +42,8 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 		function.addTryBeginRunnables(new Runnable() {
 			@Override
 			public void run() {
-				__createIfSystemIdentifierIsBlank__(userAccount.getUser());
-				__create__(userAccount.getAccount());
+				__createIfSystemIdentifierIsBlank__(userAccount.getUser());//TODO write save method and use it here
+				__create__(userAccount.getAccount());//TODO write save method and use it here
 			}
 		});
 	}
@@ -84,6 +87,47 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 					}
 				}
 			});
+	}
+	
+	@Override
+	protected void __listenExecuteUpdateOneBefore__(UserAccount userAccount, Properties properties,BusinessFunctionModifier function) {
+		super.__listenExecuteUpdateOneBefore__(userAccount, properties, function);
+		__inject__(UserBusiness.class).update(userAccount.getUser());//TODO write save method and use it here
+		__inject__(AccountBusiness.class).update(userAccount.getAccount());//TODO write save method and use it here
+		
+		//Collection<RolePoste> userCollection = userAccount.getRolePostes();
+		Collection<UserAccountRolePoste> databaseCollection = __inject__(UserAccountRolePostePersistence.class).readByUserAccount(userAccount);
+		Collection<RolePoste> databaseRolePostes = __injectCollectionHelper__().isEmpty(databaseCollection) ? null : databaseCollection.stream()
+				.map(UserAccountRolePoste::getRolePoste).collect(Collectors.toList());
+		Collection<UserAccountRolePoste> userAccountRolePostesToDelete = null;
+		Collection<UserAccountRolePoste> userAccountRolePostesToSave = null;
+		
+		//what to delete
+		if(__injectCollectionHelper__().isNotEmpty(databaseCollection))
+			for(UserAccountRolePoste database : databaseCollection) {
+				if(!Boolean.TRUE.equals(__injectCollectionHelper__().contains(userAccount.getRolePostes(), database.getRolePoste()))) {
+					if(userAccountRolePostesToDelete == null)
+						userAccountRolePostesToDelete = new ArrayList<>();
+					userAccountRolePostesToDelete.add(database);
+				}
+			}
+		
+		//what to save
+		if(__injectCollectionHelper__().isNotEmpty(userAccount.getRolePostes())) {
+			for(RolePoste index : userAccount.getRolePostes().get()) {
+				//check if not yet created
+				if(!Boolean.TRUE.equals(__injectCollectionHelper__().contains(databaseRolePostes, index))) {
+					if(userAccountRolePostesToSave == null)
+						userAccountRolePostesToSave = new ArrayList<>();
+					userAccountRolePostesToSave.add(new UserAccountRolePoste().setUserAccount(userAccount).setRolePoste(index));	
+				}
+			}
+		}
+		
+		if(__injectCollectionHelper__().isNotEmpty(userAccountRolePostesToDelete))
+			__inject__(UserAccountRolePosteBusiness.class).deleteMany(userAccountRolePostesToDelete);
+		if(__injectCollectionHelper__().isNotEmpty(userAccountRolePostesToSave))
+			__inject__(UserAccountRolePosteBusiness.class).createMany(userAccountRolePostesToSave);
 	}
 	
 	@Override

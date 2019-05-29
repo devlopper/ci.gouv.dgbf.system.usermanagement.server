@@ -59,7 +59,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		assertThat(rolePosteDtos.stream().map(x -> x.getCode()).collect(Collectors.toList())).contains("ASSISTANT_SAISIE_MINISTERE_21","CONTROLEUR_FINANCIER_MINISTERE_21");
 	}
 	
-	@Test
+	//@Test
 	public void create_userAccount() throws Exception{
 		if(Boolean.TRUE.equals(Topic.MAIL.getIsConsumerStarted())) {
 			startServersZookeeperAndKafka();
@@ -93,6 +93,34 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 			__inject__(TimeHelper.class).pause(1000l * 25);
 			stopServersKafkaAndZookeeper();	
 		}
+	}
+	
+	@Test
+	public void update_userAccount() throws Exception{
+		UserAccountDto userAccount = new UserAccountDto();
+		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomCode__()+"@mail.com");
+		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
+		userAccount.addRolePostes("CONTROLEUR_FINANCIER_MINISTERE_21");
+		
+		__inject__(UserAccountRepresentation.class).createOne(userAccount);
+		
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null,UserAccount.FIELD_ROLE_POSTES).getEntity();
+		assertThat(userAccount).isNotNull();
+		assertThat(userAccount.getRolePostes()).isNotNull();
+		assertThat(userAccount.getRolePostes().getCollection()).isNotEmpty();
+		assertThat(userAccount.getRolePostes().getCollection().stream().map(RolePosteDto::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
+		
+		userAccount.addRolePostes("ASSISTANT_SAISIE_MINISTERE_21");
+		__inject__(UserAccountRepresentation.class).updateOne(userAccount,UserAccountDto.FIELD_ROLE_POSTES);
+		
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null,UserAccount.FIELD_ROLE_POSTES).getEntity();
+		assertThat(userAccount).isNotNull();
+		assertThat(userAccount.getRolePostes()).isNotNull();
+		assertThat(userAccount.getRolePostes().getCollection()).isNotEmpty();
+		assertThat(userAccount.getRolePostes().getCollection().stream().map(RolePosteDto::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21"
+				,"ASSISTANT_SAISIE_MINISTERE_21");
+		
+		__inject__(UserAccountRepresentation.class).deleteOne(userAccount);
 	}
 	
 	@Override

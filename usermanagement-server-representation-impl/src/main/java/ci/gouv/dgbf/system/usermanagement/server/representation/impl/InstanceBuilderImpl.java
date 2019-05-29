@@ -2,9 +2,6 @@ package ci.gouv.dgbf.system.usermanagement.server.representation.impl;
 
 import java.io.Serializable;
 
-import org.cyk.utility.__kernel__.annotation.Representation;
-import org.cyk.utility.__kernel__.annotation.Server;
-import org.cyk.utility.__kernel__.annotation.System;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.instance.AbstractInstanceBuilderImpl;
 import org.cyk.utility.instance.InstanceHelper;
@@ -23,7 +20,7 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RoleFunctionDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RolePosteDto;
 
-@System @Server @Representation
+@ci.gouv.dgbf.system.usermanagement.server.annotation.System
 public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -62,14 +59,16 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 		}
 		//Representation to Persistence
 		else if(source instanceof UserAccountDto && destination instanceof UserAccount) {
-			UserAccount persistence = (UserAccount) destination;
 			UserAccountDto representation = (UserAccountDto) source;
+			UserAccount persistence = (UserAccount) destination;
 			persistence.setIdentifier(representation.getIdentifier());
 			persistence.setUser(__inject__(InstanceHelper.class).buildOne(User.class, representation.getUser()));
 			persistence.setAccount(__inject__(InstanceHelper.class).buildOne(Account.class, representation.getAccount()));
-			if(representation.getRolePostes()!=null)
+			persistence.setRolePostes(null);
+			if(representation.getRolePostes()!=null && __injectCollectionHelper__().isNotEmpty(representation.getRolePostes().getCollection()))
 				for(RolePosteDto index : representation.getRolePostes().getCollection()) {
-					persistence.addRolePostes(__inject__(RolePostePersistence.class).readOneByBusinessIdentifier(index.getCode()));
+					RolePoste rolePoste = __inject__(RolePostePersistence.class).readOneByBusinessIdentifier(index.getCode());
+					persistence.getRolePostes(Boolean.TRUE).add(rolePoste);
 				}
 		}
 		
