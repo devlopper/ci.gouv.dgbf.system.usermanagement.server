@@ -33,7 +33,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		
 		__inject__(ci.gouv.dgbf.system.usermanagement.server.persistence.impl.ApplicationScopeLifeCycleListener.class).initialize(null);
 		
-		__initializePersistenceData__();
+		//__initializePersistenceData__();
 	}
 	
 	@Override

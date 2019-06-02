@@ -20,4 +20,9 @@ public class RolePosteDto extends AbstractEntityFromPersistenceEntityCodedAndNam
 	private RoleFunctionDto program;
 	private RoleFunctionDto administrativeUnit;
 	
+	@Override
+	public RolePosteDto setCode(String code) {
+		return (RolePosteDto) super.setCode(code);
+	}
+	
 }

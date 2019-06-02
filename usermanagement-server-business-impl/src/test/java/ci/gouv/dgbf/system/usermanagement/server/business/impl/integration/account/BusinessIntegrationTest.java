@@ -122,7 +122,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		}
 		
 		UserAccount userAccount = new UserAccount();
-		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress("kycdev@gmail.com");
+		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomCode__()+"@gmail.com");
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
 		userAccount.addRolePostes(__inject__(RolePostePersistence.class).readOneByBusinessIdentifier("CONTROLEUR_FINANCIER_MINISTERE_21"));
 		__inject__(TestBusinessCreate.class).addObjects(userAccount).addTryEndRunnables(new Runnable() {
@@ -151,7 +151,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	@Test
 	public void update_userAccount() throws Exception{
 		UserAccount userAccount = new UserAccount();
-		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress("kycdev@gmail.com");
+		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomCode__()+"@gmail.com");
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
 		userAccount.addRolePostes(__inject__(RolePostePersistence.class).readOneByBusinessIdentifier("CONTROLEUR_FINANCIER_MINISTERE_21"));
 		__inject__(UserAccountBusiness.class).create(userAccount);

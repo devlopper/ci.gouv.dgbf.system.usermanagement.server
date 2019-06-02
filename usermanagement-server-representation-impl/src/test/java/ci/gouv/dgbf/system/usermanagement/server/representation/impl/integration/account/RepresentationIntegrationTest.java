@@ -71,9 +71,9 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		}
 		
 		UserAccountDto userAccount = new UserAccountDto();
-		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress("kycdev@gmail.com");
+		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomCode__()+"@gmail.com");
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
-		userAccount.addRolePostes("ASSISTANT_SAISIE_MINISTERE_21");
+		userAccount.addRolePostesByCodes("ASSISTANT_SAISIE_MINISTERE_21");
 		__inject__(TestRepresentationCreate.class).addObjects(userAccount).setIsCatchThrowable(Boolean.FALSE).addTryEndRunnables(new Runnable() {
 			@Override
 			public void run() {
@@ -100,7 +100,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		UserAccountDto userAccount = new UserAccountDto();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomCode__()+"@mail.com");
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
-		userAccount.addRolePostes("CONTROLEUR_FINANCIER_MINISTERE_21");
+		userAccount.addRolePostesByCodes("CONTROLEUR_FINANCIER_MINISTERE_21");
 		
 		__inject__(UserAccountRepresentation.class).createOne(userAccount);
 		
@@ -110,7 +110,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		assertThat(userAccount.getRolePostes().getCollection()).isNotEmpty();
 		assertThat(userAccount.getRolePostes().getCollection().stream().map(RolePosteDto::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
 		
-		userAccount.addRolePostes("ASSISTANT_SAISIE_MINISTERE_21");
+		userAccount.addRolePostesByCodes("ASSISTANT_SAISIE_MINISTERE_21");
 		__inject__(UserAccountRepresentation.class).updateOne(userAccount,UserAccountDto.FIELD_ROLE_POSTES);
 		
 		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null,UserAccount.FIELD_ROLE_POSTES).getEntity();
