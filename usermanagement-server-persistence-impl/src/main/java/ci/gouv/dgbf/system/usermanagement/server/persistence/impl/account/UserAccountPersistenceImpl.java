@@ -33,9 +33,9 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 		Collection<String> rolesCodes = __injectCollectionHelper__().isEmpty(userAccount.getRolePostes()) ? null : userAccount.getRolePostes().get()
 				.stream().map(x -> x.getFunction().getCode()).collect(Collectors.toList());
 		
-		String identifier = __inject__(KeycloakHelper.class).createUserAccount(userAccount.getUser().getFirstName(), userAccount.getUser().getLastNames()
+		String identifier = __inject__(KeycloakHelper.class).saveUserAccount(userAccount.getUser().getFirstName(), userAccount.getUser().getLastNames()
 				, userAccount.getUser().getElectronicMailAddress(), userAccount.getAccount().getIdentifier(),  userAccount.getAccount().getPass()
-				,  rolesCodes);
+				,  rolesCodes,null);
 		userAccount.setIdentifier(identifier);
 		super.create(userAccount, properties);
 		return this;
@@ -44,6 +44,13 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 	@Override
 	public UserAccount readByAccountIdentifier(String accountIdentifier) {
 		return __readOne__(____getQueryParameters____(null,accountIdentifier));
+	}
+	
+	@Override
+	public PersistenceServiceProvider<UserAccount> update(UserAccount userAccount, Properties properties) {
+		super.update(userAccount, properties);
+		
+		return this;
 	}
 	
 	@Override

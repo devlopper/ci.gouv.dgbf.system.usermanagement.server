@@ -15,6 +15,7 @@ import javax.transaction.UserTransaction;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
+import org.cyk.utility.__kernel__.object.__static__.identifiable.AbstractIdentified;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.collection.CollectionHelper;
 import org.cyk.utility.helper.AbstractHelper;
@@ -37,6 +38,7 @@ import org.keycloak.representations.idm.UserRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.RoleCategoryPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.RoleFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.RolePostePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountRolePoste;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
@@ -207,14 +209,14 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	}
 	
 	@Override
-	public String createUserAccount(String firstName, String lastNames, String electronicMailAddress,String userName, String pass,Collection<String> rolesCodes) {
+	public String saveUserAccount(String firstName, String lastNames, String electronicMailAddress,String userName, String pass,Collection<String> rolesCodes,Map<String,List<String>> attributes) {
 		UserRepresentation userRepresentation = new UserRepresentation();
 		userRepresentation.setEnabled(true);
 		userRepresentation.setUsername(userName);
 		userRepresentation.setFirstName(firstName);
 		userRepresentation.setLastName(lastNames);
 		userRepresentation.setEmail(electronicMailAddress);
-		
+		userRepresentation.setAttributes(attributes);
 		UsersResource usersRessource = getUsersResource();
 
 		Response response = usersRessource.create(userRepresentation);
@@ -252,6 +254,67 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 		return this;
 	}
 
+	@Override
+	public KeycloakHelper addUserAccountAttributeValue(String identifier, String attributeName, String attributeValue) {
+		if(Boolean.TRUE.equals(__inject__(StringHelper.class).isNotBlank(attributeName)) && Boolean.TRUE.equals(__inject__(StringHelper.class).isNotBlank(attributeValue))) {
+			UserResource userResource = getUsersResource().get(identifier);
+			UserRepresentation userRepresentation = userResource.toRepresentation();
+			Map<String,List<String>> attributes = userRepresentation.getAttributes();
+			if(attributes == null)
+				userRepresentation.setAttributes(attributes = new LinkedHashMap<>());
+			List<String> values = attributes.get(attributeName);
+			if(values == null)
+				attributes.put(attributeName, values = new ArrayList<>());
+			if(!values.contains(attributeValue))
+				values.add(attributeValue);
+			userResource.update(userRepresentation);	
+		}
+		return this;
+	}
+	
+	@Override
+	public KeycloakHelper addUserAccountAttributesValues(UserAccountRolePoste userAccountRolePoste) {
+		__addUserAccountAttributesValues__(userAccountRolePoste, USER_ACCOUNT_ATTRIBUTE_MINISTRY, userAccountRolePoste.getRolePoste().getMinistry());
+		__addUserAccountAttributesValues__(userAccountRolePoste, USER_ACCOUNT_ATTRIBUTE_PROGRAM, userAccountRolePoste.getRolePoste().getProgram());
+		__addUserAccountAttributesValues__(userAccountRolePoste, USER_ACCOUNT_ATTRIBUTE_ADMINISTRATIVE_UNIT, userAccountRolePoste.getRolePoste().getAdministrativeUnit());
+		return this;
+	}
+	
+	private void __addUserAccountAttributesValues__(UserAccountRolePoste userAccountRolePoste,String attributeName,AbstractIdentified<?> identified) {
+		if(identified!=null && identified.getIdentifier()!=null)
+			addUserAccountAttributeValue(userAccountRolePoste.getUserAccount().getIdentifier(), attributeName, identified.getIdentifier().toString());
+	}
+	
+	@Override
+	public KeycloakHelper removeUserAccountAttributeValue(String identifier, String attributeName,String attributeValue) {
+		if(Boolean.TRUE.equals(__inject__(StringHelper.class).isNotBlank(attributeName)) && Boolean.TRUE.equals(__inject__(StringHelper.class).isNotBlank(attributeValue))) {
+			UserResource userResource = getUsersResource().get(identifier);
+			UserRepresentation userRepresentation = userResource.toRepresentation();
+			Map<String,List<String>> attributes = userRepresentation.getAttributes();
+			if(attributes != null) {
+				List<String> values = attributes.get(attributeName);
+				if(values != null) {
+					values.remove(attributeValue);
+					userResource.update(userRepresentation);		
+				}	
+			}
+		}
+		return this;
+	}
+	
+	@Override
+	public KeycloakHelper removeUserAccountAttributesValues(UserAccountRolePoste userAccountRolePoste) {
+		__removeUserAccountAttributesValues__(userAccountRolePoste, USER_ACCOUNT_ATTRIBUTE_MINISTRY, userAccountRolePoste.getRolePoste().getMinistry());
+		__removeUserAccountAttributesValues__(userAccountRolePoste, USER_ACCOUNT_ATTRIBUTE_PROGRAM, userAccountRolePoste.getRolePoste().getProgram());
+		__removeUserAccountAttributesValues__(userAccountRolePoste, USER_ACCOUNT_ATTRIBUTE_ADMINISTRATIVE_UNIT, userAccountRolePoste.getRolePoste().getAdministrativeUnit());
+		return this;
+	}
+	
+	private void __removeUserAccountAttributesValues__(UserAccountRolePoste userAccountRolePoste,String attributeName,AbstractIdentified<?> identified) {
+		if(identified!=null && identified.getIdentifier()!=null)
+			removeUserAccountAttributeValue(userAccountRolePoste.getUserAccount().getIdentifier(), attributeName, identified.getIdentifier().toString());
+	}
+	
 	/**/
 	
 	@Override

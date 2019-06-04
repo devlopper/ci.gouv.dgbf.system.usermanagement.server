@@ -7,12 +7,14 @@ import javax.inject.Singleton;
 
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
+import org.cyk.utility.server.persistence.PersistenceServiceProvider;
 import org.cyk.utility.server.persistence.query.PersistenceQuery;
 import org.cyk.utility.server.persistence.query.PersistenceQueryRepository;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountRolePostePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountRolePoste;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
 @Singleton
 public class UserAccountRolePostePersistenceImpl extends AbstractPersistenceEntityImpl<UserAccountRolePoste> implements UserAccountRolePostePersistence,Serializable {
@@ -27,8 +29,29 @@ public class UserAccountRolePostePersistenceImpl extends AbstractPersistenceEnti
 	}
 	
 	@Override
+	public PersistenceServiceProvider<UserAccountRolePoste> create(UserAccountRolePoste userAccountRolePoste, Properties properties) {
+		super.create(userAccountRolePoste, properties);
+		__inject__(KeycloakHelper.class).addUserAccountAttributesValues(userAccountRolePoste);
+		return this;	
+	}
+	
+	@Override
 	public Collection<UserAccountRolePoste> readByUserAccount(UserAccount userAccount) {
 		return __readMany__(null,____getQueryParameters____(null,userAccount));
+	}
+	
+	@Override
+	public PersistenceServiceProvider<UserAccountRolePoste> update(UserAccountRolePoste userAccountRolePoste, Properties properties) {
+		super.update(userAccountRolePoste, properties);
+		__inject__(KeycloakHelper.class).addUserAccountAttributesValues(userAccountRolePoste);
+		return this;
+	}
+	
+	@Override
+	public PersistenceServiceProvider<UserAccountRolePoste> delete(UserAccountRolePoste userAccountRolePoste, Properties properties) {
+		super.delete(userAccountRolePoste, properties);
+		__inject__(KeycloakHelper.class).removeUserAccountAttributesValues(userAccountRolePoste);
+		return this;
 	}
 	
 	protected Object[] __getQueryParameters__(String queryIdentifier,Properties properties,Object...objects){
