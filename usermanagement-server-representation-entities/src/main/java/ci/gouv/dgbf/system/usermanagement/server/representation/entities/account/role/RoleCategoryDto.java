@@ -15,4 +15,13 @@ import lombok.experimental.Accessors;
 public class RoleCategoryDto extends AbstractEntityFromPersistenceEntityCodedAndNamed implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	@Override
+	public RoleCategoryDto setCode(String code) {
+		return (RoleCategoryDto) super.setCode(code);
+	}
+	
+	@Override
+	public RoleCategoryDto setName(String name) {
+		return (RoleCategoryDto) super.setName(name);
+	}
 }

@@ -23,6 +23,12 @@
 			<version>0.0.1</version>
 		</dependency>
 		
+		<dependency>
+			<groupId>ci.gouv.dgbf.system.usermanagement.server.business</groupId>
+			<artifactId>usermanagement-server-business-impl</artifactId>
+			<version>0.0.1</version>
+		</dependency>
+		
 		<dependency>  
   			<groupId>org.jboss.weld.se</groupId>
   			<artifactId>weld-se</artifactId>

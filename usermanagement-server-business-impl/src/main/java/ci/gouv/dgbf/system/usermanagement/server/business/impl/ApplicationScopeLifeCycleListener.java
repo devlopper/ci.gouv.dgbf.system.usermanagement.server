@@ -9,6 +9,7 @@ import org.cyk.utility.__kernel__.AbstractApplicationScopeLifeCycleListener;
 import org.cyk.utility.__kernel__.DependencyInjection;
 import org.cyk.utility.array.ArrayInstanceTwoDimensionString;
 import org.cyk.utility.file.excel.FileExcelSheetDataArrayReader;
+import org.cyk.utility.map.MapInstanceIntegerToString;
 import org.cyk.utility.network.protocol.ProtocolDefaults;
 import org.cyk.utility.security.Credentials;
 import org.cyk.utility.system.node.SystemNodeServer;
@@ -47,6 +48,26 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("ministère");
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
+		
+		//__inject__(MinistryBusiness.class).saveFromFileExcelSheet("data.xlsx", "ministère", __inject__(MapInstanceIntegerToString.class).set(0,Ministry.FIELD_IDENTIFIER), null);
+		__inject__(MinistryBusiness.class).saveFromFileExcelSheet(reader, __inject__(MapInstanceIntegerToString.class).set(0,Ministry.FIELD_IDENTIFIER), null);
+		
+		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
+		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("programme");
+		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
+		__inject__(ProgramBusiness.class).saveFromFileExcelSheet(reader, __inject__(MapInstanceIntegerToString.class).set(0,Program.FIELD_IDENTIFIER), null);
+		
+		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
+		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("unité administrative");
+		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
+		__inject__(AdministrativeUnitBusiness.class).saveFromFileExcelSheet(reader, __inject__(MapInstanceIntegerToString.class).set(0,AdministrativeUnit.FIELD_IDENTIFIER), null);
+		
+		/*
+		FileExcelSheetDataArrayReader reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
+		
+		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
+		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("ministère");
+		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		ArrayInstanceTwoDimensionString ministryArrayInstance = reader.execute().getOutput();
 		Collection<Ministry> ministries = new ArrayList<>();
 		for(Integer index  = 0; index < ministryArrayInstance.getFirstDimensionElementCount() && index < 30; index = index + 1)
@@ -73,5 +94,6 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 			administrativeUnits.add(new AdministrativeUnit().setIdentifier(administrativeUnitArrayInstance.get(index, 0)));
 		__logInfo__("Creating administrative unit");
 		__inject__(AdministrativeUnitBusiness.class).createMany(administrativeUnits);
+		*/
 	}
 }

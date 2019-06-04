@@ -7,7 +7,7 @@ import javax.persistence.AccessType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByString;
+import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByStringAndLinkedByStringAndNamed;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
 @Entity @Access(AccessType.FIELD)
 @Getter @Setter @Accessors(chain=true)
 @Table(name=Ministry.TABLE_NAME)
-public class Ministry extends AbstractIdentifiedByString implements Serializable {
+public class Ministry extends AbstractIdentifiedByStringAndLinkedByStringAndNamed implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Override

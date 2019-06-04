@@ -72,15 +72,15 @@ public class PopulateKeycloak extends AbstractObject {
 		RolesResource rolesResource = client.realm(realmName).roles();
 		
 		populateKeycloak.deleteRoles(rolesResource);
-		populateKeycloak.saveRoles(roleArrayInstance, ministereArrayInstance,programmeArrayInstance,uaArrayInstance,rolesResource);
+		//populateKeycloak.saveRoles(roleArrayInstance, ministereArrayInstance,programmeArrayInstance,uaArrayInstance,rolesResource);
 		
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
 		reader.setWorkbookInputStream(PopulateKeycloak.class.getResourceAsStream("data.xlsx")).setSheetName("service");
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		ArrayInstanceTwoDimensionString serviceArrayInstance = reader.execute().getOutput();
 		
-		populateKeycloak.deleteClients(client.realm(realmName).clients());
-		populateKeycloak.saveClients(serviceArrayInstance,client.realm(realmName).clients());
+		//populateKeycloak.deleteClients(client.realm(realmName).clients());
+		//populateKeycloak.saveClients(serviceArrayInstance,client.realm(realmName).clients());
 		
 		weld.shutdown();
 	}
@@ -153,7 +153,7 @@ public class PopulateKeycloak extends AbstractObject {
 			String type = functionsArrayInstance.get(index, 2);
 			String name = functionsArrayInstance.get(index, 1);
 			saveRole(rolesResource, code, name, type,null);
-			
+			/*
 			if("FONCTION".equals(type) && StringUtils.startsWith(functionsArrayInstance.get(index, 4), "oui"))
 				savePosts(code, name, "MINISTERE", " du ministère ", ministriesArrayInstance, rolesResource);
 			
@@ -162,7 +162,7 @@ public class PopulateKeycloak extends AbstractObject {
 			
 			if("FONCTION".equals(type) && StringUtils.startsWith(functionsArrayInstance.get(index, 8), "oui"))
 				savePosts(code, name, "UNITE_ADMINISTRATIVE", " de l'unité administrative ", uaArrayInstance, rolesResource);
-			
+			*/
 		}
 		
 		System.out.println("Synchronising compositions");
@@ -172,7 +172,7 @@ public class PopulateKeycloak extends AbstractObject {
 			saveRoleComposites(rolesResource, code, parents);
 		}
 	}
-	
+	/*
 	private void savePosts(String functionCode,String functionName,String locationCode,String locationName,ArrayInstanceTwoDimensionString locationArrayInstance,RolesResource rolesResource) {
 		System.out.println("Synchronising posts of function "+functionCode);		
 		for(Integer index  = 0; index < locationArrayInstance.getFirstDimensionElementCount(); index = index + 1) {
@@ -186,7 +186,7 @@ public class PopulateKeycloak extends AbstractObject {
 			break;
 		}
 	}
-	
+	*/
 	private void saveClients(ArrayInstanceTwoDimensionString serviceArrayInstance,ClientsResource clientsResource) {
 		System.out.println("Synchronising services");
 		for(Integer index  = 0; index < serviceArrayInstance.getFirstDimensionElementCount(); index = index + 1) {

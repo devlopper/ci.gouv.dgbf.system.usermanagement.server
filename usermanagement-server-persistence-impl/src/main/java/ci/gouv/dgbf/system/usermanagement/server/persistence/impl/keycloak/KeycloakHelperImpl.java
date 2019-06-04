@@ -142,8 +142,14 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	
 	@Override
 	public KeycloakHelper createRole(String code,String name, String type,Collection<String> parentsCodes) {
-		if(getRolesResource().get(code) == null) {
-			RoleRepresentation roleRepresentation = new RoleRepresentation();
+		RoleResource roleResource = null;
+		RoleRepresentation roleRepresentation  = null;
+		try {
+			roleResource = getRolesResource().get(code);
+			roleRepresentation = roleResource.toRepresentation();
+		} catch (NotFoundException exception) {}
+		if(roleRepresentation == null) {
+			roleRepresentation = new RoleRepresentation();
 			roleRepresentation.setName(code);
 			roleRepresentation.setDescription(name);
 			
@@ -219,8 +225,12 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 			rolesCodes.forEach(new Consumer<String>() {
 				@Override
 				public void accept(String roleCode) {
-					RoleRepresentation roleRepresentation = getRealmResource().roles().get(roleCode).toRepresentation();
-					userResource.roles().realmLevel().add(Arrays.asList(roleRepresentation));
+					try {
+						RoleRepresentation roleRepresentation = getRealmResource().roles().get(roleCode).toRepresentation();
+						userResource.roles().realmLevel().add(Arrays.asList(roleRepresentation));
+					} catch (NotFoundException exception) {
+						System.out.println("Role "+exception+" : "+roleCode);
+					}
 				}
 			});
 

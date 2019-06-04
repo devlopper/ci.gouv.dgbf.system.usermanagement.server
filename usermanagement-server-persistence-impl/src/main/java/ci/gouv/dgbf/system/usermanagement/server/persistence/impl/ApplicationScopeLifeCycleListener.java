@@ -15,7 +15,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 	@Override
 	public void __initialize__(Object object) {
 		__inject__(KeycloakHelper.class).setClient(__inject__(KeycloakHelper.class).getClient());
-		__inject__(KeycloakHelper.class).load();
+		//__inject__(KeycloakHelper.class).load();
 	}
 	
 	@Override

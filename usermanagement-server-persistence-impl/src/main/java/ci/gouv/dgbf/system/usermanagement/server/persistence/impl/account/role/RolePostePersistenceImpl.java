@@ -13,7 +13,6 @@ import org.cyk.utility.server.persistence.query.PersistenceQuery;
 import org.cyk.utility.server.persistence.query.PersistenceQueryRepository;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
 @Singleton
 public class RolePostePersistenceImpl extends AbstractRolePostePersistenceImpl implements Serializable {
@@ -37,7 +36,7 @@ public class RolePostePersistenceImpl extends AbstractRolePostePersistenceImpl i
 	@Override
 	public PersistenceServiceProvider<RolePoste> delete(RolePoste rolePoste, Properties properties) {
 		super.delete(rolePoste, properties);
-		__inject__(KeycloakHelper.class).deleteRole(rolePoste.getCode());
+		//__inject__(KeycloakHelper.class).deleteRole(rolePoste.getCode());
 		return this;
 	}
 	

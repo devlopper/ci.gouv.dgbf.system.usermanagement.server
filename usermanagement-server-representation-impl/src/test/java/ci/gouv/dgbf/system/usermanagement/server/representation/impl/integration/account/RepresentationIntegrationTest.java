@@ -2,7 +2,6 @@ package ci.gouv.dgbf.system.usermanagement.server.representation.impl.integratio
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.cyk.utility.server.representation.AbstractEntityCollection;
@@ -14,10 +13,12 @@ import org.junit.Test;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.UserAccountRepresentation;
+import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.MinistryRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.RoleCategoryRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.RoleFunctionRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.RolePosteRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.MinistryDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RoleCategoryDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RoleFunctionDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RolePosteDto;
@@ -33,30 +34,23 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 	}
 	
 	@Test
-	public void read_roleCategory() throws Exception{
-		@SuppressWarnings("unchecked")
-		Collection<RoleCategoryDto> roleCategoryDtos = (Collection<RoleCategoryDto>) __inject__(RoleCategoryRepresentation.class).getMany(Boolean.FALSE,null, null, null,null).getEntity();
-		assertThat(roleCategoryDtos.stream().map(x -> x.getCode()).collect(Collectors.toList())).contains("ADMINISTRATIF","BUDGETAIRE");
+	public void create_roleCategory() throws Exception{
+		__inject__(TestRepresentationCreate.class).addObjects(new RoleCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__())).execute();
 	}
 	
 	@Test
-	public void count_roleCategory() throws Exception{
-		Long count = (Long) __inject__(RoleCategoryRepresentation.class).count(null).getEntity();
-		assertThat(count).isEqualTo(2);
+	public void create_roleFunction() throws Exception{
+		RoleCategoryDto category = new RoleCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(TestRepresentationCreate.class).addObjectsToBeCreatedArray(category)
+			.addObjects(new RoleFunctionDto().setCode(__getRandomCode__()).setName(__getRandomName__()).setCategory(category)).execute();
 	}
 	
 	@Test
-	public void read_roleFunction() throws Exception{
-		@SuppressWarnings("unchecked")
-		Collection<RoleFunctionDto> roleFunctionDtos = (Collection<RoleFunctionDto>) __inject__(RoleFunctionRepresentation.class).getMany(Boolean.FALSE,null, null, null,null).getEntity();
-		assertThat(roleFunctionDtos.stream().map(x -> x.getCode()).collect(Collectors.toList())).contains("ASSISTANT","DIRECTEUR");
-	}
-	
-	@Test
-	public void read_rolePoste() throws Exception{
-		@SuppressWarnings("unchecked")
-		Collection<RolePosteDto> rolePosteDtos = (Collection<RolePosteDto>) __inject__(RolePosteRepresentation.class).getMany(Boolean.FALSE,null, null, null,null).getEntity();
-		assertThat(rolePosteDtos.stream().map(x -> x.getCode()).collect(Collectors.toList())).contains("ASSISTANT_SAISIE_MINISTERE_21","CONTROLEUR_FINANCIER_MINISTERE_21");
+	public void create_rolePoste() throws Exception{
+		RoleCategoryDto category = new RoleCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
+		RoleFunctionDto function = new RoleFunctionDto().setCode(__getRandomCode__()).setName(__getRandomName__()).setCategory(category);
+		__inject__(TestRepresentationCreate.class).addObjectsToBeCreatedArray(category,function)
+			.addObjects(new RolePosteDto().setCode(__getRandomCode__()).setName(__getRandomName__()).setFunction(function)).execute();
 	}
 	
 	@Test
@@ -70,21 +64,26 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 			__inject__(TimeHelper.class).pause(1000l * 15);
 		}
 		
+		MinistryDto ministry = new MinistryDto().setIdentifier("21");
+		RoleCategoryDto category = new RoleCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
+		RoleFunctionDto function = new RoleFunctionDto().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setCategory(category);
+		RolePosteDto poste = new RolePosteDto().setFunction(function).setMinistry(ministry);
+		
 		UserAccountDto userAccount = new UserAccountDto();
-		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomCode__()+"@gmail.com");
+		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__());
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
-		userAccount.addRolePostesByCodes("ASSISTANT_SAISIE_MINISTERE_21");
-		__inject__(TestRepresentationCreate.class).addObjects(userAccount).setIsCatchThrowable(Boolean.FALSE).addTryEndRunnables(new Runnable() {
+		userAccount.addRolePostes(poste);
+		__inject__(TestRepresentationCreate.class).setName("Create user account").addObjectsToBeCreatedArray(ministry,category,function,poste).addObjects(userAccount).addTryEndRunnables(new Runnable() {
 			@Override
 			public void run() {
 				UserAccountDto userAccount01 = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null, null).getEntity();
-				assertThat(userAccount01).isNotNull();
-				assertThat(userAccount01.getRolePostes()).isNull();
+				assertThat(userAccount01).as("user account is null").isNotNull();
+				assertThat(userAccount01.getRolePostes()).as("user account roles collection is not null").isNull();
 				
 				userAccount01 = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),null,UserAccount.FIELD_ROLE_POSTES).getEntity();
-				assertThat(userAccount01).isNotNull();
-				assertThat(userAccount01.getRolePostes()).isNotNull();
-				assertThat(userAccount01.getRolePostes().getCollection()).isNotEmpty();
+				assertThat(userAccount01).as("user account is null").isNotNull();
+				assertThat(userAccount01.getRolePostes()).as("user account roles collection is null").isNotNull();
+				assertThat(userAccount01.getRolePostes().getCollection()).as("user account roles collection is empty").isNotEmpty();
 				assertThat(userAccount01.getRolePostes().getCollection().stream().map(RolePosteDto::getCode).collect(Collectors.toList())).contains("ASSISTANT_SAISIE_MINISTERE_21");
 			}
 		}).execute();
@@ -97,10 +96,19 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 	
 	@Test
 	public void update_userAccount() throws Exception{
+		MinistryDto ministry = new MinistryDto().setIdentifier("21");
+		__inject__(MinistryRepresentation.class).createOne(ministry);
+		RoleCategoryDto category = new RoleCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(RoleCategoryRepresentation.class).createOne(category);
+		RoleFunctionDto function = new RoleFunctionDto().setCode("CONTROLEUR_FINANCIER").setName(__getRandomName__()).setCategory(category);
+		__inject__(RoleFunctionRepresentation.class).createOne(function);
+		RolePosteDto poste = new RolePosteDto().setFunction(function).setMinistry(ministry);
+		__inject__(RolePosteRepresentation.class).createOne(poste);
+		
 		UserAccountDto userAccount = new UserAccountDto();
-		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomCode__()+"@mail.com");
+		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__());
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
-		userAccount.addRolePostesByCodes("CONTROLEUR_FINANCIER_MINISTERE_21");
+		userAccount.addRolePostes(poste);
 		
 		__inject__(UserAccountRepresentation.class).createOne(userAccount);
 		
@@ -110,7 +118,12 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		assertThat(userAccount.getRolePostes().getCollection()).isNotEmpty();
 		assertThat(userAccount.getRolePostes().getCollection().stream().map(RolePosteDto::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
 		
-		userAccount.addRolePostesByCodes("ASSISTANT_SAISIE_MINISTERE_21");
+		function = new RoleFunctionDto().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setCategory(category);
+		__inject__(RoleFunctionRepresentation.class).createOne(function);
+		poste = new RolePosteDto().setFunction(function).setMinistry(ministry);
+		__inject__(RolePosteRepresentation.class).createOne(poste);
+		
+		userAccount.addRolePostes(poste);
 		__inject__(UserAccountRepresentation.class).updateOne(userAccount,UserAccountDto.FIELD_ROLE_POSTES);
 		
 		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null,UserAccount.FIELD_ROLE_POSTES).getEntity();
@@ -121,6 +134,9 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 				,"ASSISTANT_SAISIE_MINISTERE_21");
 		
 		__inject__(UserAccountRepresentation.class).deleteOne(userAccount);
+		__inject__(RolePosteRepresentation.class).deleteAll();
+		__inject__(RoleFunctionRepresentation.class).deleteAll();
+		
 	}
 	
 	@Override

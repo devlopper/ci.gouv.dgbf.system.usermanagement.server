@@ -23,9 +23,9 @@ public class RolePoste extends AbstractIdentifiedByStringAndCodedAndNamed implem
 
 	@ManyToOne @JoinColumn(name=COLUMN_FUNCTION) @NotNull private RoleFunction function;
 	
-	@ManyToOne @JoinColumn(name=COLUMN_MINISTRY) private RoleFunction ministry;
-	@ManyToOne @JoinColumn(name=COLUMN_PROGRAM) private RoleFunction program;
-	@ManyToOne @JoinColumn(name=COLUMN_ADMINISTRATIVE_UNIT) private RoleFunction administrativeUnit;
+	@ManyToOne @JoinColumn(name=COLUMN_MINISTRY) private Ministry ministry;
+	@ManyToOne @JoinColumn(name=COLUMN_PROGRAM) private Program program;
+	@ManyToOne @JoinColumn(name=COLUMN_ADMINISTRATIVE_UNIT) private AdministrativeUnit administrativeUnit;
 	
 	/**/
 	

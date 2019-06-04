@@ -16,4 +16,14 @@ public class RoleFunctionDto extends AbstractEntityFromPersistenceEntityCodedAnd
 	private static final long serialVersionUID = 1L;
 	
 	private RoleCategoryDto category;
+	
+	@Override
+	public RoleFunctionDto setCode(String code) {
+		return (RoleFunctionDto) super.setCode(code);
+	}
+	
+	@Override
+	public RoleFunctionDto setName(String name) {
+		return (RoleFunctionDto) super.setName(name);
+	}
 }

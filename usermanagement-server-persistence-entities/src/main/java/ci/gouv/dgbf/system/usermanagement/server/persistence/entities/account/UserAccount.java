@@ -36,7 +36,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	@ManyToOne @JoinColumn(name=COLUMN_ACCOUNT) @NotNull private Account account;
 	@Transient private RolePostes rolePostes;
 	//@Transient private Collection<RolePoste> rolePostes;
-	@Transient private Boolean notifyByMail;
+	@Transient private Boolean isNotifiableByMail;
 	
 	/**/
 	

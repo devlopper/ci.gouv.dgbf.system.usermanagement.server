@@ -1,6 +1,7 @@
 package ci.gouv.dgbf.system.usermanagement.server.persistence.impl.account;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
@@ -13,7 +14,6 @@ import org.cyk.utility.server.persistence.query.PersistenceQueryRepository;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
 @Singleton
@@ -30,9 +30,12 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 	
 	@Override
 	public PersistenceServiceProvider<UserAccount> create(UserAccount userAccount, Properties properties) {
+		Collection<String> rolesCodes = __injectCollectionHelper__().isEmpty(userAccount.getRolePostes()) ? null : userAccount.getRolePostes().get()
+				.stream().map(x -> x.getFunction().getCode()).collect(Collectors.toList());
+		
 		String identifier = __inject__(KeycloakHelper.class).createUserAccount(userAccount.getUser().getFirstName(), userAccount.getUser().getLastNames()
 				, userAccount.getUser().getElectronicMailAddress(), userAccount.getAccount().getIdentifier(),  userAccount.getAccount().getPass()
-				,  __injectCollectionHelper__().isEmpty(userAccount.getRolePostes()) ? null : userAccount.getRolePostes().get().stream().map(RolePoste::getCode).collect(Collectors.toList()));
+				,  rolesCodes);
 		userAccount.setIdentifier(identifier);
 		super.create(userAccount, properties);
 		return this;
