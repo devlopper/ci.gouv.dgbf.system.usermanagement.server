@@ -13,6 +13,7 @@ import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.RoleRepresentation;
 
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountRolePoste;
 
 public interface KeycloakHelper extends Helper {
@@ -33,7 +34,8 @@ public interface KeycloakHelper extends Helper {
 	KeycloakHelper createRole(String code,String name,String type,String...parentsCodes);
 	KeycloakHelper deleteRole(String code);
 	
-	String saveUserAccount(String firstName,String lastNames,String electronicMailAddress,String userName,String pass,Collection<String> rolesCodes,Map<String,List<String>> attributes);
+	String saveUserAccount(String identifier,String firstName,String lastNames,String electronicMailAddress,String userName,String pass,Collection<String> rolesCodes,Map<String,List<String>> attributes);
+	String saveUserAccount(UserAccount userAccount);
 	KeycloakHelper addUserAccountAttributeValue(String identifier,String attributeName,String attributeValue);
 	KeycloakHelper addUserAccountAttributesValues(UserAccountRolePoste userAccountRolePoste);
 	KeycloakHelper removeUserAccountAttributeValue(String identifier,String attributeName,String attributeValue);

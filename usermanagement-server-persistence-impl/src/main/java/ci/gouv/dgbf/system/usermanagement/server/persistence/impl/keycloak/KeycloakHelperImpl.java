@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
 import javax.transaction.UserTransaction;
@@ -38,6 +38,7 @@ import org.keycloak.representations.idm.UserRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.RoleCategoryPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.RoleFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.RolePostePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountRolePoste;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleFunction;
@@ -209,38 +210,61 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	}
 	
 	@Override
-	public String saveUserAccount(String firstName, String lastNames, String electronicMailAddress,String userName, String pass,Collection<String> rolesCodes,Map<String,List<String>> attributes) {
-		UserRepresentation userRepresentation = new UserRepresentation();
-		userRepresentation.setEnabled(true);
+	public String saveUserAccount(String identifier,String firstName, String lastNames, String electronicMailAddress,String userName, String pass,Collection<String> rolesCodes,Map<String,List<String>> attributes) {
+		UsersResource usersRessource = getUsersResource();
+		UserResource userResource = null;
+		try {
+			userResource = usersRessource.get(identifier);
+		} catch (NotFoundException exception) {}
+		UserRepresentation userRepresentation = null;
+		if(userResource!=null)
+			userRepresentation = userResource.toRepresentation();
+		
+		if(userRepresentation == null) {
+			userRepresentation = new UserRepresentation();
+			userRepresentation.setEnabled(true);
+		}else {
+			
+		}
+		
 		userRepresentation.setUsername(userName);
 		userRepresentation.setFirstName(firstName);
 		userRepresentation.setLastName(lastNames);
 		userRepresentation.setEmail(electronicMailAddress);
 		userRepresentation.setAttributes(attributes);
-		UsersResource usersRessource = getUsersResource();
-
-		Response response = usersRessource.create(userRepresentation);
-		String identifier = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
-		UserResource userResource = usersRessource.get(identifier);
 		
+		if(__inject__(StringHelper.class).isBlank(identifier)) {
+			Response response = usersRessource.create(userRepresentation);
+			identifier = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");	
+			userResource = usersRessource.get(identifier);
+			
+			CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
+			credentialRepresentation.setTemporary(Boolean.TRUE);
+			credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
+			credentialRepresentation.setValue(__inject__(ValueHelper.class).defaultToIfNull(pass, "1234"));
+			userResource.resetPassword(credentialRepresentation);
+		}
+				
 		if(__inject__(CollectionHelper.class).isNotEmpty(rolesCodes)) 
-			rolesCodes.forEach(new Consumer<String>() {
-				@Override
-				public void accept(String roleCode) {
-					try {
-						RoleRepresentation roleRepresentation = getRealmResource().roles().get(roleCode).toRepresentation();
-						userResource.roles().realmLevel().add(Arrays.asList(roleRepresentation));
-					} catch (NotFoundException exception) {
-						System.out.println("Role "+exception+" : "+roleCode);
-					}
+			for(String index : rolesCodes) {
+				try {
+					RoleRepresentation roleRepresentation = getRealmResource().roles().get(index).toRepresentation();
+					userResource.roles().realmLevel().add(Arrays.asList(roleRepresentation));
+				} catch (NotFoundException exception) {
+					System.out.println("Role "+exception+" : "+index);
 				}
-			});
-
-		CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
-		credentialRepresentation.setTemporary(Boolean.TRUE);
-		credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
-		credentialRepresentation.setValue(__inject__(ValueHelper.class).defaultToIfNull(pass, "1234"));
-		userResource.resetPassword(credentialRepresentation);
+			}
+			
+		return identifier;
+	}
+	
+	@Override
+	public String saveUserAccount(UserAccount userAccount) {
+		Collection<String> rolesCodes = __inject__(CollectionHelper.class).isEmpty(userAccount.getRolePostes()) ? null : userAccount.getRolePostes().get()
+				.stream().map(x -> x.getFunction().getCode()).collect(Collectors.toList());
+		
+		String identifier = saveUserAccount(userAccount.getIdentifier(),userAccount.getUser().getFirstName(), userAccount.getUser().getLastNames(), userAccount.getUser().getElectronicMailAddress()
+				, userAccount.getAccount().getIdentifier(),  userAccount.getAccount().getPass(),  rolesCodes,null);
 		return identifier;
 	}
 	
