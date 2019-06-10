@@ -11,12 +11,15 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.Ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Account;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.User;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PosteLocation;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.AccountDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.PosteLocationDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.PosteLocationTypeDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RoleCategoryDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RoleFunctionDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RolePosteDto;
@@ -28,7 +31,13 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 	@Override
 	protected void __copy__(Object source, Object destination, Properties properties) {
 		//Persistence to Representation
-		if(source instanceof RoleCategory && destination instanceof RoleCategoryDto) {
+		if(source instanceof PosteLocation && destination instanceof PosteLocationDto) {
+			PosteLocation persistence = (PosteLocation) source;
+			PosteLocationDto representation = (PosteLocationDto) destination;
+			representation.setIdentifier(persistence.getIdentifier());
+			representation.setName(persistence.getName()); 
+			representation.setType(__inject__(InstanceHelper.class).buildOne(PosteLocationTypeDto.class, persistence.getType())); 
+		}else if(source instanceof RoleCategory && destination instanceof RoleCategoryDto) {
 			RoleCategory persistence = (RoleCategory) source;
 			RoleCategoryDto representation = (RoleCategoryDto) destination;
 			representation.setIdentifier(persistence.getIdentifier());
@@ -48,6 +57,7 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			representation.setCode(persistence.getCode());
 			representation.setName(persistence.getName()); 
 			representation.setFunction(__inject__(InstanceHelper.class).buildOne(RoleFunctionDto.class, persistence.getFunction()));
+			representation.setLocation(__inject__(InstanceHelper.class).buildOne(PosteLocationDto.class, persistence.getLocation()));
 			/*
 			representation.setMinistry(__inject__(InstanceHelper.class).buildOne(MinistryDto.class, persistence.getMinistry()));
 			representation.setProgram(__inject__(InstanceHelper.class).buildOne(ProgramDto.class, persistence.getProgram()));

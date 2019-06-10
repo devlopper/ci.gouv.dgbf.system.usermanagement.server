@@ -18,6 +18,7 @@ import lombok.experimental.Accessors;
 @Entity @Access(AccessType.FIELD)
 @Getter @Setter @Accessors(chain=true)
 @Table(name=AdministrativeUnit.TABLE_NAME)
+@Deprecated
 public class AdministrativeUnit extends AbstractIdentifiedByStringAndLinkedByStringAndNamed implements Serializable {
 	private static final long serialVersionUID = 1L;
 

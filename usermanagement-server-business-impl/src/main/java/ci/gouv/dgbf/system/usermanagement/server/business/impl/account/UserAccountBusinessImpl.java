@@ -133,10 +133,6 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 	@Override
 	protected void __listenExecuteDeleteOneBefore__(UserAccount userAccount, Properties properties,BusinessFunctionRemover function) {
 		super.__listenExecuteDeleteOneBefore__(userAccount, properties, function);
-		if(userAccount.getUser() != null)
-			__inject__(UserBusiness.class).delete(userAccount.getUser());
-		if(userAccount.getAccount() != null)
-			__inject__(AccountBusiness.class).delete(userAccount.getAccount());
 		function.addTryBeginRunnables(new Runnable() {
 			@Override
 			public void run() {
@@ -145,6 +141,16 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 					__inject__(UserAccountRolePosteBusiness.class).deleteMany(userAccountRolePostes);
 			}
 		});
+		
+		function.addTryEndRunnables(new Runnable() {
+			@Override
+			public void run() {
+				if(userAccount.getUser() != null)
+					__inject__(UserBusiness.class).delete(userAccount.getUser());
+				if(userAccount.getAccount() != null)
+					__inject__(AccountBusiness.class).delete(userAccount.getAccount());
+			}
+		});
 	}
-	
+
 }

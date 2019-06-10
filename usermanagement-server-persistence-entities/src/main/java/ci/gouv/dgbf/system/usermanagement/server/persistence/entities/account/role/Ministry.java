@@ -16,6 +16,7 @@ import lombok.experimental.Accessors;
 @Entity @Access(AccessType.FIELD)
 @Getter @Setter @Accessors(chain=true)
 @Table(name=Ministry.TABLE_NAME)
+@Deprecated
 public class Ministry extends AbstractIdentifiedByStringAndLinkedByStringAndNamed implements Serializable {
 	private static final long serialVersionUID = 1L;
 

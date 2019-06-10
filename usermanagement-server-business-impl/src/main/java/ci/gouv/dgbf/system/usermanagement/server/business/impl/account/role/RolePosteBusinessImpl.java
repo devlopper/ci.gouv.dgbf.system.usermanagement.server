@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.inject.Singleton;
 
+import org.apache.commons.lang3.StringUtils;
 import org.cyk.utility.__kernel__.constant.ConstantCharacter;
 import org.cyk.utility.__kernel__.constant.ConstantEmpty;
 import org.cyk.utility.__kernel__.properties.Properties;
@@ -22,27 +23,22 @@ public class RolePosteBusinessImpl extends AbstractBusinessEntityImpl<RolePoste,
 	protected void __listenExecuteCreateOneBefore__(RolePoste rolePoste, Properties properties,BusinessFunctionCreator function) {
 		super.__listenExecuteCreateOneBefore__(rolePoste, properties, function);
 		if(__injectStringHelper__().isBlank(rolePoste.getCode())) {
-			String code = null;
-			if(rolePoste.getMinistry() != null) {
-				code = "MINISTERE"+ConstantCharacter.UNDESCORE+rolePoste.getMinistry().getIdentifier();
-			}else if(rolePoste.getProgram() != null) {
-				code = "PROGRAMME"+ConstantCharacter.UNDESCORE+rolePoste.getProgram().getIdentifier();
-			}else if(rolePoste.getAdministrativeUnit() != null) {
-				code = "UNITE_ADMINISTRATIVE"+ConstantCharacter.UNDESCORE+rolePoste.getAdministrativeUnit().getIdentifier();
+			if(rolePoste.getLocation() != null) {
+				String code = rolePoste.getLocation().getType().getCode()+ConstantCharacter.UNDESCORE+rolePoste.getLocation().getIdentifier();
+				rolePoste.setCode(rolePoste.getFunction().getCode()+(__injectStringHelper__().isBlank(code) ? ConstantEmpty.STRING : (ConstantCharacter.UNDESCORE+code)));
 			}
-			rolePoste.setCode(rolePoste.getFunction().getCode()+(__injectStringHelper__().isBlank(code) ? ConstantEmpty.STRING : (ConstantCharacter.UNDESCORE+code)));
 		}
 		
 		if(__injectStringHelper__().isBlank(rolePoste.getName())) {
-			String name = null;
-			if(rolePoste.getMinistry() != null) {
-				name = "du ministère "+rolePoste.getMinistry().getIdentifier();
-			}else if(rolePoste.getProgram() != null) {
-				name = "du programme "+rolePoste.getProgram().getIdentifier();
-			}else if(rolePoste.getAdministrativeUnit() != null) {
-				name = "de l'unité administrative "+rolePoste.getAdministrativeUnit().getIdentifier();
+			if(rolePoste.getLocation() != null) {
+				String name = rolePoste.getLocation().getType().getName().toLowerCase()+ConstantCharacter.SPACE+rolePoste.getLocation().getIdentifier();
+				if(StringUtils.startsWithAny(name, "a","e","i","o","u")) {
+					name = "de l' " + name;
+				}else {
+					name = "du " + name;
+				}
+				rolePoste.setName(rolePoste.getFunction().getName()+(__injectStringHelper__().isBlank(name) ? ConstantEmpty.STRING : (ConstantCharacter.SPACE+name)));	
 			}
-			rolePoste.setName(rolePoste.getFunction().getName()+(__injectStringHelper__().isBlank(name) ? ConstantEmpty.STRING : (ConstantCharacter.SPACE+name)));
 		}
 	}
 	

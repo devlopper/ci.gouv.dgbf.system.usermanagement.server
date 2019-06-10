@@ -23,9 +23,7 @@ public class RolePoste extends AbstractIdentifiedByStringAndCodedAndNamed implem
 
 	@ManyToOne @JoinColumn(name=COLUMN_FUNCTION) @NotNull private RoleFunction function;
 	
-	@ManyToOne @JoinColumn(name=COLUMN_MINISTRY) private Ministry ministry;
-	@ManyToOne @JoinColumn(name=COLUMN_PROGRAM) private Program program;
-	@ManyToOne @JoinColumn(name=COLUMN_ADMINISTRATIVE_UNIT) private AdministrativeUnit administrativeUnit;
+	@ManyToOne @JoinColumn(name=COLUMN_LOCATION) @NotNull private PosteLocation location;
 	
 	/**/
 	
@@ -47,6 +45,7 @@ public class RolePoste extends AbstractIdentifiedByStringAndCodedAndNamed implem
 	/**/
 	
 	public static final String FIELD_FUNCTION = "fonction";
+	public static final String FIELD_LOCATION = "location";
 	public static final String FIELD_MINISTRY = "ministry";
 	public static final String FIELD_PROGRAM = "program";
 	public static final String FIELD_ADMINISTRATIVE_UNIT = "administrativeUnit";
@@ -54,8 +53,6 @@ public class RolePoste extends AbstractIdentifiedByStringAndCodedAndNamed implem
 	public static final String TABLE_NAME = "poste";
 	
 	public static final String COLUMN_FUNCTION = RoleFunction.TABLE_NAME;
-	public static final String COLUMN_MINISTRY = Ministry.TABLE_NAME;
-	public static final String COLUMN_PROGRAM = Program.TABLE_NAME;
-	public static final String COLUMN_ADMINISTRATIVE_UNIT = AdministrativeUnit.TABLE_NAME;
+	public static final String COLUMN_LOCATION = PosteLocation.TABLE_NAME;
 	
 }

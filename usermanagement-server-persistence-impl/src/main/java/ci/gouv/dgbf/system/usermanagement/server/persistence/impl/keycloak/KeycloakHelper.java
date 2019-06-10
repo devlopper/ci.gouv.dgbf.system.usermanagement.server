@@ -48,7 +48,5 @@ public interface KeycloakHelper extends Helper {
 	KeycloakHelper loadRolePoste();
 	
 	String ROLE_ATTRIBUTE_NAME = "nom";
-	String USER_ACCOUNT_ATTRIBUTE_MINISTRY = "ministere";
-	String USER_ACCOUNT_ATTRIBUTE_PROGRAM = "programme";
-	String USER_ACCOUNT_ATTRIBUTE_ADMINISTRATIVE_UNIT = "unite_administrative";
+	
 }

@@ -3,8 +3,9 @@ package ci.gouv.dgbf.system.usermanagement.server.representation.entities.accoun
 import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
-import org.cyk.utility.server.representation.AbstractEntityFromPersistenceEntityLinkedAndNamed;
+import org.cyk.utility.server.representation.AbstractEntityCollection;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,12 +13,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @XmlRootElement @Getter @Setter @Accessors(chain=true) @NoArgsConstructor
-public class MinistryDto extends AbstractEntityFromPersistenceEntityLinkedAndNamed implements Serializable {
+@XmlSeeAlso(PosteLocationDto.class)
+public class PosteLocationDtoCollection extends AbstractEntityCollection<PosteLocationDto> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Override
-	public MinistryDto setIdentifier(String identifier) {
-		return (MinistryDto) super.setIdentifier(identifier);
-	}
-	
 }

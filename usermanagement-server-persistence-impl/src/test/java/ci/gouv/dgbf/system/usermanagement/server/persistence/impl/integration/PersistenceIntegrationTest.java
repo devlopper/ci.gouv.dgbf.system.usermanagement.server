@@ -1,9 +1,10 @@
 package ci.gouv.dgbf.system.usermanagement.server.persistence.impl.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import org.cyk.utility.collection.CollectionHelper;
 import org.cyk.utility.server.persistence.test.TestPersistenceCreate;
@@ -14,9 +15,8 @@ import org.keycloak.representations.idm.UserRepresentation;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountRolePoste;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.AdministrativeUnit;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Ministry;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Program;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PosteLocation;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PosteLocationType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
@@ -30,6 +30,19 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	protected void __listenBeforeCallCountIsZero__() throws Exception {
 		super.__listenBeforeCallCountIsZero__();
 		__inject__(ApplicationScopeLifeCycleListener.class).initialize(null);
+	}
+	
+	@Test
+	public void create_posteLocationType() throws Exception{
+		PosteLocationType posteLocationType = new PosteLocationType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(TestPersistenceCreate.class).addObjects(posteLocationType).execute();
+	}
+	
+	@Test
+	public void create_posteLocation() throws Exception{
+		PosteLocationType posteLocationType = new PosteLocationType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		PosteLocation posteLocation = new PosteLocation().setType(posteLocationType);
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(posteLocationType).addObjects(posteLocation).execute();
 	}
 	
 	/* Role Category */
@@ -53,10 +66,12 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Test
 	public void create_rolePoste() throws Exception{
-		RolePoste role = new RolePoste().setCode(__getRandomCode__()).setName(__getRandomName__());
+		PosteLocationType locationType = new PosteLocationType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		PosteLocation location = new PosteLocation().setType(locationType);
+		RolePoste role = new RolePoste().setLocation(location).setCode(__getRandomCode__()).setName(__getRandomName__());
 		role.setFunction(new RoleFunction().setCode(__getRandomCode__()).setName(__getRandomName__())
 				.setCategory(new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__())));
-		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(role.getFunction().getCategory(),role.getFunction()).addObjects(role).execute();
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(locationType,location,role.getFunction().getCategory(),role.getFunction()).addObjects(role).execute();
 	}
 	
 	/* User Account*/
@@ -71,10 +86,11 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Test
 	public void create_userAccountRolePoste_ministryIs21() throws Exception{
-		Ministry ministry = new Ministry().setIdentifier("21");
+		PosteLocationType locationType = new PosteLocationType().setCode("MINISTERE").setName("Ministère");
+		PosteLocation location = new PosteLocation().setIdentifier("21").setType(locationType);
 		RolePoste rolePoste = new RolePoste().setCode(__getRandomCode__()).setName(__getRandomName__());
 		rolePoste.setFunction(new RoleFunction().setCode(__getRandomCode__()).setName(__getRandomName__())
-				.setCategory(new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__()))).setMinistry(ministry);
+				.setCategory(new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__()))).setLocation(location);
 		
 		UserAccount userAccount = new UserAccount();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
@@ -83,7 +99,7 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		userAccountRolePoste.setUserAccount(userAccount);
 		userAccountRolePoste.setRolePoste(rolePoste);
 		
-		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(ministry,rolePoste.getFunction().getCategory(),rolePoste.getFunction()
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(locationType,location,rolePoste.getFunction().getCategory(),rolePoste.getFunction()
 				,rolePoste,userAccount.getUser(),userAccount.getAccount(),userAccount).addObjects(userAccountRolePoste)
 			.setIsCatchThrowable(Boolean.FALSE).addTryEndRunnables(new Runnable() {
 				@Override
@@ -91,7 +107,7 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 					UserResource userResource = __inject__(KeycloakHelper.class).getUsersResource().get(userAccount.getIdentifier());
 					UserRepresentation userRepresentation = userResource.toRepresentation();
 					Map<String,List<String>> attributes = userRepresentation.getAttributes();
-					assertThat(attributes).containsExactly(new AbstractMap.SimpleEntry<String, List<String>>("ministere"
+					assertThat(attributes).containsExactly(new AbstractMap.SimpleEntry<String, List<String>>("MINISTERE"
 							,(List<String>)__inject__(CollectionHelper.class).instanciate("21")));
 				}
 			}).execute();
@@ -99,10 +115,11 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Test
 	public void create_userAccountRolePoste_programIs100() throws Exception{
-		Program program = new Program().setIdentifier("100");
+		PosteLocationType locationType = new PosteLocationType().setCode("PROGRAMME").setName("Programme");
+		PosteLocation location = new PosteLocation().setIdentifier("100").setType(locationType);
 		RolePoste rolePoste = new RolePoste().setCode(__getRandomCode__()).setName(__getRandomName__());
 		rolePoste.setFunction(new RoleFunction().setCode(__getRandomCode__()).setName(__getRandomName__())
-				.setCategory(new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__()))).setProgram(program);
+				.setCategory(new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__()))).setLocation(location);
 		
 		UserAccount userAccount = new UserAccount();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
@@ -111,7 +128,7 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		userAccountRolePoste.setUserAccount(userAccount);
 		userAccountRolePoste.setRolePoste(rolePoste);
 		
-		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(program,rolePoste.getFunction().getCategory(),rolePoste.getFunction()
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(locationType,location,rolePoste.getFunction().getCategory(),rolePoste.getFunction()
 				,rolePoste,userAccount.getUser(),userAccount.getAccount(),userAccount).addObjects(userAccountRolePoste)
 			.setIsCatchThrowable(Boolean.FALSE).addTryEndRunnables(new Runnable() {
 				@Override
@@ -119,7 +136,7 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 					UserResource userResource = __inject__(KeycloakHelper.class).getUsersResource().get(userAccount.getIdentifier());
 					UserRepresentation userRepresentation = userResource.toRepresentation();
 					Map<String,List<String>> attributes = userRepresentation.getAttributes();
-					assertThat(attributes).containsExactly(new AbstractMap.SimpleEntry<String, List<String>>("programme"
+					assertThat(attributes).containsExactly(new AbstractMap.SimpleEntry<String, List<String>>("PROGRAMME"
 							,(List<String>)__inject__(CollectionHelper.class).instanciate("100")));
 				}
 			}).execute();
@@ -127,10 +144,11 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Test
 	public void create_userAccountRolePoste_administrativeUnitIs200() throws Exception{
-		AdministrativeUnit administrativeUnit = new AdministrativeUnit().setIdentifier("200");
+		PosteLocationType locationType = new PosteLocationType().setCode("UNITE_ADMINISTRATIVE").setName("Unité administrative");
+		PosteLocation location = new PosteLocation().setIdentifier("200").setType(locationType);
 		RolePoste rolePoste = new RolePoste().setCode(__getRandomCode__()).setName(__getRandomName__());
 		rolePoste.setFunction(new RoleFunction().setCode(__getRandomCode__()).setName(__getRandomName__())
-				.setCategory(new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__()))).setAdministrativeUnit(administrativeUnit);
+				.setCategory(new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__()))).setLocation(location);
 		
 		UserAccount userAccount = new UserAccount();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
@@ -139,7 +157,7 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		userAccountRolePoste.setUserAccount(userAccount);
 		userAccountRolePoste.setRolePoste(rolePoste);
 		
-		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(administrativeUnit,rolePoste.getFunction().getCategory(),rolePoste.getFunction()
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(locationType,location,rolePoste.getFunction().getCategory(),rolePoste.getFunction()
 				,rolePoste,userAccount.getUser(),userAccount.getAccount(),userAccount).addObjects(userAccountRolePoste)
 			.setIsCatchThrowable(Boolean.FALSE).addTryEndRunnables(new Runnable() {
 				@Override
@@ -147,43 +165,10 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 					UserResource userResource = __inject__(KeycloakHelper.class).getUsersResource().get(userAccount.getIdentifier());
 					UserRepresentation userRepresentation = userResource.toRepresentation();
 					Map<String,List<String>> attributes = userRepresentation.getAttributes();
-					assertThat(attributes).containsExactly(new AbstractMap.SimpleEntry<String, List<String>>("unite_administrative"
+					assertThat(attributes).containsExactly(new AbstractMap.SimpleEntry<String, List<String>>("UNITE_ADMINISTRATIVE"
 							,(List<String>)__inject__(CollectionHelper.class).instanciate("200")));
 				}
 			}).execute();
 	}
-	
-	@Test
-	public void create_userAccountRolePoste_ministry15_administrativeUnitIs200() throws Exception{
-		Ministry ministry = new Ministry().setIdentifier("15");
-		AdministrativeUnit administrativeUnit = new AdministrativeUnit().setIdentifier("200");
-		RolePoste rolePoste = new RolePoste().setCode(__getRandomCode__()).setName(__getRandomName__());
-		rolePoste.setFunction(new RoleFunction().setCode(__getRandomCode__()).setName(__getRandomName__())
-				.setCategory(new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__()))).setMinistry(ministry).setAdministrativeUnit(administrativeUnit);
-		
-		UserAccount userAccount = new UserAccount();
-		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
-		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
-		UserAccountRolePoste userAccountRolePoste = new UserAccountRolePoste();
-		userAccountRolePoste.setUserAccount(userAccount);
-		userAccountRolePoste.setRolePoste(rolePoste);
-		
-		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(ministry,administrativeUnit,rolePoste.getFunction().getCategory(),rolePoste.getFunction()
-				,rolePoste,userAccount.getUser(),userAccount.getAccount(),userAccount).addObjects(userAccountRolePoste)
-			.setIsCatchThrowable(Boolean.FALSE).addTryEndRunnables(new Runnable() {
-				@Override
-				public void run() {
-					UserResource userResource = __inject__(KeycloakHelper.class).getUsersResource().get(userAccount.getIdentifier());
-					UserRepresentation userRepresentation = userResource.toRepresentation();
-					Map<String,List<String>> attributes = userRepresentation.getAttributes();
-					assertThat(attributes).contains(
-							new AbstractMap.SimpleEntry<String, List<String>>("ministere",(List<String>)__inject__(CollectionHelper.class).instanciate("15"))
-							,new AbstractMap.SimpleEntry<String, List<String>>("unite_administrative",(List<String>)__inject__(CollectionHelper.class).instanciate("200"))
-							).hasSize(2);
-				}
-			}).execute();
-	}
-	
-	/**/
 	
 }

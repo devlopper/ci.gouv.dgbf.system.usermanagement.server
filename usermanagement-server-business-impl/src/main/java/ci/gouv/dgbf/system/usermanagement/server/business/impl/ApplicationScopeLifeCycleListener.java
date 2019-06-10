@@ -5,50 +5,59 @@ import java.util.Collection;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.cyk.utility.__kernel__.AbstractApplicationScopeLifeCycleListener;
 import org.cyk.utility.__kernel__.DependencyInjection;
 import org.cyk.utility.array.ArrayInstanceTwoDimensionString;
 import org.cyk.utility.collection.CollectionHelper;
 import org.cyk.utility.file.excel.FileExcelSheetDataArrayReader;
-import org.cyk.utility.network.protocol.ProtocolDefaults;
-import org.cyk.utility.security.Credentials;
-import org.cyk.utility.system.node.SystemNodeServer;
+import org.cyk.utility.server.business.AbstractApplicationScopeLifeCycleListenerImplementation;
 
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.AdministrativeUnitBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.MinistryBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProgramBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.PosteLocationBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.PosteLocationTypeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.RoleCategoryBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.RoleFunctionBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.RolePosteBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.AdministrativeUnit;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Ministry;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Program;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PosteLocation;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PosteLocationType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
 
 @ApplicationScoped
-public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeLifeCycleListener implements Serializable {
+public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeLifeCycleListenerImplementation implements Serializable {
 	private static final long serialVersionUID = 1L;
-
+	
 	@Override
 	public void __initialize__(Object object) {
-		__inject__(SystemNodeServer.class).setName("Gestion des utilisateurs");
-		
-		__inject__(ProtocolDefaults.class).getSimpleMailTransfer().setHost("smtp.gmail.com").setPort(587).setIsAuthenticationRequired(Boolean.TRUE)
-		.setIsSecuredConnectionRequired(Boolean.TRUE).setAuthenticationCredentials(__inject__(Credentials.class).setIdentifier("dgbfdtideveloppers").setSecret("dgbf2016dti"));
-		
 		__inject__(ci.gouv.dgbf.system.usermanagement.server.persistence.impl.ApplicationScopeLifeCycleListener.class).initialize(null);
-		
-		__initializePersistenceData__();
 	}
+	
+	/*@Override
+	public void __initialize__(Object object) {
+		super.__initialize__(object);
+		//__inject__(SystemNodeServer.class).setName("Gestion des utilisateurs");
+		
+		//__inject__(ProtocolDefaults.class).getSimpleMailTransfer().setHost("smtp.gmail.com").setPort(587).setIsAuthenticationRequired(Boolean.TRUE)
+		//.setIsSecuredConnectionRequired(Boolean.TRUE).setAuthenticationCredentials(__inject__(Credentials.class).setIdentifier("dgbfdtideveloppers").setSecret("dgbf2016dti"));
+		
+		
+		
+		//__initializePersistenceData__();
+	}*/
 	
 	@Override
 	public void __destroy__(Object object) {}
 	
 	/**/
 	
-	private void __initializePersistenceData__() {
+	public void saveDataFromResources() {
+		//super.__saveData__();
+		PosteLocationType ministere = new PosteLocationType().setCode("MINISTERE").setName("Ministère");
+		PosteLocationType programme = new PosteLocationType().setCode("PROGRAMME").setName("Programme");
+		PosteLocationType ua = new PosteLocationType().setCode("UNITE_ADMINISTRATIVE").setName("Unité administrative");
+		PosteLocationType institution = new PosteLocationType().setCode("INSTITUTION").setName("Institution");
+		
+		__inject__(PosteLocationTypeBusiness.class).createMany(__inject__(CollectionHelper.class).instanciate(ministere,programme,ua,institution));
+		
 		FileExcelSheetDataArrayReader reader;
 		ArrayInstanceTwoDimensionString arrayInstance;
 		
@@ -56,31 +65,31 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("ministère");
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		arrayInstance = reader.execute().getOutput();
-		Collection<Ministry> ministries = new ArrayList<>();
+		Collection<PosteLocation> ministries = new ArrayList<>();
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount(); index = index + 1)
-			ministries.add(new Ministry().setIdentifier(arrayInstance.get(index, 0)));
+			ministries.add(new PosteLocation().setIdentifier(arrayInstance.get(index, 0)).setType(ministere));
 		__logInfo__("Creating "+ministries.size()+" ministries");
-		__inject__(MinistryBusiness.class).createMany(ministries);
+		__inject__(PosteLocationBusiness.class).createMany(ministries);
 		
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("programme");
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		arrayInstance = reader.execute().getOutput();
-		Collection<Program> programs = new ArrayList<>();
+		Collection<PosteLocation> programs = new ArrayList<>();
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 30; index = index + 1)
-			programs.add(new Program().setIdentifier(arrayInstance.get(index, 0)));
+			programs.add(new PosteLocation().setIdentifier(arrayInstance.get(index, 0)).setType(programme));
 		__logInfo__("Creating "+programs.size()+" programs");
-		__inject__(ProgramBusiness.class).createMany(programs);
+		__inject__(PosteLocationBusiness.class).createMany(programs);
 		
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("unité administrative");
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		arrayInstance = reader.execute().getOutput();
-		Collection<AdministrativeUnit> administrativeUnits = new ArrayList<>();
+		Collection<PosteLocation> administrativeUnits = new ArrayList<>();
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 30; index = index + 1)
-			administrativeUnits.add(new AdministrativeUnit().setIdentifier(arrayInstance.get(index, 0)));
+			administrativeUnits.add(new PosteLocation().setIdentifier(arrayInstance.get(index, 0)).setType(ua));
 		__logInfo__("Creating "+administrativeUnits.size()+" administratives units");
-		__inject__(AdministrativeUnitBusiness.class).createMany(administrativeUnits);
+		__inject__(PosteLocationBusiness.class).createMany(administrativeUnits);
 		
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("catégorie");
@@ -103,16 +112,16 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 					.setCategory(__inject__(CollectionHelper.class).getElementAt(roleCategories, arrayInstance.get(index, 2).startsWith("ADMIN") ? 0 : 1));
 			roleFonctions.add(function);
 			if(arrayInstance.get(index, 3).startsWith("oui")) {
-				for(Ministry indexMinistry : ministries)
-					rolePostes.add(new RolePoste().setFunction(function).setMinistry(indexMinistry));
+				for(PosteLocation indexMinistry : ministries)
+					rolePostes.add(new RolePoste().setFunction(function).setLocation(indexMinistry));
 			}
 			if(arrayInstance.get(index, 4).startsWith("oui")) {
-				for(Program indexProgram : programs)
-					rolePostes.add(new RolePoste().setFunction(function).setProgram(indexProgram));
+				for(PosteLocation indexProgram : programs)
+					rolePostes.add(new RolePoste().setFunction(function).setLocation(indexProgram));
 			}
 			if(arrayInstance.get(index, 7).startsWith("oui")) {
-				for(AdministrativeUnit indexAdministrativeUnit : administrativeUnits)
-					rolePostes.add(new RolePoste().setFunction(function).setAdministrativeUnit(indexAdministrativeUnit));
+				for(PosteLocation indexAdministrativeUnit : administrativeUnits)
+					rolePostes.add(new RolePoste().setFunction(function).setLocation(indexAdministrativeUnit));
 			}
 		}
 		__logInfo__("Creating "+roleFonctions.size()+" role functions");
@@ -121,4 +130,5 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		__logInfo__("Creating "+rolePostes.size()+" role postes");
 		__inject__(RolePosteBusiness.class).createMany(rolePostes);
 	}
+	
 }

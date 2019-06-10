@@ -150,7 +150,13 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 		try {
 			roleResource = getRolesResource().get(code);
 			roleRepresentation = roleResource.toRepresentation();
-		} catch (NotFoundException exception) {}
+		} catch (NotFoundException exception) {
+			//if existing then log
+			//__logSevere__("Role <<"+code+">> not found. "+exception);
+		}/* catch (ProcessingException exception) {
+			__logSevere__("Cannot create role <<"+code+">>. "+exception);
+			return this;
+		}*/
 		if(roleRepresentation == null) {
 			roleRepresentation = new RoleRepresentation();
 			roleRepresentation.setName(code);
@@ -175,8 +181,11 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 		try {
 			getRolesResource().deleteRole(code);
 		} catch (NotFoundException exception) {
-			
-		}
+			__logWarning__("Role <<"+code+">> not found. "+exception);
+		}/* catch (ProcessingException exception) {
+			__logSevere__("Cannot delete role <<"+code+">>. "+exception);
+			return this;
+		}*/
 		return this;
 	}
 	
@@ -213,13 +222,24 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	public String saveUserAccount(String identifier,String firstName, String lastNames, String electronicMailAddress,String userName, String pass,Collection<String> rolesCodes,Map<String,List<String>> attributes) {
 		UsersResource usersRessource = getUsersResource();
 		UserResource userResource = null;
-		try {
-			userResource = usersRessource.get(identifier);
-		} catch (NotFoundException exception) {}
+		if(__inject__(StringHelper.class).isNotBlank(identifier))
+			try {
+				userResource = usersRessource.get(identifier);
+			} catch (NotFoundException exception) {
+				__logSevere__("User account <<"+identifier+">> to save not found. "+exception);
+			}/* catch (ProcessingException exception) {
+				__logSevere__("Cannot save user account <<"+identifier+">>. "+exception);
+				return null;
+			}*/
 		UserRepresentation userRepresentation = null;
 		if(userResource!=null)
-			userRepresentation = userResource.toRepresentation();
-		
+			//try {
+				userRepresentation = userResource.toRepresentation();	
+			/*} catch (ProcessingException exception) {
+				__logSevere__("Cannot save user account <<"+identifier+">>. "+exception);
+				return null;
+			}*/
+			
 		if(userRepresentation == null) {
 			userRepresentation = new UserRepresentation();
 			userRepresentation.setEnabled(true);
@@ -272,9 +292,12 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	public KeycloakHelper deleteUserAccount(String identifier) {
 		try{
 			getUsersResource().get(identifier).remove();
-		}catch(NotFoundException exception) {
-			
-		}
+		} catch (NotFoundException exception) {
+			__logSevere__("User account <<"+identifier+">> not found. "+exception);
+		}/* catch (ProcessingException exception) {
+			__logSevere__("Cannot delete user account <<"+identifier+">>. "+exception);
+			return this;
+		}*/
 		return this;
 	}
 
@@ -298,9 +321,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	
 	@Override
 	public KeycloakHelper addUserAccountAttributesValues(UserAccountRolePoste userAccountRolePoste) {
-		__addUserAccountAttributesValues__(userAccountRolePoste, USER_ACCOUNT_ATTRIBUTE_MINISTRY, userAccountRolePoste.getRolePoste().getMinistry());
-		__addUserAccountAttributesValues__(userAccountRolePoste, USER_ACCOUNT_ATTRIBUTE_PROGRAM, userAccountRolePoste.getRolePoste().getProgram());
-		__addUserAccountAttributesValues__(userAccountRolePoste, USER_ACCOUNT_ATTRIBUTE_ADMINISTRATIVE_UNIT, userAccountRolePoste.getRolePoste().getAdministrativeUnit());
+		__addUserAccountAttributesValues__(userAccountRolePoste, userAccountRolePoste.getRolePoste().getLocation().getType().getCode(), userAccountRolePoste.getRolePoste().getLocation());
 		return this;
 	}
 	
@@ -328,9 +349,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	
 	@Override
 	public KeycloakHelper removeUserAccountAttributesValues(UserAccountRolePoste userAccountRolePoste) {
-		__removeUserAccountAttributesValues__(userAccountRolePoste, USER_ACCOUNT_ATTRIBUTE_MINISTRY, userAccountRolePoste.getRolePoste().getMinistry());
-		__removeUserAccountAttributesValues__(userAccountRolePoste, USER_ACCOUNT_ATTRIBUTE_PROGRAM, userAccountRolePoste.getRolePoste().getProgram());
-		__removeUserAccountAttributesValues__(userAccountRolePoste, USER_ACCOUNT_ATTRIBUTE_ADMINISTRATIVE_UNIT, userAccountRolePoste.getRolePoste().getAdministrativeUnit());
+		__removeUserAccountAttributesValues__(userAccountRolePoste, userAccountRolePoste.getRolePoste().getLocation().getType().getCode(), userAccountRolePoste.getRolePoste().getLocation());
 		return this;
 	}
 	

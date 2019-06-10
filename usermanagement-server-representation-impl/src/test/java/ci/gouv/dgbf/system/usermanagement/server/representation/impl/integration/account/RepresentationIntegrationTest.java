@@ -13,12 +13,14 @@ import org.junit.Test;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.UserAccountRepresentation;
-import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.MinistryRepresentation;
+import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.PosteLocationRepresentation;
+import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.PosteLocationTypeRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.RoleCategoryRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.RoleFunctionRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.RolePosteRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.MinistryDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.PosteLocationDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.PosteLocationTypeDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RoleCategoryDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RoleFunctionDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RolePosteDto;
@@ -47,10 +49,12 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 	
 	@Test
 	public void create_rolePoste() throws Exception{
+		PosteLocationTypeDto locationType = new PosteLocationTypeDto().setCode(__getRandomCode__()).setName(__getRandomCode__());
+		PosteLocationDto location = new PosteLocationDto().setIdentifier("21").setType(locationType);
 		RoleCategoryDto category = new RoleCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
 		RoleFunctionDto function = new RoleFunctionDto().setCode(__getRandomCode__()).setName(__getRandomName__()).setCategory(category);
-		__inject__(TestRepresentationCreate.class).addObjectsToBeCreatedArray(category,function)
-			.addObjects(new RolePosteDto().setCode(__getRandomCode__()).setName(__getRandomName__()).setFunction(function)).execute();
+		__inject__(TestRepresentationCreate.class).addObjectsToBeCreatedArray(locationType,location,category,function)
+			.addObjects(new RolePosteDto().setCode(__getRandomCode__()).setName(__getRandomName__()).setFunction(function).setLocation(location)).execute();
 	}
 	
 	@Test
@@ -64,16 +68,17 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 			__inject__(TimeHelper.class).pause(1000l * 15);
 		}
 		
-		MinistryDto ministry = new MinistryDto().setIdentifier("21");
+		PosteLocationTypeDto locationType = new PosteLocationTypeDto().setCode("MINISTERE").setName("Ministère");
+		PosteLocationDto location = new PosteLocationDto().setIdentifier("21").setType(locationType);
 		RoleCategoryDto category = new RoleCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
 		RoleFunctionDto function = new RoleFunctionDto().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setCategory(category);
-		RolePosteDto poste = new RolePosteDto().setFunction(function).setMinistry(ministry);
+		RolePosteDto poste = new RolePosteDto().setFunction(function).setLocation(location);
 		
 		UserAccountDto userAccount = new UserAccountDto();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__());
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
 		userAccount.addRolePostes(poste);
-		__inject__(TestRepresentationCreate.class).setName("Create user account").addObjectsToBeCreatedArray(ministry,category,function,poste).addObjects(userAccount).addTryEndRunnables(new Runnable() {
+		__inject__(TestRepresentationCreate.class).setName("Create user account").addObjectsToBeCreatedArray(locationType,location,category,function,poste).addObjects(userAccount).addTryEndRunnables(new Runnable() {
 			@Override
 			public void run() {
 				UserAccountDto userAccount01 = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null, null).getEntity();
@@ -96,13 +101,15 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 	
 	@Test
 	public void update_userAccount() throws Exception{
-		MinistryDto ministry = new MinistryDto().setIdentifier("21");
-		__inject__(MinistryRepresentation.class).createOne(ministry);
+		PosteLocationTypeDto locationType = new PosteLocationTypeDto().setCode("MINISTERE").setName("Ministère");
+		__inject__(PosteLocationTypeRepresentation.class).createOne(locationType);
+		PosteLocationDto location = new PosteLocationDto().setIdentifier("21").setType(locationType);
+		__inject__(PosteLocationRepresentation.class).createOne(location);
 		RoleCategoryDto category = new RoleCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
 		__inject__(RoleCategoryRepresentation.class).createOne(category);
 		RoleFunctionDto function = new RoleFunctionDto().setCode("CONTROLEUR_FINANCIER").setName(__getRandomName__()).setCategory(category);
 		__inject__(RoleFunctionRepresentation.class).createOne(function);
-		RolePosteDto poste = new RolePosteDto().setFunction(function).setMinistry(ministry);
+		RolePosteDto poste = new RolePosteDto().setFunction(function).setLocation(location);
 		__inject__(RolePosteRepresentation.class).createOne(poste);
 		
 		UserAccountDto userAccount = new UserAccountDto();
@@ -120,7 +127,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		
 		function = new RoleFunctionDto().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setCategory(category);
 		__inject__(RoleFunctionRepresentation.class).createOne(function);
-		poste = new RolePosteDto().setFunction(function).setMinistry(ministry);
+		poste = new RolePosteDto().setFunction(function).setLocation(location);
 		__inject__(RolePosteRepresentation.class).createOne(poste);
 		
 		userAccount.addRolePostes(poste);
@@ -136,7 +143,9 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		__inject__(UserAccountRepresentation.class).deleteOne(userAccount);
 		__inject__(RolePosteRepresentation.class).deleteAll();
 		__inject__(RoleFunctionRepresentation.class).deleteAll();
-		
+		__inject__(RolePosteRepresentation.class).deleteAll();
+		__inject__(PosteLocationRepresentation.class).deleteAll();
+		__inject__(PosteLocationTypeRepresentation.class).deleteAll();
 	}
 	
 	@Override

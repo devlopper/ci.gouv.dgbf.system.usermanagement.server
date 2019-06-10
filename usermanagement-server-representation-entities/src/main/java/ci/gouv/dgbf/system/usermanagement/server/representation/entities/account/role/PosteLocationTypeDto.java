@@ -12,20 +12,16 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @XmlRootElement @Getter @Setter @Accessors(chain=true) @NoArgsConstructor
-public class RolePosteDto extends AbstractEntityFromPersistenceEntityCodedAndNamed implements Serializable {
+public class PosteLocationTypeDto extends AbstractEntityFromPersistenceEntityCodedAndNamed implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
-	private RoleFunctionDto function;
-	private PosteLocationDto location;
-	
+
 	@Override
-	public RolePosteDto setCode(String code) {
-		return (RolePosteDto) super.setCode(code);
+	public PosteLocationTypeDto setCode(String code) {
+		return (PosteLocationTypeDto) super.setCode(code);
 	}
 	
 	@Override
-	public RolePosteDto setName(String name) {
-		return (RolePosteDto) super.setName(name);
+	public PosteLocationTypeDto setName(String name) {
+		return (PosteLocationTypeDto) super.setName(name);
 	}
-	
 }

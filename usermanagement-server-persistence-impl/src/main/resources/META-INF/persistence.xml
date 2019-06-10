@@ -2,12 +2,11 @@
   
     <persistence-unit name="usermanagementPersistenceUnit" transaction-type="JTA">
     	<jta-data-source>${data.source.jndi.name}</jta-data-source>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PosteLocationType</class>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PosteLocation</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleFunction</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste</class>
-    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Ministry</class>
-    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Program</class>
-    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.AdministrativeUnit</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.User</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Account</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount</class>
