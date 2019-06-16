@@ -17,7 +17,7 @@
 	<properties>
 		<microprofile.archive.name>usermanagement-server</microprofile.archive.name>
 	</properties>
-
+		
 	<dependencies>
 		<dependency>
 			<groupId>ci.gouv.dgbf.system.usermanagement.server.representation</groupId>
@@ -30,5 +30,54 @@
 			<version>0.0.1</version>
 		</dependency>
 	</dependencies>		
+
+	<profiles>
+		<profile>
+			<id>deployment.common</id>
+			<properties>
+				<cyk.parameter.system.name>Gestion des acteurs</cyk.parameter.system.name>
+			</properties>
+		</profile>
+		
+		<profile>
+			<id>deployment.server.jboss.wildfly.local</id>
+			<properties>
+				
+			</properties>
+		</profile>
+		
+		<profile>
+			<id>deployment.thorntail.local</id>
+			<properties>
+				<deployment.standalone.port.offset>1</deployment.standalone.port.offset>
+				<data.base.management.system.sid>xe</data.base.management.system.sid>
+				<data.source.user>GESTION_ACTEUR</data.source.user>
+				<data.source.password>GESTION_ACTEUR</data.source.password>
+				<keycloak.server.url>http://localhost:8230/auth</keycloak.server.url>
+				<keycloak.realm.name>TestPopulate</keycloak.realm.name>
+				<keycloak.client.identifier>admin-cli</keycloak.client.identifier>
+				<keycloak.client.secret>99592008-3bd6-4fda-9b57-09fbc6befa86</keycloak.client.secret>
+				<keycloak.credential.username>admin</keycloak.credential.username>
+				<keycloak.credential.password>admin</keycloak.credential.password>
+			</properties>
+		</profile>
+		
+		<profile>
+			<id>deployment.thorntail.remote</id>
+			<properties>
+				<deployment.standalone.port.offset>0</deployment.standalone.port.offset>
+				<data.base.management.system.host>sib-database</data.base.management.system.host>
+				<data.base.management.system.sid>SIB</data.base.management.system.sid>
+				<data.source.user>GESTION_ACTEUR</data.source.user>
+				<data.source.password>GESTION_ACTEUR</data.source.password>
+				<keycloak.server.url>http://10.3.4.20:31000/auth/</keycloak.server.url>
+				<keycloak.realm.name>SIIBDemo</keycloak.realm.name>
+				<keycloak.client.identifier>admin-cli</keycloak.client.identifier>
+				<keycloak.client.secret>7b7d69ef-612a-4361-b66f-33f09837cf05</keycloak.client.secret>
+				<keycloak.credential.username>admin</keycloak.credential.username>
+				<keycloak.credential.password>admin</keycloak.credential.password>
+			</properties>
+		</profile>
+	</profiles>
 
 </project>

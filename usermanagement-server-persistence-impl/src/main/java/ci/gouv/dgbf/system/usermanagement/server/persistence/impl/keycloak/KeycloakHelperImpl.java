@@ -18,9 +18,9 @@ import javax.ws.rs.core.Response;
 import org.cyk.utility.__kernel__.object.__static__.identifiable.AbstractIdentified;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.collection.CollectionHelper;
+import org.cyk.utility.configuration.ConstantParameterName;
 import org.cyk.utility.helper.AbstractHelper;
 import org.cyk.utility.string.StringHelper;
-import org.cyk.utility.system.SystemHelper;
 import org.cyk.utility.value.ValueHelper;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
@@ -54,12 +54,12 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	@Override
 	public Keycloak getClient() {
 		if(client == null) {
-			String url = __inject__(SystemHelper.class).getPropertyThrowIfBlank("keycloak.server.url");
-			realmName = __inject__(SystemHelper.class).getPropertyThrowIfBlank("keycloak.realm.name");
-			String clientIdentifier = __inject__(SystemHelper.class).getPropertyThrowIfBlank("keycloak.client.identifier");
-			String clientSecret = __inject__(SystemHelper.class).getPropertyThrowIfBlank("keycloak.client.secret");
-			String username = __inject__(SystemHelper.class).getPropertyThrowIfBlank("keycloak.credential.username");
-			String password = __inject__(SystemHelper.class).getPropertyThrowIfBlank("keycloak.credential.password");
+			String url = __inject__(ValueHelper.class).returnOrThrowIfBlank("keycloak server url",ConstantParameterName.get("keycloak.server.url")); 
+			realmName = __inject__(ValueHelper.class).returnOrThrowIfBlank("keycloak realm name",ConstantParameterName.get("keycloak.realm.name")); 
+			String clientIdentifier = __inject__(ValueHelper.class).returnOrThrowIfBlank("keycloak client identifier",ConstantParameterName.get("keycloak.client.identifier")); 
+			String clientSecret = __inject__(ValueHelper.class).returnOrThrowIfBlank("keycloak client secret",ConstantParameterName.get("keycloak.client.secret")); 
+			String username = __inject__(ValueHelper.class).returnOrThrowIfBlank("keycloak credentials username",ConstantParameterName.get("keycloak.credential.username")); 
+			String password = __inject__(ValueHelper.class).returnOrThrowIfBlank("keycloak credentials password",ConstantParameterName.get("keycloak.credential.password"));
 			
 			__logInfo__("KEYCLOAK CLIENT TO BE CREATED\nurl:"+url+"\nrealm:"+realmName+"\nclient identifier:"+clientIdentifier+"\nclient secret:"+clientSecret
 					+"\nusername:"+username+"\npassword:"+password);

@@ -1,1 +1,1 @@
-docker build --tag "usermanagement-server:latest" ../../
+docker build --tag mic-utilisateur-gestion-server ../../

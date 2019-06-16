@@ -1,11 +1,3 @@
 swarm:
   port:
-    offset: ${server.port.offset}
-  datasources:
-    data-sources:
-      ${data.source.name}:
-        jndi-name: ${data.source.jndi.name}
-        driver-name: ${data.source.driver.name}
-        connection-url: ${data.source.url}
-        user-name: ${data.source.user}
-        password: ${data.source.password}
+    offset: ${deployment.standalone.port.offset}
