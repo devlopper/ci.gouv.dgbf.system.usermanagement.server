@@ -2,7 +2,7 @@ package ci.gouv.dgbf.system.usermanagement.server.representation.impl.account.ro
 
 import java.io.Serializable;
 
-import javax.inject.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.cyk.utility.server.representation.AbstractRepresentationEntityImpl;
 
@@ -12,7 +12,7 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RoleCategoryDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RoleCategoryDtoCollection;
 
-@Singleton
+@ApplicationScoped
 public class RoleCategoryRepresentationImpl extends AbstractRepresentationEntityImpl<RoleCategory,RoleCategoryBusiness,RoleCategoryDto,RoleCategoryDtoCollection> implements RoleCategoryRepresentation,Serializable {
 	private static final long serialVersionUID = 1L;
 

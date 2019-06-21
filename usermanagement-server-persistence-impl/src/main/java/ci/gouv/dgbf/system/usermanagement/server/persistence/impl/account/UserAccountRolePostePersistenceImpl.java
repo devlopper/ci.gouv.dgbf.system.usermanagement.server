@@ -3,7 +3,7 @@ package ci.gouv.dgbf.system.usermanagement.server.persistence.impl.account;
 import java.io.Serializable;
 import java.util.Collection;
 
-import javax.inject.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
@@ -16,7 +16,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Us
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountRolePoste;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
-@Singleton
+@ApplicationScoped
 public class UserAccountRolePostePersistenceImpl extends AbstractPersistenceEntityImpl<UserAccountRolePoste> implements UserAccountRolePostePersistence,Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -37,7 +37,8 @@ public class UserAccountRolePostePersistenceImpl extends AbstractPersistenceEnti
 	
 	@Override
 	public Collection<UserAccountRolePoste> readByUserAccount(UserAccount userAccount) {
-		return __readMany__(null,____getQueryParameters____(null,userAccount));
+		Properties properties = new Properties().setQueryIdentifier(readByUserAccount);
+		return __readMany__(properties,____getQueryParameters____(properties,userAccount));
 	}
 	
 	@Override

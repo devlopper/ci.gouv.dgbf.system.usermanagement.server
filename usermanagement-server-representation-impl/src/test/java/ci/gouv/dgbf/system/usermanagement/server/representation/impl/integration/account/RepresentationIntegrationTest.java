@@ -2,6 +2,7 @@ package ci.gouv.dgbf.system.usermanagement.server.representation.impl.integratio
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 import org.cyk.utility.server.representation.AbstractEntityCollection;
@@ -19,6 +20,7 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.RoleFunctionRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.RolePosteRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountInterimDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.PosteLocationDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.PosteLocationTypeDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RoleCategoryDto;
@@ -146,6 +148,25 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		__inject__(RolePosteRepresentation.class).deleteAll();
 		__inject__(PosteLocationRepresentation.class).deleteAll();
 		__inject__(PosteLocationTypeRepresentation.class).deleteAll();
+	}
+	
+	@Test
+	public void create_userAccountInterim() throws Exception{
+		UserAccountDto userAccount = new UserAccountDto();
+		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__());
+		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
+		
+		UserAccountDto interim = new UserAccountDto();
+		interim.getUser(Boolean.TRUE).setFirstName("Yao").setLastNames("Charles").setElectronicMailAddress(__getRandomElectronicMailAddress__());
+		interim.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
+		
+		UserAccountInterimDto userAccountInterim = new UserAccountInterimDto();
+		userAccountInterim.setUserAccount(userAccount);
+		userAccountInterim.setInterim(interim);
+		userAccountInterim.setFromDate(LocalDateTime.of(2000, 1, 1, 0, 0));
+		userAccountInterim.setToDate(LocalDateTime.of(2000, 2, 1, 0, 0));
+		
+		__inject__(TestRepresentationCreate.class).setName("Create user account interim").addObjectsToBeCreatedArray(userAccount,interim).addObjects(userAccountInterim).execute();
 	}
 	
 	@Override

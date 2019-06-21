@@ -2,7 +2,7 @@ package ci.gouv.dgbf.system.usermanagement.server.representation.impl.account;
 
 import java.io.Serializable;
 
-import javax.inject.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.cyk.utility.server.representation.AbstractRepresentationEntityImpl;
 
@@ -12,7 +12,7 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.Serv
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.ServiceDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.ServiceDtoCollection;
 
-@Singleton
+@ApplicationScoped
 public class ServiceRepresentationImpl extends AbstractRepresentationEntityImpl<Service,ServiceBusiness,ServiceDto,ServiceDtoCollection> implements ServiceRepresentation,Serializable {
 	private static final long serialVersionUID = 1L;
 

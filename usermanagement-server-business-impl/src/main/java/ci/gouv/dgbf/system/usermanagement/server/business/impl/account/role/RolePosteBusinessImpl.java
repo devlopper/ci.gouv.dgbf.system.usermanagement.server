@@ -2,7 +2,7 @@ package ci.gouv.dgbf.system.usermanagement.server.business.impl.account.role;
 
 import java.io.Serializable;
 
-import javax.inject.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.commons.lang3.StringUtils;
 import org.cyk.utility.__kernel__.constant.ConstantCharacter;
@@ -15,7 +15,7 @@ import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.RoleP
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.RolePostePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
 
-@Singleton
+@ApplicationScoped
 public class RolePosteBusinessImpl extends AbstractBusinessEntityImpl<RolePoste, RolePostePersistence> implements RolePosteBusiness,Serializable {
 	private static final long serialVersionUID = 1L;
 

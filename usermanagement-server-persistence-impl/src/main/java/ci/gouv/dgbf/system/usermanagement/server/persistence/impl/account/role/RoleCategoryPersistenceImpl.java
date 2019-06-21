@@ -2,7 +2,7 @@ package ci.gouv.dgbf.system.usermanagement.server.persistence.impl.account.role;
 
 import java.io.Serializable;
 
-import javax.inject.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.persistence.PersistenceServiceProvider;
@@ -10,7 +10,7 @@ import org.cyk.utility.server.persistence.PersistenceServiceProvider;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
-@Singleton
+@ApplicationScoped
 public class RoleCategoryPersistenceImpl extends AbstractRoleCategoryPersistenceImpl implements Serializable {
 	private static final long serialVersionUID = 1L;
 

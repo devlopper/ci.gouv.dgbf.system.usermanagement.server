@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.inject.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.UserTransaction;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
@@ -44,7 +44,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
 
-@Singleton
+@ApplicationScoped
 public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper,Serializable {
 	private static final long serialVersionUID = 1L;
 

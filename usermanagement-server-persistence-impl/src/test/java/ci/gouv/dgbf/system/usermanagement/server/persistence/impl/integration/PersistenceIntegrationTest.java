@@ -2,6 +2,7 @@ package ci.gouv.dgbf.system.usermanagement.server.persistence.impl.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.LocalDateTime;
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.UserRepresentation;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterim;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountRolePoste;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PosteLocation;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PosteLocationType;
@@ -169,6 +171,26 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 							,(List<String>)__inject__(CollectionHelper.class).instanciate("200")));
 				}
 			}).execute();
+	}
+	
+	@Test
+	public void create_userAccountInterim() throws Exception{
+		UserAccount userAccount = new UserAccount();
+		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
+		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
+		
+		UserAccount interim = new UserAccount();
+		interim.getUser(Boolean.TRUE).setFirstName("Yao").setElectronicMailAddress(__getRandomElectronicMailAddress__());
+		interim.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
+		
+		UserAccountInterim userAccountInterim = new UserAccountInterim();
+		userAccountInterim.setUserAccount(userAccount);
+		userAccountInterim.setInterim(interim);
+		userAccountInterim.setFromDate(LocalDateTime.of(2000, 1, 1,0,0));
+		userAccountInterim.setToDate(LocalDateTime.of(2000, 2, 1,0,0));
+		
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(userAccount.getUser(),userAccount.getAccount(),userAccount
+				,interim.getUser(),interim.getAccount(),interim).addObjects(userAccountInterim).execute();
 	}
 	
 }

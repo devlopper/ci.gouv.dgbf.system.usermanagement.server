@@ -2,7 +2,7 @@ package ci.gouv.dgbf.system.usermanagement.server.representation.impl.account.ro
 
 import java.io.Serializable;
 
-import javax.inject.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.cyk.utility.server.representation.AbstractRepresentationEntityImpl;
 
@@ -12,7 +12,7 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.PosteLocationDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.PosteLocationDtoCollection;
 
-@Singleton
+@ApplicationScoped
 public class PosteLocationRepresentationImpl extends AbstractRepresentationEntityImpl<PosteLocation,PosteLocationBusiness,PosteLocationDto,PosteLocationDtoCollection> implements PosteLocationRepresentation,Serializable {
 	private static final long serialVersionUID = 1L;
 

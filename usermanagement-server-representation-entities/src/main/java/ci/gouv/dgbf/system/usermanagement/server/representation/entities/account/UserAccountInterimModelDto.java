@@ -4,8 +4,6 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.cyk.utility.server.representation.AbstractEntityFromPersistenceEntity;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,12 +11,17 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 @XmlRootElement @Getter @Setter @Accessors(chain=true) @NoArgsConstructor @ToString
-public class UserDto extends AbstractEntityFromPersistenceEntity implements Serializable {
+public class UserAccountInterimModelDto extends AbstractUserAccountInterimDto implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private String firstName;
-	private String lastNames;
-	private String names;
-	private String electronicMailAddress;
+	@Override
+	public UserAccountDto getUserAccount(Boolean injectIfNull) {
+		return super.getUserAccount(injectIfNull);
+	}
+	
+	@Override
+	public UserAccountDto getInterim(Boolean injectIfNull) {
+		return super.getInterim(injectIfNull);
+	}
 	
 }

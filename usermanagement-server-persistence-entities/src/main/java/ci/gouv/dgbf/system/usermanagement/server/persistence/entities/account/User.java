@@ -7,9 +7,11 @@ import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByString;
+import org.cyk.utility.string.StringHelper;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -31,9 +33,20 @@ public class User extends AbstractIdentifiedByString implements Serializable {
 	
 	/**/
 
+	@Transient private String names;
+	
 	@Override
 	public User setIdentifier(String identifier) {
 		return (User) super.setIdentifier(identifier);
+	}
+	
+	public String getNames() {
+		if(names == null) {
+			names = firstName;
+			if(__inject__(StringHelper.class).isNotBlank(lastNames))
+				names = names + " " + lastNames;
+		}
+		return names;
 	}
 	
 	/**/
@@ -44,6 +57,7 @@ public class User extends AbstractIdentifiedByString implements Serializable {
 	public static final String FIELD_LAST_NAMES = "lastNames";
 	public static final String FIELD_ELECTRONIC_MAIL_ADDRESS = "electronicMailAddress";
 	public static final String FIELD_PHONE_NUMBER = "phoneNumber";
+	public static final String FIELD_NAMES = "names";
 	
 	public static final String TABLE_NAME = "util";
 	

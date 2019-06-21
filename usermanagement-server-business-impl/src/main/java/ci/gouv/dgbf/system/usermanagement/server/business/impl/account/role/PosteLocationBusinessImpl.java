@@ -2,7 +2,7 @@ package ci.gouv.dgbf.system.usermanagement.server.business.impl.account.role;
 
 import java.io.Serializable;
 
-import javax.inject.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.cyk.utility.server.business.AbstractBusinessEntityImpl;
 
@@ -10,7 +10,7 @@ import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.Poste
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.PosteLocationPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PosteLocation;
 
-@Singleton
+@ApplicationScoped
 public class PosteLocationBusinessImpl extends AbstractBusinessEntityImpl<PosteLocation, PosteLocationPersistence> implements PosteLocationBusiness,Serializable {
 	private static final long serialVersionUID = 1L;
 

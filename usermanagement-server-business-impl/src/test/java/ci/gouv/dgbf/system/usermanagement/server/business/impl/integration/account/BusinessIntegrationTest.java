@@ -2,6 +2,7 @@ package ci.gouv.dgbf.system.usermanagement.server.business.impl.integration.acco
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.LocalDateTime;
 import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import ci.gouv.dgbf.system.usermanagement.server.business.impl.ApplicationScopeL
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.RolePostePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Service;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterim;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PosteLocation;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PosteLocationType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory;
@@ -44,8 +46,9 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		__inject__(ApplicationScopeLifeCycleListener.class).initialize(null);
 	}
 	
-	@Test
+	//@Test
 	public void read_systemName() throws Exception{
+		System.setProperty("cyk.parameter.system.name", "Gestion des acteurs");
 		assertThat(__inject__(SystemNodeServer.class).getName()).isEqualTo("Gestion des acteurs");
 	}
 	
@@ -230,7 +233,26 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		__inject__(RoleCategoryBusiness.class).deleteAll();
 		__inject__(PosteLocationBusiness.class).deleteAll();
 		__inject__(PosteLocationTypeBusiness.class).deleteAll();
-		
-		
 	}
+	
+	@Test
+	public void create_userAccountInterim() throws Exception{
+		UserAccount userAccount = new UserAccount();
+		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
+		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
+		
+		UserAccount interim = new UserAccount();
+		interim.getUser(Boolean.TRUE).setFirstName("Yao").setElectronicMailAddress(__getRandomElectronicMailAddress__());
+		interim.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
+		
+		UserAccountInterim userAccountInterim = new UserAccountInterim();
+		userAccountInterim.setUserAccount(userAccount);
+		userAccountInterim.setInterim(interim);
+		userAccountInterim.setFromDate(LocalDateTime.of(2000, 1, 1,0,0));
+		userAccountInterim.setToDate(LocalDateTime.of(2000, 2, 1,0,0));
+		
+		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(userAccount.getUser(),userAccount.getAccount(),userAccount
+				,interim.getUser(),interim.getAccount(),interim).addObjects(userAccountInterim).execute();
+	}
+	
 }

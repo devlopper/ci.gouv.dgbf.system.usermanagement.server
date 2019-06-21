@@ -3,7 +3,7 @@ package ci.gouv.dgbf.system.usermanagement.server.persistence.impl.account.role;
 import java.io.Serializable;
 import java.util.Collection;
 
-import javax.inject.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.array.ArrayHelper;
@@ -14,7 +14,7 @@ import org.cyk.utility.server.persistence.query.PersistenceQueryRepository;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
 
-@Singleton
+@ApplicationScoped
 public class RolePostePersistenceImpl extends AbstractRolePostePersistenceImpl implements Serializable {
 	private static final long serialVersionUID = 1L;
 

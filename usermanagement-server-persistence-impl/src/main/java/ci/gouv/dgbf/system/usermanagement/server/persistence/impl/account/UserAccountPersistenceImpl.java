@@ -2,7 +2,7 @@ package ci.gouv.dgbf.system.usermanagement.server.persistence.impl.account;
 
 import java.io.Serializable;
 
-import javax.inject.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
@@ -14,16 +14,17 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAcc
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
-@Singleton
+@ApplicationScoped
 public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<UserAccount> implements UserAccountPersistence,Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	private String readByAccountIdentifier;
+	private String readWhereAccountIdentifierOrFirstUserFirstNameOrUserLastnamesContains;
 	
 	@Override
 	protected void __listenPostConstructPersistenceQueries__() {
 		super.__listenPostConstructPersistenceQueries__();
-		addQueryCollectInstances(readByAccountIdentifier, "SELECT tuple FROM UserAccount tuple WHERE lower(tuple.account.identifier) LIKE lower(:accountIdentifier)");
+		addQueryCollectInstances(readWhereAccountIdentifierOrFirstUserFirstNameOrUserLastnamesContains, "SELECT tuple FROM UserAccount tuple WHERE lower(tuple.account.identifier)"
+				+ " LIKE lower(:query) OR lower(tuple.user.firstName) LIKE lower(:query) OR lower(tuple.user.lastNames) LIKE lower(:query)");
 	}
 	
 	@Override
@@ -54,7 +55,7 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 	
 	protected Object[] __getQueryParameters__(String queryIdentifier,Properties properties,Object...objects){
 		PersistenceQuery persistenceQuery = __inject__(PersistenceQueryRepository.class).getBySystemIdentifier(queryIdentifier);
-		if(persistenceQuery.isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readByAccountIdentifier,queryIdentifier))
+		if(persistenceQuery.isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readWhereAccountIdentifierOrFirstUserFirstNameOrUserLastnamesContains,queryIdentifier))
 			return new Object[]{"accountIdentifier", objects[0]};
 		return super.__getQueryParameters__(queryIdentifier,properties, objects);
 	}

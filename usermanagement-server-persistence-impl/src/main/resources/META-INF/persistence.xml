@@ -12,6 +12,8 @@
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Service</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountRolePoste</class>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterim</class>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterimModel</class>
     	<exclude-unlisted-classes>true</exclude-unlisted-classes>
 		<properties>
 			<property name="hibernate.hbm2ddl.auto" value="${hibernate.hbm2ddl.auto}"/>
