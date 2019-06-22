@@ -29,16 +29,19 @@ public class UserAccountRolePoste extends AbstractIdentifiedByString implements 
 
 	@ManyToOne @JoinColumn(name=COLUMN_USER_ACCOUNT) @NotNull private UserAccount userAccount;
 	@ManyToOne @JoinColumn(name=COLUMN_ROLE_POSTE) @NotNull private RolePoste rolePoste;
+	private Boolean isInterim;
 	
 	/**/
 	
 	public static final String FIELD_USER_ACCOUNT = "userAccount";
 	public static final String FIELD_ROLE_POSTE = "rolePoste";
+	public static final String FIELD_IS_INTERIM = "isInterim";
 	
 	public static final String TABLE_NAME = UserAccount.TABLE_NAME+"_"+RolePoste.TABLE_NAME;
 	
 	public static final String COLUMN_USER_ACCOUNT = UserAccount.TABLE_NAME;
 	public static final String COLUMN_ROLE_POSTE = RolePoste.TABLE_NAME;
+	public static final String COLUMN_IS_INTERIM = "est_"+UserAccountInterim.TABLE_NAME;
 	
 	public static final String UNIQUE_CONSTRAINT_USER_ACCOUNT_ROLE_POSTE_NAME = COLUMN_USER_ACCOUNT+ "_"+COLUMN_ROLE_POSTE;
 	
