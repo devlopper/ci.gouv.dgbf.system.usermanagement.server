@@ -44,11 +44,8 @@ public class RolePoste extends AbstractIdentifiedByStringAndCodedAndNamed implem
 	
 	/**/
 	
-	public static final String FIELD_FUNCTION = "fonction";
+	public static final String FIELD_FUNCTION = "function";
 	public static final String FIELD_LOCATION = "location";
-	public static final String FIELD_MINISTRY = "ministry";
-	public static final String FIELD_PROGRAM = "program";
-	public static final String FIELD_ADMINISTRATIVE_UNIT = "administrativeUnit";
 	
 	public static final String TABLE_NAME = "poste";
 	

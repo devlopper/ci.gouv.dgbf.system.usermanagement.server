@@ -7,9 +7,12 @@
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleFunction</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste</class>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile</class>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileRoleFunction</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.User</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Account</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount</class>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Service</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountRolePoste</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterim</class>
