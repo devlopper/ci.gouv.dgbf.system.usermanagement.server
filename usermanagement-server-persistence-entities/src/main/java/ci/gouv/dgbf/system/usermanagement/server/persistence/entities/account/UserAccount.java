@@ -17,6 +17,8 @@ import org.cyk.utility.array.ArrayHelper;
 import org.cyk.utility.collection.CollectionHelper;
 import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByString;
 
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profiles;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePostes;
 import lombok.Getter;
@@ -34,8 +36,9 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 
 	@ManyToOne @JoinColumn(name=COLUMN_USER) @NotNull private User user;
 	@ManyToOne @JoinColumn(name=COLUMN_ACCOUNT) @NotNull private Account account;
+	
+	@Transient private Profiles profiles;
 	@Transient private RolePostes postes;
-	//@Transient private Collection<RolePoste> rolePostes;
 	@Transient private Boolean isNotifiableByMail;
 	
 	/**/
@@ -53,6 +56,22 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	
 	public Account getAccount(Boolean injectIfNull) {
 		return (Account) __getInjectIfNull__(FIELD_ACCOUNT, injectIfNull);
+	}
+	
+	public Profiles getProfiles(Boolean injectIfNull) {
+		return (Profiles) __getInjectIfNull__(FIELD_PROFILES, injectIfNull);
+	}
+	
+	public UserAccount addProfiles(Collection<Profile> profiles) {
+		getProfiles(Boolean.TRUE).add(profiles);
+		return this;
+	}
+	
+	public UserAccount addRoleProfiles(Profile...profiles) {
+		if(__inject__(ArrayHelper.class).isNotEmpty(profiles)) {
+			addProfiles(__inject__(CollectionHelper.class).instanciate(profiles));
+		}
+		return this;
 	}
 	
 	public RolePostes getPostes(Boolean injectIfNull) {
@@ -75,6 +94,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	
 	public static final String FIELD_USER = "user";
 	public static final String FIELD_ACCOUNT = "account";
+	public static final String FIELD_PROFILES = "profiles";
 	public static final String FIELD_POSTES = "postes";
 	
 	public static final String TABLE_NAME = Account.TABLE_NAME+"_"+User.TABLE_NAME;

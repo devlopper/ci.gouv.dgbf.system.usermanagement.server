@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,6 +23,7 @@ import org.keycloak.representations.idm.UserRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.PosteLocationBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.PosteLocationTypeBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.RoleCategoryBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.RoleFunctionBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.RolePosteBusiness;
@@ -132,11 +134,14 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		__inject__(RoleFunctionBusiness.class).create(roleFunction);
 		RolePoste rolePoste = new RolePoste().setFunction(roleFunction).setLocation(location);
 		__inject__(RolePosteBusiness.class).create(rolePoste);
+		Profile profile = new Profile().setCode("p001").setName(__getRandomName__());
+		__inject__(ProfileBusiness.class).create(profile);
 		
 		UserAccount userAccount = new UserAccount();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__());
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
 		userAccount.addRolePostes(rolePoste);
+		userAccount.addRoleProfiles(profile);
 		__inject__(TestBusinessCreate.class).setName("Create user account").addObjects(userAccount).addTryEndRunnables(new Runnable() {
 			@Override
 			public void run() {
@@ -149,6 +154,23 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 				assertThat(userAccount01.getPostes()).isNotNull();
 				assertThat(userAccount01.getPostes().get()).isNotEmpty();
 				assertThat(userAccount01.getPostes().get().stream().map(RolePoste::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
+				assertThat(userAccount01.getProfiles()).isNull();
+				
+				userAccount01 = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_PROFILES));
+				assertThat(userAccount01).isNotNull();
+				assertThat(userAccount01.getProfiles()).isNotNull();
+				assertThat(userAccount01.getProfiles().get()).isNotEmpty();
+				assertThat(userAccount01.getProfiles().get().stream().map(Profile::getCode).collect(Collectors.toList())).contains("p001");
+				assertThat(userAccount01.getPostes()).isNull();
+				
+				userAccount01 = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(),new Properties().setFields(Arrays.asList(UserAccount.FIELD_POSTES,UserAccount.FIELD_PROFILES)));
+				assertThat(userAccount01).isNotNull();
+				assertThat(userAccount01.getPostes()).isNotNull();
+				assertThat(userAccount01.getPostes().get()).isNotEmpty();
+				assertThat(userAccount01.getPostes().get().stream().map(RolePoste::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
+				assertThat(userAccount01.getProfiles()).isNotNull();
+				assertThat(userAccount01.getProfiles().get()).isNotEmpty();
+				assertThat(userAccount01.getProfiles().get().stream().map(Profile::getCode).collect(Collectors.toList())).contains("p001");
 				
 				UserResource userResource = __inject__(KeycloakHelper.class).getUsersResource().get(userAccount.getIdentifier());
 				UserRepresentation userRepresentation = userResource.toRepresentation();
@@ -158,7 +180,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 						).hasSize(1);
 				
 			}
-		}).execute();
+		}).setIsCatchThrowable(Boolean.FALSE).execute();
 		
 		__inject__(RolePosteBusiness.class).deleteAll();
 		__inject__(RoleFunctionBusiness.class).deleteAll();

@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.apache.commons.lang3.StringUtils;
-import org.cyk.utility.__kernel__.constant.ConstantCharacter;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.business.AbstractBusinessEntityImpl;
 import org.cyk.utility.server.business.BusinessFunctionCreator;
@@ -19,12 +17,16 @@ import org.cyk.utility.string.Strings;
 
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.AccountBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountProfileBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountRolePosteBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountRolePostePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountRolePoste;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
 
 @ApplicationScoped
@@ -42,8 +44,8 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 		function.addTryBeginRunnables(new Runnable() {
 			@Override
 			public void run() {
-				__createIfSystemIdentifierIsBlank__(userAccount.getUser());//TODO write save method and use it here
-				__create__(userAccount.getAccount());//TODO write save method and use it here
+				__create__(userAccount.getUser());
+				__create__(userAccount.getAccount());
 			}
 		});
 	}
@@ -51,6 +53,13 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 	@Override
 	protected void __listenExecuteCreateOneAfter__(UserAccount userAccount, Properties properties,BusinessFunctionCreator function) {
 		super.__listenExecuteCreateOneAfter__(userAccount, properties, function);
+		if(Boolean.TRUE.equals(__injectCollectionHelper__().isNotEmpty(userAccount.getProfiles()))) {
+			Collection<UserAccountProfile> userAccountProfiles = new ArrayList<>();
+			for(Profile index : userAccount.getProfiles().get())
+				userAccountProfiles.add(new UserAccountProfile().setUserAccount(userAccount).setProfile(index));
+			__inject__(UserAccountProfileBusiness.class).createMany(userAccountProfiles);
+		}
+		
 		if(Boolean.TRUE.equals(__injectCollectionHelper__().isNotEmpty(userAccount.getPostes()))) {
 			Collection<UserAccountRolePoste> userAccountRolePostes = new ArrayList<>();
 			for(RolePoste index : userAccount.getPostes().get())
@@ -68,19 +77,16 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 	@Override
 	protected void __processAfterRead__(UserAccount userAccount,Properties properties) {
 		super.__processAfterRead__(userAccount,properties);
-		Object fieldsObject = Properties.getFromPath(properties, Properties.FIELDS);
-		Strings fields = null;
-		if(fieldsObject instanceof Strings)
-			fields = (Strings) fieldsObject;
-		else if(fieldsObject instanceof String) {
-			fields = __inject__(Strings.class).add(StringUtils.split((String) fieldsObject,ConstantCharacter.COMA.toString()));
-		}
-		
+		Strings fields = __getFieldsFromProperties__(properties);
 		if(__injectCollectionHelper__().isNotEmpty(fields))
 			fields.get().forEach(new Consumer<String>() {
 				@Override
 				public void accept(String field) {
-					if(UserAccount.FIELD_POSTES.equals(field)) {
+					if(UserAccount.FIELD_PROFILES.equals(field)) {
+						Collection<UserAccountProfile> userAccountProfiles = __inject__(UserAccountProfilePersistence.class).readByUserAccount(userAccount);
+						if(__injectCollectionHelper__().isNotEmpty(userAccountProfiles))
+							userAccount.getProfiles(Boolean.TRUE).add(userAccountProfiles.stream().map(UserAccountProfile::getProfile).collect(Collectors.toList()));
+					}else if(UserAccount.FIELD_POSTES.equals(field)) {
 						Collection<UserAccountRolePoste> userAccountRolePostes = __inject__(UserAccountRolePostePersistence.class).readByUserAccount(userAccount);
 						if(__injectCollectionHelper__().isNotEmpty(userAccountRolePostes))
 							userAccount.getPostes(Boolean.TRUE).add(userAccountRolePostes.stream().map(UserAccountRolePoste::getRolePoste).collect(Collectors.toList()));
@@ -92,42 +98,22 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 	@Override
 	protected void __listenExecuteUpdateOneBefore__(UserAccount userAccount, Properties properties,BusinessFunctionModifier function) {
 		super.__listenExecuteUpdateOneBefore__(userAccount, properties, function);
-		__inject__(UserBusiness.class).update(userAccount.getUser());//TODO write save method and use it here
-		__inject__(AccountBusiness.class).update(userAccount.getAccount());//TODO write save method and use it here
+		__inject__(UserBusiness.class).save(userAccount.getUser());
+		__inject__(AccountBusiness.class).save(userAccount.getAccount());
 		
-		//Collection<RolePoste> userCollection = userAccount.getRolePostes();
 		Collection<UserAccountRolePoste> databaseCollection = __inject__(UserAccountRolePostePersistence.class).readByUserAccount(userAccount);
 		Collection<RolePoste> databaseRolePostes = __injectCollectionHelper__().isEmpty(databaseCollection) ? null : databaseCollection.stream()
 				.map(UserAccountRolePoste::getRolePoste).collect(Collectors.toList());
-		Collection<UserAccountRolePoste> userAccountRolePostesToDelete = null;
-		Collection<UserAccountRolePoste> userAccountRolePostesToSave = null;
 		
-		//what to delete
-		if(__injectCollectionHelper__().isNotEmpty(databaseCollection))
-			for(UserAccountRolePoste database : databaseCollection) {
-				if(!Boolean.TRUE.equals(__injectCollectionHelper__().contains(userAccount.getPostes(), database.getRolePoste()))) {
-					if(userAccountRolePostesToDelete == null)
-						userAccountRolePostesToDelete = new ArrayList<>();
-					userAccountRolePostesToDelete.add(database);
-				}
-			}
+		__delete__(userAccount.getPostes(), databaseCollection,UserAccountRolePoste.FIELD_ROLE_POSTE);
+		__save__(UserAccountRolePoste.class,userAccount.getPostes(), databaseRolePostes, UserAccountRolePoste.FIELD_ROLE_POSTE, userAccount, UserAccountRolePoste.FIELD_USER_ACCOUNT);
 		
-		//what to save
-		if(__injectCollectionHelper__().isNotEmpty(userAccount.getPostes())) {
-			for(RolePoste index : userAccount.getPostes().get()) {
-				//check if not yet created
-				if(!Boolean.TRUE.equals(__injectCollectionHelper__().contains(databaseRolePostes, index))) {
-					if(userAccountRolePostesToSave == null)
-						userAccountRolePostesToSave = new ArrayList<>();
-					userAccountRolePostesToSave.add(new UserAccountRolePoste().setUserAccount(userAccount).setRolePoste(index));	
-				}
-			}
-		}
+		Collection<UserAccountProfile> databaseUserAccountProfiles = __inject__(UserAccountProfilePersistence.class).readByUserAccount(userAccount);
+		Collection<Profile> databaseProfiles = __injectCollectionHelper__().isEmpty(databaseCollection) ? null : databaseUserAccountProfiles.stream()
+				.map(UserAccountProfile::getProfile).collect(Collectors.toList());
 		
-		if(__injectCollectionHelper__().isNotEmpty(userAccountRolePostesToDelete))
-			__inject__(UserAccountRolePosteBusiness.class).deleteMany(userAccountRolePostesToDelete);
-		if(__injectCollectionHelper__().isNotEmpty(userAccountRolePostesToSave))
-			__inject__(UserAccountRolePosteBusiness.class).createMany(userAccountRolePostesToSave);
+		__delete__(userAccount.getProfiles(), databaseUserAccountProfiles,UserAccountProfile.FIELD_PROFILE);
+		__save__(UserAccountProfile.class,userAccount.getProfiles(), databaseProfiles, UserAccountProfile.FIELD_PROFILE, userAccount, UserAccountProfile.FIELD_USER_ACCOUNT);
 	}
 	
 	@Override
@@ -136,19 +122,16 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 		function.addTryBeginRunnables(new Runnable() {
 			@Override
 			public void run() {
-				Collection<UserAccountRolePoste> userAccountRolePostes = __inject__(UserAccountRolePostePersistence.class).readByUserAccount(userAccount);
-				if(__injectCollectionHelper__().isNotEmpty(userAccountRolePostes))
-					__inject__(UserAccountRolePosteBusiness.class).deleteMany(userAccountRolePostes);
+				__deleteMany__(__inject__(UserAccountRolePostePersistence.class).readByUserAccount(userAccount));
+				__deleteMany__(__inject__(UserAccountProfilePersistence.class).readByUserAccount(userAccount));
 			}
 		});
 		
 		function.addTryEndRunnables(new Runnable() {
 			@Override
 			public void run() {
-				if(userAccount.getUser() != null)
-					__inject__(UserBusiness.class).delete(userAccount.getUser());
-				if(userAccount.getAccount() != null)
-					__inject__(AccountBusiness.class).delete(userAccount.getAccount());
+				__delete__(userAccount.getUser());
+				__delete__(userAccount.getAccount());
 			}
 		});
 	}
