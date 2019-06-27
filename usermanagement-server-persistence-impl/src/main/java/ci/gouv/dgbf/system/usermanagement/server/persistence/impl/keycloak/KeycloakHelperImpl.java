@@ -280,7 +280,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	
 	@Override
 	public String saveUserAccount(UserAccount userAccount) {
-		Collection<String> rolesCodes = __inject__(CollectionHelper.class).isEmpty(userAccount.getRolePostes()) ? null : userAccount.getRolePostes().get()
+		Collection<String> rolesCodes = __inject__(CollectionHelper.class).isEmpty(userAccount.getPostes()) ? null : userAccount.getPostes().get()
 				.stream().map(x -> x.getFunction().getCode()).collect(Collectors.toList());
 		
 		String identifier = saveUserAccount(userAccount.getIdentifier(),userAccount.getUser().getFirstName(), userAccount.getUser().getLastNames(), userAccount.getUser().getElectronicMailAddress()

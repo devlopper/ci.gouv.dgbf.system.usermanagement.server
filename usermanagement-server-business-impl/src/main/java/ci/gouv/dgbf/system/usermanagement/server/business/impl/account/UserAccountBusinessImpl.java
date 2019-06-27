@@ -51,9 +51,9 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 	@Override
 	protected void __listenExecuteCreateOneAfter__(UserAccount userAccount, Properties properties,BusinessFunctionCreator function) {
 		super.__listenExecuteCreateOneAfter__(userAccount, properties, function);
-		if(Boolean.TRUE.equals(__injectCollectionHelper__().isNotEmpty(userAccount.getRolePostes()))) {
+		if(Boolean.TRUE.equals(__injectCollectionHelper__().isNotEmpty(userAccount.getPostes()))) {
 			Collection<UserAccountRolePoste> userAccountRolePostes = new ArrayList<>();
-			for(RolePoste index : userAccount.getRolePostes().get())
+			for(RolePoste index : userAccount.getPostes().get())
 				userAccountRolePostes.add(new UserAccountRolePoste().setUserAccount(userAccount).setRolePoste(index));
 			__inject__(UserAccountRolePosteBusiness.class).createMany(userAccountRolePostes);
 		}
@@ -80,10 +80,10 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 			fields.get().forEach(new Consumer<String>() {
 				@Override
 				public void accept(String field) {
-					if(UserAccount.FIELD_ROLE_POSTES.equals(field)) {
+					if(UserAccount.FIELD_POSTES.equals(field)) {
 						Collection<UserAccountRolePoste> userAccountRolePostes = __inject__(UserAccountRolePostePersistence.class).readByUserAccount(userAccount);
 						if(__injectCollectionHelper__().isNotEmpty(userAccountRolePostes))
-							userAccount.getRolePostes(Boolean.TRUE).add(userAccountRolePostes.stream().map(UserAccountRolePoste::getRolePoste).collect(Collectors.toList()));
+							userAccount.getPostes(Boolean.TRUE).add(userAccountRolePostes.stream().map(UserAccountRolePoste::getRolePoste).collect(Collectors.toList()));
 					}
 				}
 			});
@@ -105,7 +105,7 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 		//what to delete
 		if(__injectCollectionHelper__().isNotEmpty(databaseCollection))
 			for(UserAccountRolePoste database : databaseCollection) {
-				if(!Boolean.TRUE.equals(__injectCollectionHelper__().contains(userAccount.getRolePostes(), database.getRolePoste()))) {
+				if(!Boolean.TRUE.equals(__injectCollectionHelper__().contains(userAccount.getPostes(), database.getRolePoste()))) {
 					if(userAccountRolePostesToDelete == null)
 						userAccountRolePostesToDelete = new ArrayList<>();
 					userAccountRolePostesToDelete.add(database);
@@ -113,8 +113,8 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 			}
 		
 		//what to save
-		if(__injectCollectionHelper__().isNotEmpty(userAccount.getRolePostes())) {
-			for(RolePoste index : userAccount.getRolePostes().get()) {
+		if(__injectCollectionHelper__().isNotEmpty(userAccount.getPostes())) {
+			for(RolePoste index : userAccount.getPostes().get()) {
 				//check if not yet created
 				if(!Boolean.TRUE.equals(__injectCollectionHelper__().contains(databaseRolePostes, index))) {
 					if(userAccountRolePostesToSave == null)

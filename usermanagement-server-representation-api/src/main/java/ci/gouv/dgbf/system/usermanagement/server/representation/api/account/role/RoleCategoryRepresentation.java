@@ -11,6 +11,6 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 @Path(RoleCategoryRepresentation.PATH)
 public interface RoleCategoryRepresentation extends RepresentationEntity<RoleCategory,RoleCategoryDto,RoleCategoryDtoCollection> {
 	
-	String PATH = "/rolecategory";
+	String PATH = "/categorie";
 	
 }

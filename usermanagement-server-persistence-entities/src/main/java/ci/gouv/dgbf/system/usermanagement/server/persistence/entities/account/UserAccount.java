@@ -34,7 +34,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 
 	@ManyToOne @JoinColumn(name=COLUMN_USER) @NotNull private User user;
 	@ManyToOne @JoinColumn(name=COLUMN_ACCOUNT) @NotNull private Account account;
-	@Transient private RolePostes rolePostes;
+	@Transient private RolePostes postes;
 	//@Transient private Collection<RolePoste> rolePostes;
 	@Transient private Boolean isNotifiableByMail;
 	
@@ -55,18 +55,18 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 		return (Account) __getInjectIfNull__(FIELD_ACCOUNT, injectIfNull);
 	}
 	
-	public RolePostes getRolePostes(Boolean injectIfNull) {
-		return (RolePostes) __getInjectIfNull__(FIELD_ROLE_POSTES, injectIfNull);
+	public RolePostes getPostes(Boolean injectIfNull) {
+		return (RolePostes) __getInjectIfNull__(FIELD_POSTES, injectIfNull);
 	}
 	
-	public UserAccount addRolePostes(Collection<RolePoste> rolePostes) {
-		getRolePostes(Boolean.TRUE).add(rolePostes);
+	public UserAccount addPostes(Collection<RolePoste> rolePostes) {
+		getPostes(Boolean.TRUE).add(rolePostes);
 		return this;
 	}
 	
 	public UserAccount addRolePostes(RolePoste...rolePostes) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(rolePostes)) {
-			addRolePostes(__inject__(CollectionHelper.class).instanciate(rolePostes));
+			addPostes(__inject__(CollectionHelper.class).instanciate(rolePostes));
 		}
 		return this;
 	}
@@ -75,7 +75,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	
 	public static final String FIELD_USER = "user";
 	public static final String FIELD_ACCOUNT = "account";
-	public static final String FIELD_ROLE_POSTES = "rolePostes";
+	public static final String FIELD_POSTES = "postes";
 	
 	public static final String TABLE_NAME = Account.TABLE_NAME+"_"+User.TABLE_NAME;
 	

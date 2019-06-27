@@ -18,17 +18,17 @@ public class FieldValueCopyImpl extends AbstractFieldValueCopyImpl implements Se
 
 	@Override
 	protected Object __processValue__(Field source, Field destination, Object value) {
-		if(__injectFieldHelper__().getField(UserAccountDto.class, UserAccountDto.FIELD_ROLE_POSTES).equals(source) 
-				&& __injectFieldHelper__().getField(UserAccount.class, UserAccount.FIELD_ROLE_POSTES).equals(destination)) {
-			RolePostes rolePostes = null;
+		if(__injectFieldHelper__().getField(UserAccountDto.class, UserAccountDto.FIELD_POSTES).equals(source) 
+				&& __injectFieldHelper__().getField(UserAccount.class, UserAccount.FIELD_POSTES).equals(destination)) {
+			RolePostes postes = null;
 			RolePosteDtoCollection rolePosteDtoCollection = ((RolePosteDtoCollection) value);
 			if(rolePosteDtoCollection != null && Boolean.TRUE.equals(__injectCollectionHelper__().isNotEmpty(rolePosteDtoCollection.getCollection()))) {
-				rolePostes = __inject__(RolePostes.class);
+				postes = __inject__(RolePostes.class);
 				for(RolePosteDto index : rolePosteDtoCollection.getCollection()) {
-					rolePostes.add(__inject__(RolePostePersistence.class).readOneByBusinessIdentifier(index.getCode()));
+					postes.add(__inject__(RolePostePersistence.class).readOneByBusinessIdentifier(index.getCode()));
 				}
 			}
-			return rolePostes;
+			return postes;
 		}else
 			return super.__processValue__(source, destination, value);
 	}

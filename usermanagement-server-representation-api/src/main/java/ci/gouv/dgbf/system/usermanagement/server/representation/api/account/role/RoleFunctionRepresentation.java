@@ -11,6 +11,6 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 @Path(RoleFunctionRepresentation.PATH)
 public interface RoleFunctionRepresentation extends RepresentationEntity<RoleFunction,RoleFunctionDto,RoleFunctionDtoCollection> {
 	
-	String PATH = "/rolefunction";
+	String PATH = "/fonction";
 	
 }

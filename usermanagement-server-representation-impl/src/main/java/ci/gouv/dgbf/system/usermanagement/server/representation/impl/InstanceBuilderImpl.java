@@ -69,9 +69,9 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			representation.setIdentifier(persistence.getIdentifier());
 			representation.setUser(__inject__(InstanceHelper.class).buildOne(UserDto.class, persistence.getUser()));
 			representation.setAccount(__inject__(InstanceHelper.class).buildOne(AccountDto.class, persistence.getAccount()));
-			if(__injectCollectionHelper__().isNotEmpty(persistence.getRolePostes()))
-				for(RolePoste index : persistence.getRolePostes().get())
-					representation.addRolePostes(__inject__(InstanceHelper.class).buildOne(RolePosteDto.class, index));
+			if(__injectCollectionHelper__().isNotEmpty(persistence.getPostes()))
+				for(RolePoste index : persistence.getPostes().get())
+					representation.addPostes(__inject__(InstanceHelper.class).buildOne(RolePosteDto.class, index));
 		}
 		//Representation to Persistence
 		else if(source instanceof UserAccountDto && destination instanceof UserAccount) {
@@ -80,16 +80,16 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			persistence.setIdentifier(representation.getIdentifier());
 			persistence.setUser(__inject__(InstanceHelper.class).buildOne(User.class, representation.getUser()));
 			persistence.setAccount(__inject__(InstanceHelper.class).buildOne(Account.class, representation.getAccount()));
-			persistence.setRolePostes(null);
-			if(representation.getRolePostes()!=null && __injectCollectionHelper__().isNotEmpty(representation.getRolePostes().getCollection()))
-				for(RolePosteDto index : representation.getRolePostes().getCollection()) {
+			persistence.setPostes(null);
+			if(representation.getPostes()!=null && __injectCollectionHelper__().isNotEmpty(representation.getPostes().getCollection()))
+				for(RolePosteDto index : representation.getPostes().getCollection()) {
 					RolePoste rolePoste = null;
 					if(__inject__(StringHelper.class).isBlank(index.getIdentifier()))
 						rolePoste = __inject__(RolePostePersistence.class).readOneByBusinessIdentifier(index.getCode());
 					else
 						rolePoste = __inject__(RolePostePersistence.class).readOneBySystemIdentifier(index.getIdentifier());
 					if(rolePoste != null)
-						persistence.getRolePostes(Boolean.TRUE).add(rolePoste);
+						persistence.getPostes(Boolean.TRUE).add(rolePoste);
 				}
 		}
 		

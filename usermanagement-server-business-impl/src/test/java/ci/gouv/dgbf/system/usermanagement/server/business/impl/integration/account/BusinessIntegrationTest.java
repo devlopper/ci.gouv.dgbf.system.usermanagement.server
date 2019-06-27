@@ -12,7 +12,6 @@ import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.collection.CollectionHelper;
 import org.cyk.utility.server.business.test.TestBusinessCreate;
 import org.cyk.utility.server.business.test.arquillian.AbstractBusinessArquillianIntegrationTestWithDefaultDeployment;
-import org.cyk.utility.server.persistence.test.TestPersistenceCreate;
 import org.cyk.utility.stream.distributed.Topic;
 import org.cyk.utility.system.node.SystemNodeServer;
 import org.cyk.utility.time.TimeHelper;
@@ -143,13 +142,13 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 			public void run() {
 				UserAccount userAccount01 = __inject__(UserAccountBusiness.class).findOneBySystemIdentifier(userAccount.getIdentifier());
 				assertThat(userAccount01).isNotNull();
-				assertThat(userAccount01.getRolePostes()).isNull();
+				assertThat(userAccount01.getPostes()).isNull();
 				
-				userAccount01 = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_ROLE_POSTES));
+				userAccount01 = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_POSTES));
 				assertThat(userAccount01).isNotNull();
-				assertThat(userAccount01.getRolePostes()).isNotNull();
-				assertThat(userAccount01.getRolePostes().get()).isNotEmpty();
-				assertThat(userAccount01.getRolePostes().get().stream().map(RolePoste::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
+				assertThat(userAccount01.getPostes()).isNotNull();
+				assertThat(userAccount01.getPostes().get()).isNotEmpty();
+				assertThat(userAccount01.getPostes().get().stream().map(RolePoste::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
 				
 				UserResource userResource = __inject__(KeycloakHelper.class).getUsersResource().get(userAccount.getIdentifier());
 				UserRepresentation userRepresentation = userResource.toRepresentation();
@@ -183,7 +182,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		Profile profile = new Profile();
 		profile.setCode(__getRandomCode__()).setName(__getRandomName__());
 		UserAccountProfile userAccountProfile = new UserAccountProfile().setUserAccount(userAccount).setProfile(profile);
-		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(userAccount.getUser(),userAccount.getAccount(),userAccount,profile).addObjects(userAccountProfile).execute();
+		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(userAccount.getUser(),userAccount.getAccount(),userAccount,profile).addObjects(userAccountProfile).execute();
 	}
 	
 	@Test
@@ -216,20 +215,20 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 				new AbstractMap.SimpleEntry<String, List<String>>("MINISTERE",(List<String>)__inject__(CollectionHelper.class).instanciate("21"))
 				).hasSize(1);
 		
-		userAccount = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(), new Properties().setFields(UserAccount.FIELD_ROLE_POSTES));
+		userAccount = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(), new Properties().setFields(UserAccount.FIELD_POSTES));
 		assertThat(userAccount).isNotNull();
-		assertThat(userAccount.getRolePostes()).isNotNull();
-		assertThat(userAccount.getRolePostes().get()).isNotEmpty();
-		assertThat(userAccount.getRolePostes().get().stream().map(RolePoste::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
+		assertThat(userAccount.getPostes()).isNotNull();
+		assertThat(userAccount.getPostes().get()).isNotEmpty();
+		assertThat(userAccount.getPostes().get().stream().map(RolePoste::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
 		
 		userAccount.addRolePostes(__inject__(RolePostePersistence.class).readOneByBusinessIdentifier("ASSISTANT_SAISIE_MINISTERE_21"));
-		__inject__(UserAccountBusiness.class).update(userAccount,new Properties().setFields(UserAccount.FIELD_ROLE_POSTES));
+		__inject__(UserAccountBusiness.class).update(userAccount,new Properties().setFields(UserAccount.FIELD_POSTES));
 		
-		userAccount = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(), new Properties().setFields(UserAccount.FIELD_ROLE_POSTES));
+		userAccount = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(), new Properties().setFields(UserAccount.FIELD_POSTES));
 		assertThat(userAccount).isNotNull();
-		assertThat(userAccount.getRolePostes()).isNotNull();
-		assertThat(userAccount.getRolePostes().get()).isNotEmpty();
-		assertThat(userAccount.getRolePostes().get().stream().map(RolePoste::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21"
+		assertThat(userAccount.getPostes()).isNotNull();
+		assertThat(userAccount.getPostes().get()).isNotEmpty();
+		assertThat(userAccount.getPostes().get().stream().map(RolePoste::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21"
 				,"ASSISTANT_SAISIE_MINISTERE_21");
 		
 		userResource = __inject__(KeycloakHelper.class).getUsersResource().get(userAccount.getIdentifier());
@@ -245,13 +244,13 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		__inject__(RolePosteBusiness.class).create(rolePoste);
 		
 		userAccount.addRolePostes(__inject__(RolePostePersistence.class).readOneByBusinessIdentifier("ASSISTANT_SAISIE_MINISTERE_18"));
-		__inject__(UserAccountBusiness.class).update(userAccount,new Properties().setFields(UserAccount.FIELD_ROLE_POSTES));
+		__inject__(UserAccountBusiness.class).update(userAccount,new Properties().setFields(UserAccount.FIELD_POSTES));
 		
-		userAccount = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(), new Properties().setFields(UserAccount.FIELD_ROLE_POSTES));
+		userAccount = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(), new Properties().setFields(UserAccount.FIELD_POSTES));
 		assertThat(userAccount).isNotNull();
-		assertThat(userAccount.getRolePostes()).isNotNull();
-		assertThat(userAccount.getRolePostes().get()).isNotEmpty();
-		assertThat(userAccount.getRolePostes().get().stream().map(RolePoste::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21"
+		assertThat(userAccount.getPostes()).isNotNull();
+		assertThat(userAccount.getPostes().get()).isNotEmpty();
+		assertThat(userAccount.getPostes().get().stream().map(RolePoste::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21"
 				,"ASSISTANT_SAISIE_MINISTERE_21","ASSISTANT_SAISIE_MINISTERE_18");
 		
 		userResource = __inject__(KeycloakHelper.class).getUsersResource().get(userAccount.getIdentifier());
