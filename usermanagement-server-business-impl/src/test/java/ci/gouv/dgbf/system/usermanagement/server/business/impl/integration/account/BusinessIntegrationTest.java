@@ -12,6 +12,7 @@ import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.collection.CollectionHelper;
 import org.cyk.utility.server.business.test.TestBusinessCreate;
 import org.cyk.utility.server.business.test.arquillian.AbstractBusinessArquillianIntegrationTestWithDefaultDeployment;
+import org.cyk.utility.server.persistence.test.TestPersistenceCreate;
 import org.cyk.utility.stream.distributed.Topic;
 import org.cyk.utility.system.node.SystemNodeServer;
 import org.cyk.utility.time.TimeHelper;
@@ -30,8 +31,11 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.Ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Service;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterim;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PosteLocation;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PosteLocationType;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileRoleFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
@@ -85,6 +89,25 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	public void create_service() throws Exception{
 		Service service = new Service().setIdentifier(__getRandomCode__());
 		__inject__(TestBusinessCreate.class).addObjects(service).execute();
+	}
+	
+	@Test
+	public void create_profile() throws Exception{
+		Profile profile = new Profile();
+		profile.setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(TestBusinessCreate.class).addObjects(profile).execute();
+	}
+	
+	@Test
+	public void create_profileRoleFunction() throws Exception{
+		RoleFunction function = new RoleFunction().setCode(__getRandomCode__()).setName(__getRandomName__());
+		function.setCategory(new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__()));
+		Profile profile = new Profile();
+		profile.setCode(__getRandomCode__()).setName(__getRandomName__());
+		ProfileRoleFunction profileRoleFunction = new ProfileRoleFunction();
+		profileRoleFunction.setProfile(profile);
+		profileRoleFunction.setFunction(function);
+		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(function.getCategory(),function,profile).addObjects(profileRoleFunction).execute();
 	}
 	
 	@Test
@@ -150,6 +173,17 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		}else {
 			
 		}
+	}
+	
+	@Test
+	public void create_userAccountProfile() throws Exception{
+		UserAccount userAccount = new UserAccount();
+		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
+		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
+		Profile profile = new Profile();
+		profile.setCode(__getRandomCode__()).setName(__getRandomName__());
+		UserAccountProfile userAccountProfile = new UserAccountProfile().setUserAccount(userAccount).setProfile(profile);
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(userAccount.getUser(),userAccount.getAccount(),userAccount,profile).addObjects(userAccountProfile).execute();
 	}
 	
 	@Test
