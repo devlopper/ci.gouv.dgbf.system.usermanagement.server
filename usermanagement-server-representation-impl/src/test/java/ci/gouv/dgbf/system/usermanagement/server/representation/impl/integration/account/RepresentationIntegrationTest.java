@@ -98,23 +98,27 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		RoleCategoryDto category = new RoleCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
 		RoleFunctionDto function = new RoleFunctionDto().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setCategory(category);
 		RolePosteDto poste = new RolePosteDto().setFunction(function).setLocation(location);
+		ProfileDto profile = new ProfileDto().setCode("p001").setName(__getRandomName__());
 		
 		UserAccountDto userAccount = new UserAccountDto();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__());
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
-		userAccount.addPostes(poste);
-		__inject__(TestRepresentationCreate.class).setName("Create user account").addObjectsToBeCreatedArray(locationType,location,category,function,poste).addObjects(userAccount).addTryEndRunnables(new Runnable() {
+		userAccount.addPostes(poste).addProfiles(profile);
+		__inject__(TestRepresentationCreate.class).setName("Create user account").addObjectsToBeCreatedArray(locationType,location,category,function,poste,profile).addObjects(userAccount).addTryEndRunnables(new Runnable() {
 			@Override
 			public void run() {
 				UserAccountDto userAccount01 = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null, null).getEntity();
 				assertThat(userAccount01).as("user account is null").isNotNull();
 				assertThat(userAccount01.getPostes()).as("user account roles collection is not null").isNull();
 				
-				userAccount01 = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),null,UserAccount.FIELD_POSTES).getEntity();
+				userAccount01 = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_POSTES).getEntity();
 				assertThat(userAccount01).as("user account is null").isNotNull();
 				assertThat(userAccount01.getPostes()).as("user account roles collection is null").isNotNull();
 				assertThat(userAccount01.getPostes().getCollection()).as("user account roles collection is empty").isNotEmpty();
 				assertThat(userAccount01.getPostes().getCollection().stream().map(RolePosteDto::getCode).collect(Collectors.toList())).contains("ASSISTANT_SAISIE_MINISTERE_21");
+				assertThat(userAccount01.getProfiles()).as("user account profiles collection is null").isNotNull();
+				assertThat(userAccount01.getProfiles().getCollection()).as("user account profiles collection is empty").isNotEmpty();
+				assertThat(userAccount01.getProfiles().getCollection().stream().map(ProfileDto::getCode).collect(Collectors.toList())).contains("p001");
 			}
 		}).execute();
 		
@@ -154,34 +158,44 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		__inject__(RoleFunctionRepresentation.class).createOne(function);
 		RolePosteDto poste = new RolePosteDto().setFunction(function).setLocation(location);
 		__inject__(RolePosteRepresentation.class).createOne(poste);
+		ProfileDto profile = new ProfileDto().setCode("p001").setName(__getRandomName__());
+		__inject__(ProfileRepresentation.class).createOne(profile);
 		
 		UserAccountDto userAccount = new UserAccountDto();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__());
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
-		userAccount.addPostes(poste);
+		userAccount.addPostes(poste).addProfiles(profile);
 		
 		__inject__(UserAccountRepresentation.class).createOne(userAccount);
 		
-		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null,UserAccount.FIELD_POSTES).getEntity();
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_POSTES).getEntity();
 		assertThat(userAccount).isNotNull();
 		assertThat(userAccount.getPostes()).isNotNull();
 		assertThat(userAccount.getPostes().getCollection()).isNotEmpty();
 		assertThat(userAccount.getPostes().getCollection().stream().map(RolePosteDto::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
+		assertThat(userAccount.getProfiles()).as("user account profiles collection is null").isNotNull();
+		assertThat(userAccount.getProfiles().getCollection()).as("user account profiles collection is empty").isNotEmpty();
+		assertThat(userAccount.getProfiles().getCollection().stream().map(ProfileDto::getCode).collect(Collectors.toList())).contains("p001");
 		
 		function = new RoleFunctionDto().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setCategory(category);
 		__inject__(RoleFunctionRepresentation.class).createOne(function);
 		poste = new RolePosteDto().setFunction(function).setLocation(location);
 		__inject__(RolePosteRepresentation.class).createOne(poste);
+		profile = new ProfileDto().setCode("p002").setName(__getRandomName__());
+		__inject__(ProfileRepresentation.class).createOne(profile);
 		
-		userAccount.addPostes(poste);
-		__inject__(UserAccountRepresentation.class).updateOne(userAccount,UserAccountDto.FIELD_POSTES);
+		userAccount.addPostes(poste).addProfiles(profile);
+		__inject__(UserAccountRepresentation.class).updateOne(userAccount,UserAccountDto.FIELD_PROFILES+","+UserAccountDto.FIELD_POSTES);
 		
-		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null,UserAccount.FIELD_POSTES).getEntity();
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null,UserAccountDto.FIELD_PROFILES+","+UserAccount.FIELD_POSTES).getEntity();
 		assertThat(userAccount).isNotNull();
 		assertThat(userAccount.getPostes()).isNotNull();
 		assertThat(userAccount.getPostes().getCollection()).isNotEmpty();
 		assertThat(userAccount.getPostes().getCollection().stream().map(RolePosteDto::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21"
 				,"ASSISTANT_SAISIE_MINISTERE_21");
+		assertThat(userAccount.getProfiles()).as("user account profiles collection is null").isNotNull();
+		assertThat(userAccount.getProfiles().getCollection()).as("user account profiles collection is empty").isNotEmpty();
+		assertThat(userAccount.getProfiles().getCollection().stream().map(ProfileDto::getCode).collect(Collectors.toList())).contains("p001","p002");
 		
 		__inject__(UserAccountRepresentation.class).deleteOne(userAccount);
 		__inject__(RolePosteRepresentation.class).deleteAll();

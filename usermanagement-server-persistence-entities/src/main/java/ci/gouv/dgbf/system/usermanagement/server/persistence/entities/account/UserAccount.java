@@ -67,7 +67,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 		return this;
 	}
 	
-	public UserAccount addRoleProfiles(Profile...profiles) {
+	public UserAccount addProfiles(Profile...profiles) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(profiles)) {
 			addProfiles(__inject__(CollectionHelper.class).instanciate(profiles));
 		}
