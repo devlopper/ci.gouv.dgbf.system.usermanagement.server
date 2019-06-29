@@ -14,7 +14,7 @@ import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.RoleRepresentation;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountRolePoste;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope;
 
 public interface KeycloakHelper extends Helper {
 
@@ -37,14 +37,14 @@ public interface KeycloakHelper extends Helper {
 	String saveUserAccount(String identifier,String firstName,String lastNames,String electronicMailAddress,String userName,String pass,Collection<String> rolesCodes,Map<String,List<String>> attributes);
 	String saveUserAccount(UserAccount userAccount);
 	KeycloakHelper addUserAccountAttributeValue(String identifier,String attributeName,String attributeValue);
-	KeycloakHelper addUserAccountAttributesValues(UserAccountRolePoste userAccountRolePoste);
+	KeycloakHelper addUserAccountAttributesValues(UserAccountFunctionScope userAccountRolePoste);
 	KeycloakHelper removeUserAccountAttributeValue(String identifier,String attributeName,String attributeValue);
-	KeycloakHelper removeUserAccountAttributesValues(UserAccountRolePoste userAccountRolePoste);
+	KeycloakHelper removeUserAccountAttributesValues(UserAccountFunctionScope userAccountRolePoste);
 	KeycloakHelper deleteUserAccount(String identifier);
 	
 	KeycloakHelper load();
 	KeycloakHelper loadRoleCategory();
-	KeycloakHelper loadRoleFunction();
+	KeycloakHelper loadFunction();
 	KeycloakHelper loadRolePoste();
 	
 	String ROLE_ATTRIBUTE_NAME = "nom";

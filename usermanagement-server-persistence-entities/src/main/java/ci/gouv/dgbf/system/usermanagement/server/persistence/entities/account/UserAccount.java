@@ -19,8 +19,8 @@ import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByString;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profiles;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePostes;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScopes;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -38,7 +38,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	@ManyToOne @JoinColumn(name=COLUMN_ACCOUNT) @NotNull private Account account;
 	
 	@Transient private Profiles profiles;
-	@Transient private RolePostes postes;
+	@Transient private FunctionScopes postes;
 	@Transient private Boolean isNotifiableByMail;
 	
 	/**/
@@ -74,16 +74,16 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 		return this;
 	}
 	
-	public RolePostes getPostes(Boolean injectIfNull) {
-		return (RolePostes) __getInjectIfNull__(FIELD_POSTES, injectIfNull);
+	public FunctionScopes getPostes(Boolean injectIfNull) {
+		return (FunctionScopes) __getInjectIfNull__(FIELD_POSTES, injectIfNull);
 	}
 	
-	public UserAccount addPostes(Collection<RolePoste> rolePostes) {
+	public UserAccount addPostes(Collection<FunctionScope> rolePostes) {
 		getPostes(Boolean.TRUE).add(rolePostes);
 		return this;
 	}
 	
-	public UserAccount addRolePostes(RolePoste...rolePostes) {
+	public UserAccount addRolePostes(FunctionScope...rolePostes) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(rolePostes)) {
 			addPostes(__inject__(CollectionHelper.class).instanciate(rolePostes));
 		}

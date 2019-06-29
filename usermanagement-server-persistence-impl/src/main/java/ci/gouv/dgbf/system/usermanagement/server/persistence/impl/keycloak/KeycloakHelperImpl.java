@@ -36,13 +36,13 @@ import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.RoleCategoryPersistence;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.RoleFunctionPersistence;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.RolePostePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountRolePoste;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleFunction;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 
 @ApplicationScoped
 public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper,Serializable {
@@ -320,12 +320,12 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	}
 	
 	@Override
-	public KeycloakHelper addUserAccountAttributesValues(UserAccountRolePoste userAccountRolePoste) {
-		__addUserAccountAttributesValues__(userAccountRolePoste, userAccountRolePoste.getRolePoste().getLocation().getType().getCode(), userAccountRolePoste.getRolePoste().getLocation());
+	public KeycloakHelper addUserAccountAttributesValues(UserAccountFunctionScope userAccountRolePoste) {
+		__addUserAccountAttributesValues__(userAccountRolePoste, userAccountRolePoste.getFunctionScope().getScope().getType().getCode(), userAccountRolePoste.getFunctionScope().getScope());
 		return this;
 	}
 	
-	private void __addUserAccountAttributesValues__(UserAccountRolePoste userAccountRolePoste,String attributeName,AbstractIdentified<?> identified) {
+	private void __addUserAccountAttributesValues__(UserAccountFunctionScope userAccountRolePoste,String attributeName,AbstractIdentified<?> identified) {
 		if(identified!=null && identified.getIdentifier()!=null)
 			addUserAccountAttributeValue(userAccountRolePoste.getUserAccount().getIdentifier(), attributeName, identified.getIdentifier().toString());
 	}
@@ -348,12 +348,12 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	}
 	
 	@Override
-	public KeycloakHelper removeUserAccountAttributesValues(UserAccountRolePoste userAccountRolePoste) {
-		__removeUserAccountAttributesValues__(userAccountRolePoste, userAccountRolePoste.getRolePoste().getLocation().getType().getCode(), userAccountRolePoste.getRolePoste().getLocation());
+	public KeycloakHelper removeUserAccountAttributesValues(UserAccountFunctionScope userAccountRolePoste) {
+		__removeUserAccountAttributesValues__(userAccountRolePoste, userAccountRolePoste.getFunctionScope().getScope().getType().getCode(), userAccountRolePoste.getFunctionScope().getScope());
 		return this;
 	}
 	
-	private void __removeUserAccountAttributesValues__(UserAccountRolePoste userAccountRolePoste,String attributeName,AbstractIdentified<?> identified) {
+	private void __removeUserAccountAttributesValues__(UserAccountFunctionScope userAccountRolePoste,String attributeName,AbstractIdentified<?> identified) {
 		if(identified!=null && identified.getIdentifier()!=null)
 			removeUserAccountAttributeValue(userAccountRolePoste.getUserAccount().getIdentifier(), attributeName, identified.getIdentifier().toString());
 	}
@@ -363,7 +363,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	@Override
 	public KeycloakHelper load() {
 		loadRoleCategory();
-		loadRoleFunction();
+		loadFunction();
 		loadRolePoste();
 		__logInfo__("Data from keycloak loaded into database");
 		return this;
@@ -389,14 +389,14 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	}
 	
 	@Override
-	public KeycloakHelper loadRoleFunction() {
+	public KeycloakHelper loadFunction() {
 		UserTransaction userTransaction = __inject__(UserTransaction.class);
 		try {
 			userTransaction.begin();
 			for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "FONCTION")) {
-				RoleFunction function = __inject__(RoleFunctionPersistence.class).readOneByBusinessIdentifier(index.getName());
+				Function function = __inject__(FunctionPersistence.class).readOneByBusinessIdentifier(index.getName());
 				if(function == null) {
-					function = __inject__(RoleFunction.class).setCode(index.getName()).setName(index.getAttributes().get(ROLE_ATTRIBUTE_NAME).get(0));
+					function = __inject__(Function.class).setCode(index.getName()).setName(index.getAttributes().get(ROLE_ATTRIBUTE_NAME).get(0));
 					for(RoleRepresentation indexParent : __inject__(KeycloakHelper.class).getRolesResource().get(index.getName()).getRoleComposites()) {
 						RoleCategory category = __inject__(RoleCategoryPersistence.class).readOneByBusinessIdentifier(indexParent.getName());
 						if(category != null) {
@@ -405,7 +405,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 						}
 					}
 					if(function.getCategory() != null) {
-						__inject__(RoleFunctionPersistence.class).create(function);	
+						__inject__(FunctionPersistence.class).create(function);	
 					}
 				}
 			}
@@ -423,18 +423,18 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 		try {
 			userTransaction.begin();
 			for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "POSTE")) {
-				RolePoste poste = __inject__(RolePostePersistence.class).readOneByBusinessIdentifier(index.getName());
+				FunctionScope poste = __inject__(FunctionScopePersistence.class).readOneByBusinessIdentifier(index.getName());
 				if(poste == null) {
-					poste = __inject__(RolePoste.class).setCode(index.getName()).setName(index.getAttributes().get(ROLE_ATTRIBUTE_NAME).get(0));
+					poste = __inject__(FunctionScope.class).setCode(index.getName()).setName(index.getAttributes().get(ROLE_ATTRIBUTE_NAME).get(0));
 					for(RoleRepresentation indexParent : __inject__(KeycloakHelper.class).getRolesResource().get(index.getName()).getRoleComposites()) {
-						RoleFunction function = __inject__(RoleFunctionPersistence.class).readOneByBusinessIdentifier(indexParent.getName());
+						Function function = __inject__(FunctionPersistence.class).readOneByBusinessIdentifier(indexParent.getName());
 						if(function != null) {
 							poste.setFunction(function);
 							break;
 						}
 					}
 					if(poste.getFunction()!=null)
-						__inject__(RolePostePersistence.class).create(poste);
+						__inject__(FunctionScopePersistence.class).create(poste);
 				}
 			}
 			userTransaction.commit();

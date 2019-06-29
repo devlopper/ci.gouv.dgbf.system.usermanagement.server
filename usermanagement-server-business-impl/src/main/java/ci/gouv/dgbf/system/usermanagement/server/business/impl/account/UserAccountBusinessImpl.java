@@ -18,16 +18,16 @@ import org.cyk.utility.string.Strings;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.AccountBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountProfileBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountRolePosteBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountFunctionScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountProfilePersistence;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountRolePostePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountFunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountRolePoste;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 
 @ApplicationScoped
 public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAccount, UserAccountPersistence> implements UserAccountBusiness,Serializable {
@@ -61,10 +61,10 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 		}
 		
 		if(Boolean.TRUE.equals(__injectCollectionHelper__().isNotEmpty(userAccount.getPostes()))) {
-			Collection<UserAccountRolePoste> userAccountRolePostes = new ArrayList<>();
-			for(RolePoste index : userAccount.getPostes().get())
-				userAccountRolePostes.add(new UserAccountRolePoste().setUserAccount(userAccount).setRolePoste(index));
-			__inject__(UserAccountRolePosteBusiness.class).createMany(userAccountRolePostes);
+			Collection<UserAccountFunctionScope> userAccountRolePostes = new ArrayList<>();
+			for(FunctionScope index : userAccount.getPostes().get())
+				userAccountRolePostes.add(new UserAccountFunctionScope().setUserAccount(userAccount).setFunctionScope(index));
+			__inject__(UserAccountFunctionScopeBusiness.class).createMany(userAccountRolePostes);
 		}
 		
 		//Notification
@@ -87,9 +87,9 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 						if(__injectCollectionHelper__().isNotEmpty(userAccountProfiles))
 							userAccount.getProfiles(Boolean.TRUE).add(userAccountProfiles.stream().map(UserAccountProfile::getProfile).collect(Collectors.toList()));
 					}else if(UserAccount.FIELD_POSTES.equals(field)) {
-						Collection<UserAccountRolePoste> userAccountRolePostes = __inject__(UserAccountRolePostePersistence.class).readByUserAccount(userAccount);
+						Collection<UserAccountFunctionScope> userAccountRolePostes = __inject__(UserAccountFunctionScopePersistence.class).readByUserAccount(userAccount);
 						if(__injectCollectionHelper__().isNotEmpty(userAccountRolePostes))
-							userAccount.getPostes(Boolean.TRUE).add(userAccountRolePostes.stream().map(UserAccountRolePoste::getRolePoste).collect(Collectors.toList()));
+							userAccount.getPostes(Boolean.TRUE).add(userAccountRolePostes.stream().map(UserAccountFunctionScope::getFunctionScope).collect(Collectors.toList()));
 					}
 				}
 			});
@@ -101,12 +101,12 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 		__inject__(UserBusiness.class).save(userAccount.getUser());
 		__inject__(AccountBusiness.class).save(userAccount.getAccount());
 		
-		Collection<UserAccountRolePoste> databaseCollection = __inject__(UserAccountRolePostePersistence.class).readByUserAccount(userAccount);
-		Collection<RolePoste> databaseRolePostes = __injectCollectionHelper__().isEmpty(databaseCollection) ? null : databaseCollection.stream()
-				.map(UserAccountRolePoste::getRolePoste).collect(Collectors.toList());
+		Collection<UserAccountFunctionScope> databaseCollection = __inject__(UserAccountFunctionScopePersistence.class).readByUserAccount(userAccount);
+		Collection<FunctionScope> databaseRolePostes = __injectCollectionHelper__().isEmpty(databaseCollection) ? null : databaseCollection.stream()
+				.map(UserAccountFunctionScope::getFunctionScope).collect(Collectors.toList());
 		
-		__delete__(userAccount.getPostes(), databaseCollection,UserAccountRolePoste.FIELD_ROLE_POSTE);
-		__save__(UserAccountRolePoste.class,userAccount.getPostes(), databaseRolePostes, UserAccountRolePoste.FIELD_ROLE_POSTE, userAccount, UserAccountRolePoste.FIELD_USER_ACCOUNT);
+		__delete__(userAccount.getPostes(), databaseCollection,UserAccountFunctionScope.FIELD_FUNCTION_SCOPE);
+		__save__(UserAccountFunctionScope.class,userAccount.getPostes(), databaseRolePostes, UserAccountFunctionScope.FIELD_FUNCTION_SCOPE, userAccount, UserAccountFunctionScope.FIELD_USER_ACCOUNT);
 		
 		Collection<UserAccountProfile> databaseUserAccountProfiles = __inject__(UserAccountProfilePersistence.class).readByUserAccount(userAccount);
 		Collection<Profile> databaseProfiles = __injectCollectionHelper__().isEmpty(databaseCollection) ? null : databaseUserAccountProfiles.stream()
@@ -122,7 +122,7 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 		function.addTryBeginRunnables(new Runnable() {
 			@Override
 			public void run() {
-				__deleteMany__(__inject__(UserAccountRolePostePersistence.class).readByUserAccount(userAccount));
+				__deleteMany__(__inject__(UserAccountFunctionScopePersistence.class).readByUserAccount(userAccount));
 				__deleteMany__(__inject__(UserAccountProfilePersistence.class).readByUserAccount(userAccount));
 			}
 		});

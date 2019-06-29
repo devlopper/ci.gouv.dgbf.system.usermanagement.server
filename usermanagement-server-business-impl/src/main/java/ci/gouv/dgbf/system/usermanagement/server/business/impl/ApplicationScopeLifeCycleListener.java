@@ -11,16 +11,16 @@ import org.cyk.utility.collection.CollectionHelper;
 import org.cyk.utility.file.excel.FileExcelSheetDataArrayReader;
 import org.cyk.utility.server.business.AbstractApplicationScopeLifeCycleListenerImplementation;
 
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.PosteLocationBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.PosteLocationTypeBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeTypeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.RoleCategoryBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.RoleFunctionBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.RolePosteBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PosteLocation;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PosteLocationType;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionScopeBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleFunction;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 
 @ApplicationScoped
 public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeLifeCycleListenerImplementation implements Serializable {
@@ -51,11 +51,11 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 	
 	public void saveDataFromResources() {
 		//super.__saveData__();
-		PosteLocationType section = new PosteLocationType().setCode("SECTION").setName("Section");
-		PosteLocationType ugp = new PosteLocationType().setCode("UGP").setName("Unité de gestion programmatique");
-		PosteLocationType ua = new PosteLocationType().setCode("UA").setName("Unité administrative");
+		ScopeType section = new ScopeType().setCode("SECTION").setName("Section");
+		ScopeType ugp = new ScopeType().setCode("UGP").setName("Unité de gestion programmatique");
+		ScopeType ua = new ScopeType().setCode("UA").setName("Unité administrative");
 		
-		__inject__(PosteLocationTypeBusiness.class).createMany(__inject__(CollectionHelper.class).instanciate(section,ugp,ua));
+		__inject__(ScopeTypeBusiness.class).createMany(__inject__(CollectionHelper.class).instanciate(section,ugp,ua));
 		
 		FileExcelSheetDataArrayReader reader;
 		ArrayInstanceTwoDimensionString arrayInstance;
@@ -64,31 +64,31 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("ministère");
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		arrayInstance = reader.execute().getOutput();
-		Collection<PosteLocation> sections = new ArrayList<>();
+		Collection<Scope> sections = new ArrayList<>();
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount(); index = index + 1)
-			sections.add(new PosteLocation().setIdentifier(arrayInstance.get(index, 0)).setType(section));
+			sections.add(new Scope().setIdentifier(arrayInstance.get(index, 0)).setType(section));
 		__logInfo__("Creating "+sections.size()+" section");
-		__inject__(PosteLocationBusiness.class).saveManyByBatch(sections,100);
+		__inject__(ScopeBusiness.class).saveManyByBatch(sections,100);
 		
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("programme");
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		arrayInstance = reader.execute().getOutput();
-		Collection<PosteLocation> ugps = new ArrayList<>();
+		Collection<Scope> ugps = new ArrayList<>();
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 30; index = index + 1)
-			ugps.add(new PosteLocation().setIdentifier(arrayInstance.get(index, 0)).setType(ugp));
+			ugps.add(new Scope().setIdentifier(arrayInstance.get(index, 0)).setType(ugp));
 		__logInfo__("Creating "+ugps.size()+" ugp");
-		__inject__(PosteLocationBusiness.class).saveManyByBatch(ugps,100);
+		__inject__(ScopeBusiness.class).saveManyByBatch(ugps,100);
 		
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("unité administrative");
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		arrayInstance = reader.execute().getOutput();
-		Collection<PosteLocation> uas = new ArrayList<>();
+		Collection<Scope> uas = new ArrayList<>();
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 30; index = index + 1)
-			uas.add(new PosteLocation().setIdentifier(arrayInstance.get(index, 0)).setType(ua));
+			uas.add(new Scope().setIdentifier(arrayInstance.get(index, 0)).setType(ua));
 		__logInfo__("Creating "+uas.size()+" ua");
-		__inject__(PosteLocationBusiness.class).saveManyByBatch(uas,100);
+		__inject__(ScopeBusiness.class).saveManyByBatch(uas,100);
 		
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("catégorie");
@@ -104,31 +104,31 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("fonction");
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		arrayInstance = reader.execute().getOutput();
-		Collection<RoleFunction> roleFonctions = new ArrayList<>();
-		Collection<RolePoste> rolePostes = new ArrayList<>();
+		Collection<Function> roleFonctions = new ArrayList<>();
+		Collection<FunctionScope> rolePostes = new ArrayList<>();
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 30; index = index + 1) {
-			RoleFunction function = new RoleFunction().setCode(arrayInstance.get(index, 0)).setName(arrayInstance.get(index, 1))
+			Function function = new Function().setCode(arrayInstance.get(index, 0)).setName(arrayInstance.get(index, 1))
 					.setCategory(__inject__(CollectionHelper.class).getElementAt(roleCategories, arrayInstance.get(index, 2).startsWith("ADMIN") ? 0 : 1));
 			function.setIsProfileCreatableOnCreate(Boolean.TRUE);
 			roleFonctions.add(function);
 			if(arrayInstance.get(index, 3).startsWith("oui")) {
-				for(PosteLocation indexMinistry : sections)
-					rolePostes.add(new RolePoste().setFunction(function).setLocation(indexMinistry));
+				for(Scope indexMinistry : sections)
+					rolePostes.add(new FunctionScope().setFunction(function).setScope(indexMinistry));
 			}
 			if(arrayInstance.get(index, 4).startsWith("oui")) {
-				for(PosteLocation indexProgram : ugps)
-					rolePostes.add(new RolePoste().setFunction(function).setLocation(indexProgram));
+				for(Scope indexProgram : ugps)
+					rolePostes.add(new FunctionScope().setFunction(function).setScope(indexProgram));
 			}
 			if(arrayInstance.get(index, 7).startsWith("oui")) {
-				for(PosteLocation indexAdministrativeUnit : uas)
-					rolePostes.add(new RolePoste().setFunction(function).setLocation(indexAdministrativeUnit));
+				for(Scope indexAdministrativeUnit : uas)
+					rolePostes.add(new FunctionScope().setFunction(function).setScope(indexAdministrativeUnit));
 			}
 		}
 		__logInfo__("Creating "+roleFonctions.size()+" role functions");
-		__inject__(RoleFunctionBusiness.class).saveManyByBatch(roleFonctions,100);
+		__inject__(FunctionBusiness.class).saveManyByBatch(roleFonctions,100);
 		
 		__logInfo__("Creating "+rolePostes.size()+" role postes");
-		__inject__(RolePosteBusiness.class).saveManyByBatch(rolePostes,100);
+		__inject__(FunctionScopeBusiness.class).saveManyByBatch(rolePostes,100);
 	}
 	
 }

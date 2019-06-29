@@ -17,14 +17,14 @@ import org.keycloak.representations.idm.UserRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterim;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountRolePoste;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PosteLocation;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PosteLocationType;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileRoleFunction;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleFunction;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.ApplicationScopeLifeCycleListener;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
@@ -39,14 +39,14 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Test
 	public void create_posteLocationType() throws Exception{
-		PosteLocationType posteLocationType = new PosteLocationType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		ScopeType posteLocationType = new ScopeType().setCode(__getRandomCode__()).setName(__getRandomName__());
 		__inject__(TestPersistenceCreate.class).addObjects(posteLocationType).execute();
 	}
 	
 	@Test
 	public void create_posteLocation() throws Exception{
-		PosteLocationType posteLocationType = new PosteLocationType().setCode(__getRandomCode__()).setName(__getRandomName__());
-		PosteLocation posteLocation = new PosteLocation().setType(posteLocationType);
+		ScopeType posteLocationType = new ScopeType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		Scope posteLocation = new Scope().setType(posteLocationType);
 		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(posteLocationType).addObjects(posteLocation).execute();
 	}
 	
@@ -57,20 +57,20 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	}
 	
 	@Test
-	public void create_roleFunction() throws Exception{
-		RoleFunction role = new RoleFunction().setCode(__getRandomCode__()).setName(__getRandomName__());
+	public void create_function() throws Exception{
+		Function role = new Function().setCode(__getRandomCode__()).setName(__getRandomName__());
 		role.setCategory(new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__()));
 		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(role.getCategory()).addObjects(role).execute();
 	}
 	
 	@Test
-	public void create_rolePoste() throws Exception{
-		PosteLocationType locationType = new PosteLocationType().setCode(__getRandomCode__()).setName(__getRandomName__());
-		PosteLocation location = new PosteLocation().setType(locationType);
-		RolePoste role = new RolePoste().setLocation(location).setCode(__getRandomCode__()).setName(__getRandomName__());
-		role.setFunction(new RoleFunction().setCode(__getRandomCode__()).setName(__getRandomName__())
+	public void create_functionScope() throws Exception{
+		ScopeType scopeType = new ScopeType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		Scope location = new Scope().setType(scopeType);
+		FunctionScope role = new FunctionScope().setScope(location).setCode(__getRandomCode__()).setName(__getRandomName__());
+		role.setFunction(new Function().setCode(__getRandomCode__()).setName(__getRandomName__())
 				.setCategory(new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__())));
-		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(locationType,location,role.getFunction().getCategory(),role.getFunction()).addObjects(role).execute();
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(scopeType,location,role.getFunction().getCategory(),role.getFunction()).addObjects(role).execute();
 	}
 	
 	@Test
@@ -81,15 +81,15 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	}
 	
 	@Test
-	public void create_profileRoleFunction() throws Exception{
-		RoleFunction function = new RoleFunction().setCode(__getRandomCode__()).setName(__getRandomName__());
+	public void create_profileFunction() throws Exception{
+		Function function = new Function().setCode(__getRandomCode__()).setName(__getRandomName__());
 		function.setCategory(new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__()));
 		Profile profile = new Profile();
 		profile.setCode(__getRandomCode__()).setName(__getRandomName__());
-		ProfileRoleFunction profileRoleFunction = new ProfileRoleFunction();
-		profileRoleFunction.setProfile(profile);
-		profileRoleFunction.setFunction(function);
-		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(function.getCategory(),function,profile).addObjects(profileRoleFunction).execute();
+		ProfileFunction profileFunction = new ProfileFunction();
+		profileFunction.setProfile(profile);
+		profileFunction.setFunction(function);
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(function.getCategory(),function,profile).addObjects(profileFunction).execute();
 	}
 	
 	@Test
@@ -113,21 +113,20 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Test
 	public void create_userAccountRolePoste_ministryIs21() throws Exception{
-		PosteLocationType locationType = new PosteLocationType().setCode("MINISTERE").setName("Ministère");
-		PosteLocation location = new PosteLocation().setIdentifier("21").setType(locationType);
-		RolePoste rolePoste = new RolePoste().setCode(__getRandomCode__()).setName(__getRandomName__());
-		rolePoste.setFunction(new RoleFunction().setCode(__getRandomCode__()).setName(__getRandomName__())
-				.setCategory(new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__()))).setLocation(location);
+		ScopeType scopeType = new ScopeType().setCode("MINISTERE").setName("Ministère");
+		Scope location = new Scope().setIdentifier("21").setType(scopeType);
+		FunctionScope functionScope = new FunctionScope().setCode(__getRandomCode__()).setName(__getRandomName__()).setFunction(new Function().setCode(__getRandomCode__()).setName(__getRandomName__())
+				.setCategory(new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__()))).setScope(location);
 		
 		UserAccount userAccount = new UserAccount();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
-		UserAccountRolePoste userAccountRolePoste = new UserAccountRolePoste();
+		UserAccountFunctionScope userAccountRolePoste = new UserAccountFunctionScope();
 		userAccountRolePoste.setUserAccount(userAccount);
-		userAccountRolePoste.setRolePoste(rolePoste);
+		userAccountRolePoste.setFunctionScope(functionScope);
 		
-		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(locationType,location,rolePoste.getFunction().getCategory(),rolePoste.getFunction()
-				,rolePoste,userAccount.getUser(),userAccount.getAccount(),userAccount).addObjects(userAccountRolePoste)
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(scopeType,location,functionScope.getFunction().getCategory(),functionScope.getFunction()
+				,functionScope,userAccount.getUser(),userAccount.getAccount(),userAccount).addObjects(userAccountRolePoste)
 			.setIsCatchThrowable(Boolean.FALSE).addTryEndRunnables(new Runnable() {
 				@Override
 				public void run() {
@@ -142,21 +141,21 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Test
 	public void create_userAccountRolePoste_programIs100() throws Exception{
-		PosteLocationType locationType = new PosteLocationType().setCode("PROGRAMME").setName("Programme");
-		PosteLocation location = new PosteLocation().setIdentifier("100").setType(locationType);
-		RolePoste rolePoste = new RolePoste().setCode(__getRandomCode__()).setName(__getRandomName__());
-		rolePoste.setFunction(new RoleFunction().setCode(__getRandomCode__()).setName(__getRandomName__())
-				.setCategory(new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__()))).setLocation(location);
+		ScopeType scopeType = new ScopeType().setCode("PROGRAMME").setName("Programme");
+		Scope location = new Scope().setIdentifier("100").setType(scopeType);
+		FunctionScope functionScope = new FunctionScope().setCode(__getRandomCode__()).setName(__getRandomName__());
+		functionScope.setFunction(new Function().setCode(__getRandomCode__()).setName(__getRandomName__())
+				.setCategory(new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__()))).setScope(location);
 		
 		UserAccount userAccount = new UserAccount();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
-		UserAccountRolePoste userAccountRolePoste = new UserAccountRolePoste();
+		UserAccountFunctionScope userAccountRolePoste = new UserAccountFunctionScope();
 		userAccountRolePoste.setUserAccount(userAccount);
-		userAccountRolePoste.setRolePoste(rolePoste);
+		userAccountRolePoste.setFunctionScope(functionScope);
 		
-		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(locationType,location,rolePoste.getFunction().getCategory(),rolePoste.getFunction()
-				,rolePoste,userAccount.getUser(),userAccount.getAccount(),userAccount).addObjects(userAccountRolePoste)
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(scopeType,location,functionScope.getFunction().getCategory(),functionScope.getFunction()
+				,functionScope,userAccount.getUser(),userAccount.getAccount(),userAccount).addObjects(userAccountRolePoste)
 			.setIsCatchThrowable(Boolean.FALSE).addTryEndRunnables(new Runnable() {
 				@Override
 				public void run() {
@@ -171,21 +170,21 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Test
 	public void create_userAccountRolePoste_administrativeUnitIs200() throws Exception{
-		PosteLocationType locationType = new PosteLocationType().setCode("UNITE_ADMINISTRATIVE").setName("Unité administrative");
-		PosteLocation location = new PosteLocation().setIdentifier("200").setType(locationType);
-		RolePoste rolePoste = new RolePoste().setCode(__getRandomCode__()).setName(__getRandomName__());
-		rolePoste.setFunction(new RoleFunction().setCode(__getRandomCode__()).setName(__getRandomName__())
-				.setCategory(new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__()))).setLocation(location);
+		ScopeType scopeType = new ScopeType().setCode("UNITE_ADMINISTRATIVE").setName("Unité administrative");
+		Scope location = new Scope().setIdentifier("200").setType(scopeType);
+		FunctionScope functionScope = new FunctionScope().setCode(__getRandomCode__()).setName(__getRandomName__());
+		functionScope.setFunction(new Function().setCode(__getRandomCode__()).setName(__getRandomName__())
+				.setCategory(new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__()))).setScope(location);
 		
 		UserAccount userAccount = new UserAccount();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
-		UserAccountRolePoste userAccountRolePoste = new UserAccountRolePoste();
+		UserAccountFunctionScope userAccountRolePoste = new UserAccountFunctionScope();
 		userAccountRolePoste.setUserAccount(userAccount);
-		userAccountRolePoste.setRolePoste(rolePoste);
+		userAccountRolePoste.setFunctionScope(functionScope);
 		
-		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(locationType,location,rolePoste.getFunction().getCategory(),rolePoste.getFunction()
-				,rolePoste,userAccount.getUser(),userAccount.getAccount(),userAccount).addObjects(userAccountRolePoste)
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(scopeType,location,functionScope.getFunction().getCategory(),functionScope.getFunction()
+				,functionScope,userAccount.getUser(),userAccount.getAccount(),userAccount).addObjects(userAccountRolePoste)
 			.setIsCatchThrowable(Boolean.FALSE).addTryEndRunnables(new Runnable() {
 				@Override
 				public void run() {

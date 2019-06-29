@@ -12,9 +12,9 @@ import org.cyk.utility.string.StringHelper;
 
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDtoCollection;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RoleFunctionDtoCollection;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RolePosteDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RolePosteDtoCollection;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionDtoCollection;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionScopeDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionScopeDtoCollection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,9 +27,9 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 
 	private UserDto user;
 	private AccountDto account;
-	private RoleFunctionDtoCollection functions;
+	private FunctionDtoCollection functions;
 	private ProfileDtoCollection profiles;
-	private RolePosteDtoCollection postes;
+	private FunctionScopeDtoCollection postes;
 	
 	public UserDto getUser(Boolean injectIfNull) {
 		return (UserDto) __getInjectIfNull__(FIELD_USER, injectIfNull);
@@ -43,7 +43,7 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 		if(__inject__(CollectionHelper.class).isNotEmpty(rolePostesCodes)) {
 			for(String index : rolePostesCodes)
 				if(__inject__(StringHelper.class).isNotBlank(index))
-					addPostes(new RolePosteDto().setCode(index));
+					addPostes(new FunctionScopeDto().setCode(index));
 		}
 		return this;
 	}
@@ -54,20 +54,20 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 		return this;
 	}
 	
-	public UserAccountDto addPostes(Collection<RolePosteDto> rolePostes) {
+	public UserAccountDto addPostes(Collection<FunctionScopeDto> rolePostes) {
 		if(__inject__(CollectionHelper.class).isNotEmpty(rolePostes))
 			getPostes(Boolean.TRUE).add(rolePostes);	
 		return this;
 	}
 	
-	public UserAccountDto addPostes(RolePosteDto...rolePostes) {
+	public UserAccountDto addPostes(FunctionScopeDto...rolePostes) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(rolePostes))
 			addPostes(__inject__(CollectionHelper.class).instanciate(rolePostes));
 		return this;
 	}
 	
-	public RolePosteDtoCollection getPostes(Boolean instanciateIfNull) {
-		return (RolePosteDtoCollection) __getInstanciateIfNull__(FIELD_POSTES, instanciateIfNull);
+	public FunctionScopeDtoCollection getPostes(Boolean instanciateIfNull) {
+		return (FunctionScopeDtoCollection) __getInstanciateIfNull__(FIELD_POSTES, instanciateIfNull);
 	}
 	
 	/**/

@@ -22,26 +22,26 @@ import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.UserRepresentation;
 
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.PosteLocationBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.PosteLocationTypeBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeTypeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.RoleCategoryBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.RoleFunctionBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.RolePosteBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.impl.ApplicationScopeLifeCycleListener;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.RolePostePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Service;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterim;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PosteLocation;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PosteLocationType;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileRoleFunction;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleFunction;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RolePoste;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
 public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrationTestWithDefaultDeployment {
@@ -68,17 +68,17 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	@Test
 	public void create_roleFunction() throws Exception{
 		RoleCategory roleCategory = new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
-		RoleFunction role = new RoleFunction().setCode(__getRandomCode__()).setName(__getRandomCode__()).setCategory(roleCategory);
+		Function role = new Function().setCode(__getRandomCode__()).setName(__getRandomCode__()).setCategory(roleCategory);
 		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(roleCategory).addObjects(role).execute();
 	}
 	
 	@Test
 	public void create_rolePoste() throws Exception{
-		PosteLocationType locationType = new PosteLocationType().setCode("MINISTERE").setName("Ministère");
-		PosteLocation location = new PosteLocation().setIdentifier("21").setType(locationType);
+		ScopeType locationType = new ScopeType().setCode("MINISTERE").setName("Ministère");
+		Scope location = new Scope().setIdentifier("21").setType(locationType);
 		RoleCategory roleCategory = new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
-		RoleFunction roleFunction = new RoleFunction().setCode("ASSISTANT").setName("Assistant").setCategory(roleCategory);
-		RolePoste role = new RolePoste().setFunction(roleFunction).setLocation(location);
+		Function roleFunction = new Function().setCode("ASSISTANT").setName("Assistant").setCategory(roleCategory);
+		FunctionScope role = new FunctionScope().setFunction(roleFunction).setScope(location);
 		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(locationType,location,roleCategory,roleFunction).addObjects(role).addTryEndRunnables(new Runnable() {
 			@Override
 			public void run() {
@@ -103,11 +103,11 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	
 	@Test
 	public void create_profileRoleFunction() throws Exception{
-		RoleFunction function = new RoleFunction().setCode(__getRandomCode__()).setName(__getRandomName__());
+		Function function = new Function().setCode(__getRandomCode__()).setName(__getRandomName__());
 		function.setCategory(new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__()));
 		Profile profile = new Profile();
 		profile.setCode(__getRandomCode__()).setName(__getRandomName__());
-		ProfileRoleFunction profileRoleFunction = new ProfileRoleFunction();
+		ProfileFunction profileRoleFunction = new ProfileFunction();
 		profileRoleFunction.setProfile(profile);
 		profileRoleFunction.setFunction(function);
 		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(function.getCategory(),function,profile).addObjects(profileRoleFunction).execute();
@@ -126,16 +126,16 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 			__inject__(TimeHelper.class).pause(1000l * 15);
 		}
 		
-		PosteLocationType locationType = new PosteLocationType().setCode("MINISTERE").setName("Ministère");
-		__inject__(PosteLocationTypeBusiness.class).create(locationType);
-		PosteLocation location = new PosteLocation().setIdentifier("21").setType(locationType);
-		__inject__(PosteLocationBusiness.class).create(location);
+		ScopeType locationType = new ScopeType().setCode("MINISTERE").setName("Ministère");
+		__inject__(ScopeTypeBusiness.class).create(locationType);
+		Scope location = new Scope().setIdentifier("21").setType(locationType);
+		__inject__(ScopeBusiness.class).create(location);
 		RoleCategory roleCategory = new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
 		__inject__(RoleCategoryBusiness.class).create(roleCategory);
-		RoleFunction roleFunction = new RoleFunction().setCode("CONTROLEUR_FINANCIER").setName(__getRandomName__()).setCategory(roleCategory);
-		__inject__(RoleFunctionBusiness.class).create(roleFunction);
-		RolePoste rolePoste = new RolePoste().setFunction(roleFunction).setLocation(location);
-		__inject__(RolePosteBusiness.class).create(rolePoste);
+		Function roleFunction = new Function().setCode("CONTROLEUR_FINANCIER").setName(__getRandomName__()).setCategory(roleCategory);
+		__inject__(FunctionBusiness.class).create(roleFunction);
+		FunctionScope rolePoste = new FunctionScope().setFunction(roleFunction).setScope(location);
+		__inject__(FunctionScopeBusiness.class).create(rolePoste);
 		Profile profile = new Profile().setCode("p001").setName(__getRandomName__());
 		__inject__(ProfileBusiness.class).create(profile);
 		
@@ -155,7 +155,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 				assertThat(userAccount01).isNotNull();
 				assertThat(userAccount01.getPostes()).isNotNull();
 				assertThat(userAccount01.getPostes().get()).isNotEmpty();
-				assertThat(userAccount01.getPostes().get().stream().map(RolePoste::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
+				assertThat(userAccount01.getPostes().get().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
 				assertThat(userAccount01.getProfiles()).isNull();
 				
 				userAccount01 = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_PROFILES));
@@ -169,7 +169,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 				assertThat(userAccount01).isNotNull();
 				assertThat(userAccount01.getPostes()).isNotNull();
 				assertThat(userAccount01.getPostes().get()).isNotEmpty();
-				assertThat(userAccount01.getPostes().get().stream().map(RolePoste::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
+				assertThat(userAccount01.getPostes().get().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
 				assertThat(userAccount01.getProfiles()).isNotNull();
 				assertThat(userAccount01.getProfiles().get()).isNotEmpty();
 				assertThat(userAccount01.getProfiles().get().stream().map(Profile::getCode).collect(Collectors.toList())).contains("p001");
@@ -185,11 +185,11 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		}).execute();
 		
 		__inject__(ProfileBusiness.class).deleteAll();
-		__inject__(RolePosteBusiness.class).deleteAll();
-		__inject__(RoleFunctionBusiness.class).deleteAll();
+		__inject__(FunctionScopeBusiness.class).deleteAll();
+		__inject__(FunctionBusiness.class).deleteAll();
 		__inject__(RoleCategoryBusiness.class).deleteAll();
-		__inject__(PosteLocationBusiness.class).deleteAll();
-		__inject__(PosteLocationTypeBusiness.class).deleteAll();
+		__inject__(ScopeBusiness.class).deleteAll();
+		__inject__(ScopeTypeBusiness.class).deleteAll();
 		
 		if(Boolean.TRUE.equals(Topic.MAIL.getIsConsumerStarted())) {
 			__inject__(TimeHelper.class).pause(1000l * 25);
@@ -212,27 +212,27 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	
 	@Test
 	public void update_userAccount() throws Exception{
-		PosteLocationType locationType = new PosteLocationType().setCode("MINISTERE").setName("Ministère");
-		__inject__(PosteLocationTypeBusiness.class).create(locationType);
-		PosteLocation location = new PosteLocation().setIdentifier("21").setType(locationType);
-		__inject__(PosteLocationBusiness.class).create(location);
+		ScopeType locationType = new ScopeType().setCode("MINISTERE").setName("Ministère");
+		__inject__(ScopeTypeBusiness.class).create(locationType);
+		Scope location = new Scope().setIdentifier("21").setType(locationType);
+		__inject__(ScopeBusiness.class).create(location);
 		RoleCategory roleCategory = new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
 		__inject__(RoleCategoryBusiness.class).create(roleCategory);
-		RoleFunction roleFunction = new RoleFunction().setCode("CONTROLEUR_FINANCIER").setName(__getRandomName__()).setCategory(roleCategory);
-		__inject__(RoleFunctionBusiness.class).create(roleFunction);
-		RolePoste rolePoste = new RolePoste().setFunction(roleFunction).setLocation(location);
-		__inject__(RolePosteBusiness.class).create(rolePoste);
-		roleFunction = new RoleFunction().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setCategory(roleCategory);
-		__inject__(RoleFunctionBusiness.class).create(roleFunction);
-		rolePoste = new RolePoste().setFunction(roleFunction).setLocation(location);
-		__inject__(RolePosteBusiness.class).create(rolePoste);
+		Function roleFunction = new Function().setCode("CONTROLEUR_FINANCIER").setName(__getRandomName__()).setCategory(roleCategory);
+		__inject__(FunctionBusiness.class).create(roleFunction);
+		FunctionScope rolePoste = new FunctionScope().setFunction(roleFunction).setScope(location);
+		__inject__(FunctionScopeBusiness.class).create(rolePoste);
+		roleFunction = new Function().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setCategory(roleCategory);
+		__inject__(FunctionBusiness.class).create(roleFunction);
+		rolePoste = new FunctionScope().setFunction(roleFunction).setScope(location);
+		__inject__(FunctionScopeBusiness.class).create(rolePoste);
 		__inject__(ProfileBusiness.class).create(new Profile().setCode("p001").setName(__getRandomName__()));
 		__inject__(ProfileBusiness.class).create(new Profile().setCode("p002").setName(__getRandomName__()));
 		
 		UserAccount userAccount = new UserAccount();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__());
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
-		userAccount.addRolePostes(__inject__(RolePostePersistence.class).readOneByBusinessIdentifier("CONTROLEUR_FINANCIER_MINISTERE_21"));
+		userAccount.addRolePostes(__inject__(FunctionScopePersistence.class).readOneByBusinessIdentifier("CONTROLEUR_FINANCIER_MINISTERE_21"));
 		userAccount.addProfiles(__inject__(ProfilePersistence.class).readOneByBusinessIdentifier("p001"));
 		__inject__(UserAccountBusiness.class).create(userAccount);
 		
@@ -248,12 +248,12 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		assertThat(userAccount).isNotNull();
 		assertThat(userAccount.getPostes()).isNotNull();
 		assertThat(userAccount.getPostes().get()).isNotEmpty();
-		assertThat(userAccount.getPostes().get().stream().map(RolePoste::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
+		assertThat(userAccount.getPostes().get().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
 		assertThat(userAccount.getProfiles()).isNotNull();
 		assertThat(userAccount.getProfiles().get()).isNotEmpty();
 		assertThat(userAccount.getProfiles().get().stream().map(Profile::getCode).collect(Collectors.toList())).contains("p001");
 		
-		userAccount.addRolePostes(__inject__(RolePostePersistence.class).readOneByBusinessIdentifier("ASSISTANT_SAISIE_MINISTERE_21"));
+		userAccount.addRolePostes(__inject__(FunctionScopePersistence.class).readOneByBusinessIdentifier("ASSISTANT_SAISIE_MINISTERE_21"));
 		userAccount.addProfiles(__inject__(ProfilePersistence.class).readOneByBusinessIdentifier("p002"));
 		__inject__(UserAccountBusiness.class).update(userAccount,new Properties().setFields(UserAccount.FIELD_POSTES));
 		
@@ -262,7 +262,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		assertThat(userAccount).isNotNull();
 		assertThat(userAccount.getPostes()).isNotNull();
 		assertThat(userAccount.getPostes().get()).isNotEmpty();
-		assertThat(userAccount.getPostes().get().stream().map(RolePoste::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21"
+		assertThat(userAccount.getPostes().get().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21"
 				,"ASSISTANT_SAISIE_MINISTERE_21");
 		assertThat(userAccount.getProfiles()).isNotNull();
 		assertThat(userAccount.getProfiles().get()).isNotEmpty();
@@ -275,12 +275,12 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 				new AbstractMap.SimpleEntry<String, List<String>>("MINISTERE",(List<String>)__inject__(CollectionHelper.class).instanciate("21"))
 				).hasSize(1);
 		
-		location = new PosteLocation().setIdentifier("18").setType(locationType);
-		__inject__(PosteLocationBusiness.class).create(location);
-		rolePoste = new RolePoste().setFunction(roleFunction).setLocation(location);
-		__inject__(RolePosteBusiness.class).create(rolePoste);
+		location = new Scope().setIdentifier("18").setType(locationType);
+		__inject__(ScopeBusiness.class).create(location);
+		rolePoste = new FunctionScope().setFunction(roleFunction).setScope(location);
+		__inject__(FunctionScopeBusiness.class).create(rolePoste);
 		
-		userAccount.addRolePostes(__inject__(RolePostePersistence.class).readOneByBusinessIdentifier("ASSISTANT_SAISIE_MINISTERE_18"));
+		userAccount.addRolePostes(__inject__(FunctionScopePersistence.class).readOneByBusinessIdentifier("ASSISTANT_SAISIE_MINISTERE_18"));
 		__inject__(UserAccountBusiness.class).update(userAccount,new Properties().setFields(UserAccount.FIELD_POSTES));
 		
 		userAccount = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(), new Properties().setFields(__inject__(Strings.class)
@@ -288,7 +288,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		assertThat(userAccount).isNotNull();
 		assertThat(userAccount.getPostes()).isNotNull();
 		assertThat(userAccount.getPostes().get()).isNotEmpty();
-		assertThat(userAccount.getPostes().get().stream().map(RolePoste::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21"
+		assertThat(userAccount.getPostes().get().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21"
 				,"ASSISTANT_SAISIE_MINISTERE_21","ASSISTANT_SAISIE_MINISTERE_18");
 		assertThat(userAccount.getProfiles()).isNotNull();
 		assertThat(userAccount.getProfiles().get()).isNotEmpty();
@@ -303,11 +303,11 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		
 		__inject__(UserAccountBusiness.class).delete(userAccount);
 		__inject__(ProfileBusiness.class).deleteAll();
-		__inject__(RolePosteBusiness.class).deleteAll();
-		__inject__(RoleFunctionBusiness.class).deleteAll();
+		__inject__(FunctionScopeBusiness.class).deleteAll();
+		__inject__(FunctionBusiness.class).deleteAll();
 		__inject__(RoleCategoryBusiness.class).deleteAll();
-		__inject__(PosteLocationBusiness.class).deleteAll();
-		__inject__(PosteLocationTypeBusiness.class).deleteAll();
+		__inject__(ScopeBusiness.class).deleteAll();
+		__inject__(ScopeTypeBusiness.class).deleteAll();
 	}
 	
 	@Test

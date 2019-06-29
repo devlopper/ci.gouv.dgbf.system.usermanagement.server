@@ -7,20 +7,20 @@ import org.cyk.utility.request.RequestProcessor;
 import org.cyk.utility.test.arquillian.AbstractArquillianUnitTest;
 import org.junit.Test;
 
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PosteLocation;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 
 public class EntitiesUnitTest extends AbstractArquillianUnitTest {
 	private static final long serialVersionUID = 1L;
 
 	@Test
 	public void get_program() {
-		PosteLocation dto = (PosteLocation) __inject__(RequestProcessor.class)
+		Scope dto = (Scope) __inject__(RequestProcessor.class)
 				.setUniformResourceIdentifierString("http://10.3.4.20:32202/sib/classification-par-programme/api/v1/programmes/code/22060")
-				.setResponseEntityClass(PosteLocation.class)
+				.setResponseEntityClass(Scope.class)
 				.execute().getOutput();
 		assertThat(dto.getLink()).isEqualTo("2521444c-0058-4ab7-b18e-c5d27f785da3");
 		assertThat(dto.getName()).isEqualTo("TRANSPORT TERRESTRE");
-		PosteLocation posteLocation = new PosteLocation().setIdentifier("myid");
+		Scope posteLocation = new Scope().setIdentifier("myid");
 		__inject__(FieldValueCopy.class).setSource(dto).setDestination(posteLocation).setIsOverridable(Boolean.FALSE).execute();
 		assertThat(posteLocation.getIdentifier()).isEqualTo("myid");
 		assertThat(posteLocation.getLink()).isEqualTo("2521444c-0058-4ab7-b18e-c5d27f785da3");
@@ -29,9 +29,9 @@ public class EntitiesUnitTest extends AbstractArquillianUnitTest {
 	
 	//@Test
 	public void get_administrativeUnit() {
-		PosteLocation dto = (PosteLocation) __inject__(RequestProcessor.class)
+		Scope dto = (Scope) __inject__(RequestProcessor.class)
 				.setUniformResourceIdentifierString("http://10.3.4.20:32201/sib/classification-administrative/api/v1/unites-administratives/code/9918390")
-				.setResponseEntityClass(PosteLocation.class)
+				.setResponseEntityClass(Scope.class)
 				.execute().getOutput();
 		assertThat(dto.getLink()).isEqualTo("c7be3444-1b48-43aa-8965-fc45a811f3d3");
 		assertThat(dto.getName()).isEqualTo("Renforcement des Capacités Open Government Partnership (OGP)");
@@ -43,7 +43,7 @@ public class EntitiesUnitTest extends AbstractArquillianUnitTest {
 	public static org.jboss.shrinkwrap.api.spec.JavaArchive createDeployment() {
 		return new org.cyk.utility.__kernel__.test.arquillian.archive.builder.JavaArchiveBuilder()
 				.addPackage(org.cyk.utility.ApplicationScopeLifeCycleListener.class.getPackage().getName(),Boolean.TRUE)
-				.addPackage(PosteLocation.class.getPackage().getName(),Boolean.TRUE)
+				.addPackage(Scope.class.getPackage().getName(),Boolean.TRUE)
 				.execute();
 	}
 
