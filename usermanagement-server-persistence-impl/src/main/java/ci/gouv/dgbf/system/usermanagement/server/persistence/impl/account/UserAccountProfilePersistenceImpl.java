@@ -8,7 +8,6 @@ import javax.enterprise.context.ApplicationScoped;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
 import org.cyk.utility.server.persistence.query.PersistenceQuery;
-import org.cyk.utility.server.persistence.query.PersistenceQueryRepository;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
@@ -32,10 +31,11 @@ public class UserAccountProfilePersistenceImpl extends AbstractPersistenceEntity
 		return __readMany__(properties,____getQueryParameters____(properties,userAccount));
 	}
 	
-	protected Object[] __getQueryParameters__(String queryIdentifier,Properties properties,Object...objects){
-		PersistenceQuery persistenceQuery = __inject__(PersistenceQueryRepository.class).getBySystemIdentifier(queryIdentifier);
-		if(persistenceQuery.isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readByUserAccount,queryIdentifier))
+	@Override
+	protected Object[] __getQueryParameters__(PersistenceQuery query, Properties properties, Object... objects) {
+		if(query.isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readByUserAccount))
 			return new Object[]{UserAccountProfile.FIELD_USER_ACCOUNT, objects[0]};
-		return super.__getQueryParameters__(queryIdentifier,properties, objects);
+		return super.__getQueryParameters__(query, properties, objects);
 	}
+	
 }

@@ -14,6 +14,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Us
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
@@ -23,6 +24,7 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeTypeDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileFunctionDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionCategoryDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionScopeDto;
@@ -61,11 +63,12 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			representation.setName(persistence.getName()); 
 			representation.setFunction(__inject__(InstanceHelper.class).buildOne(FunctionDto.class, persistence.getFunction()));
 			representation.setScope(__inject__(InstanceHelper.class).buildOne(ScopeDto.class, persistence.getScope()));
-			/*
-			representation.setMinistry(__inject__(InstanceHelper.class).buildOne(MinistryDto.class, persistence.getMinistry()));
-			representation.setProgram(__inject__(InstanceHelper.class).buildOne(ProgramDto.class, persistence.getProgram()));
-			representation.setAdministrativeUnit(__inject__(InstanceHelper.class).buildOne(AdministrativeUnitDto.class, persistence.getAdministrativeUnit()));
-			*/
+		}else if(source instanceof ProfileFunction && destination instanceof ProfileFunctionDto) {
+			ProfileFunction persistence = (ProfileFunction) source;
+			ProfileFunctionDto representation = (ProfileFunctionDto) destination;
+			representation.setIdentifier(persistence.getIdentifier());
+			representation.setProfile(__inject__(InstanceHelper.class).buildOne(ProfileDto.class, persistence.getProfile()));
+			representation.setFunction(__inject__(InstanceHelper.class).buildOne(FunctionDto.class, persistence.getFunction()));
 		}else if(source instanceof UserAccount && destination instanceof UserAccountDto) {
 			UserAccount persistence = (UserAccount) source;
 			UserAccountDto representation = (UserAccountDto) destination;

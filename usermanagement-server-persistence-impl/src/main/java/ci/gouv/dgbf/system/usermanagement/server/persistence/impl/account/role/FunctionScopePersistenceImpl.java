@@ -10,7 +10,6 @@ import org.cyk.utility.array.ArrayHelper;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
 import org.cyk.utility.server.persistence.PersistenceFunctionReader;
 import org.cyk.utility.server.persistence.query.PersistenceQuery;
-import org.cyk.utility.server.persistence.query.PersistenceQueryRepository;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
@@ -27,15 +26,14 @@ public class FunctionScopePersistenceImpl extends AbstractPersistenceEntityImpl<
 		addQueryCollectInstances(readWhereNameContains, "SELECT tuple FROM FunctionScope tuple WHERE lower(tuple.code) LIKE lower(:query) OR lower(tuple.name) LIKE lower(:query)");
 	}
 	
-	@SuppressWarnings("unchecked")
-	protected Object[] __getQueryParameters__(String queryIdentifier,Properties properties,Object...objects){
-		PersistenceQuery persistenceQuery = __inject__(PersistenceQueryRepository.class).getBySystemIdentifier(queryIdentifier);
-		if(persistenceQuery.isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readWhereNameContains,queryIdentifier)) {
+	@Override
+	protected Object[] __getQueryParameters__(PersistenceQuery query, Properties properties, Object... objects) {
+		if(query.isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readWhereNameContains)) {
 			if(Boolean.TRUE.equals(__inject__(ArrayHelper.class).isEmpty(objects)))
 				objects = new Object[] {__injectCollectionHelper__().getFirst((Collection<String>) Properties.getFromPath(properties,Properties.QUERY_FILTERS))};
 			return new Object[]{"query", "%"+objects[0]+"%"};
 		}
-		return super.__getQueryParameters__(queryIdentifier,properties, objects);
+		return super.__getQueryParameters__(query, properties, objects);
 	}
 	
 	@Override

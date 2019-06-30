@@ -3,8 +3,12 @@ package ci.gouv.dgbf.system.usermanagement.server.representation.impl.integratio
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
+import org.cyk.utility.__kernel__.properties.Properties;
+import org.cyk.utility.map.MapHelper;
+import org.cyk.utility.object.ObjectToStringBuilder;
 import org.cyk.utility.server.representation.AbstractEntityCollection;
 import org.cyk.utility.server.representation.test.TestRepresentationCreate;
 import org.cyk.utility.server.representation.test.arquillian.AbstractRepresentationArquillianIntegrationTestWithDefaultDeployment;
@@ -12,7 +16,15 @@ import org.cyk.utility.stream.distributed.Topic;
 import org.cyk.utility.time.TimeHelper;
 import org.junit.Test;
 
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionCategoryBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileFunctionBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.UserAccountRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.ScopeRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.ScopeTypeRepresentation;
@@ -20,6 +32,7 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.FunctionCategoryRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.FunctionRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.FunctionScopeRepresentation;
+import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.ProfileFunctionRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountInterimDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountProfileDto;
@@ -80,6 +93,65 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		profileRoleFunction.setProfile(profile);
 		profileRoleFunction.setFunction(function);
 		__inject__(TestRepresentationCreate.class).addObjectsToBeCreatedArray(function.getCategory(),function,profile).addObjects(profileRoleFunction).execute();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void get_many_profileByFunctions() throws Exception{
+		FunctionCategoryDto category = new FunctionCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(FunctionCategoryRepresentation.class).createOne(category);
+		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("f01").setName(__getRandomName__()).setCategory(category));
+		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("f02").setName(__getRandomName__()).setCategory(category));
+		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("f03").setName(__getRandomName__()).setCategory(category));
+		
+		__inject__(ProfileRepresentation.class).createOne(new ProfileDto().setCode("p01").setName(__getRandomName__()));
+		__inject__(ProfileRepresentation.class).createOne(new ProfileDto().setCode("p02").setName(__getRandomName__()));
+		__inject__(ProfileRepresentation.class).createOne(new ProfileDto().setCode("p03").setName(__getRandomName__()));
+		__inject__(ProfileRepresentation.class).createOne(new ProfileDto().setCode("p04").setName(__getRandomName__()));
+		
+		Collection<ProfileFunctionDto> profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(Boolean.FALSE,null,null,null
+				,__inject__(ObjectToStringBuilder.class).setObject(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p01")).execute().getOutput()).getEntity();
+		assertThat(profileFunctions).isNull();
+		
+		__inject__(ProfileFunctionRepresentation.class).createOne(new ProfileFunctionDto().setProfile(new ProfileDto().setCode("p01")).setFunction(new FunctionDto().setCode("f01")));
+		profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(Boolean.FALSE,null,null,null
+				,__inject__(ObjectToStringBuilder.class).setObject(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p01")).execute().getOutput()).getEntity();
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01");
+		
+		__inject__(ProfileFunctionRepresentation.class).createOne(new ProfileFunctionDto().setProfile(new ProfileDto().setCode("p02")).setFunction(new FunctionDto().setCode("f02")));
+		__inject__(ProfileFunctionRepresentation.class).createOne(new ProfileFunctionDto().setProfile(new ProfileDto().setCode("p02")).setFunction(new FunctionDto().setCode("f03")));
+		
+		profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(Boolean.FALSE,null,null,null
+				,__inject__(ObjectToStringBuilder.class).setObject(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p01")).execute().getOutput()).getEntity();
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01");
+		profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(Boolean.FALSE,null,null,null
+				,__inject__(ObjectToStringBuilder.class).setObject(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p02")).execute().getOutput()).getEntity();
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f02","f03");
+		/*
+		__inject__(ProfileFunctionRepresentation.class).createOne(new ProfileFunction().setProfileFromCode("p03").setFunctionFromCode("f01"));
+		__inject__(ProfileFunctionRepresentation.class).createOne(new ProfileFunction().setProfileFromCode("p03").setFunctionFromCode("f02"));
+		__inject__(ProfileFunctionRepresentation.class).createOne(new ProfileFunction().setProfileFromCode("p03").setFunctionFromCode("f03"));
+		
+		profileFunctions = __inject__(ProfileFunctionRepresentation.class).getMany(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p01")));
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01");
+		profileFunctions = __inject__(ProfileFunctionRepresentation.class).getMany(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p02")));
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f02","f03");
+		profileFunctions = __inject__(ProfileFunctionRepresentation.class).getMany(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p03")));
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01","f02","f03");
+		
+		profileFunctions = __inject__(ProfileFunctionRepresentation.class).getMany(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p04")));
+		assertThat(profileFunctions).isEmpty();
+		*/
+		__inject__(ProfileFunctionRepresentation.class).deleteAll();
+		__inject__(ProfileRepresentation.class).deleteAll();
+		__inject__(FunctionRepresentation.class).deleteAll();
+		
 	}
 	
 	@Test

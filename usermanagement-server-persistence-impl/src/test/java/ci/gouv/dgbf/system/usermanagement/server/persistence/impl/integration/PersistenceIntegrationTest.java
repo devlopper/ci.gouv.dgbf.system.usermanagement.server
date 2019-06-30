@@ -4,9 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.util.AbstractMap;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.collection.CollectionHelper;
 import org.cyk.utility.server.persistence.test.TestPersistenceCreate;
 import org.cyk.utility.server.persistence.test.arquillian.AbstractPersistenceArquillianIntegrationTestWithDefaultDeployment;
@@ -14,17 +17,21 @@ import org.junit.Test;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.UserRepresentation;
 
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionCategoryPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileFunctionPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterim;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.ApplicationScopeLifeCycleListener;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
@@ -88,6 +95,134 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		profileFunction.setProfile(profile);
 		profileFunction.setFunction(function);
 		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(function.getCategory(),function,profile).addObjects(profileFunction).execute();
+	}
+	
+	@Test
+	public void read_profileByFunctions() throws Exception{
+		FunctionCategory category = new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
+		userTransaction.begin();
+		__inject__(FunctionCategoryPersistence.class).create(category);
+		__inject__(FunctionPersistence.class).create(new Function().setCode("f01").setName(__getRandomName__()).setCategory(category));
+		__inject__(FunctionPersistence.class).create(new Function().setCode("f02").setName(__getRandomName__()).setCategory(category));
+		__inject__(FunctionPersistence.class).create(new Function().setCode("f03").setName(__getRandomName__()).setCategory(category));
+		
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p01").setName(__getRandomName__()));
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p02").setName(__getRandomName__()));
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p03").setName(__getRandomName__()));
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p04").setName(__getRandomName__()));
+		userTransaction.commit();
+		
+		Collection<ProfileFunction> profileFunctions = __inject__(ProfileFunctionPersistence.class).readByProfileCodes("p01");
+		assertThat(profileFunctions).isEmpty();
+		userTransaction.begin();
+		__inject__(ProfileFunctionPersistence.class).create(new ProfileFunction().setProfileFromCode("p01").setFunctionFromCode("f01"));
+		userTransaction.commit();
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).readByProfileCodes("p01");
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01");
+		
+		userTransaction.begin();
+		__inject__(ProfileFunctionPersistence.class).create(new ProfileFunction().setProfileFromCode("p02").setFunctionFromCode("f02"));
+		__inject__(ProfileFunctionPersistence.class).create(new ProfileFunction().setProfileFromCode("p02").setFunctionFromCode("f03"));
+		userTransaction.commit();
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).readByProfileCodes("p01");
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01");
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).readByProfileCodes("p02");
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f02","f03");
+		
+		userTransaction.begin();
+		__inject__(ProfileFunctionPersistence.class).create(new ProfileFunction().setProfileFromCode("p03").setFunctionFromCode("f01"));
+		__inject__(ProfileFunctionPersistence.class).create(new ProfileFunction().setProfileFromCode("p03").setFunctionFromCode("f02"));
+		__inject__(ProfileFunctionPersistence.class).create(new ProfileFunction().setProfileFromCode("p03").setFunctionFromCode("f03"));
+		userTransaction.commit();
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).readByProfileCodes("p01");
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01");
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).readByProfileCodes("p02");
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f02","f03");
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).readByProfileCodes("p03");
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01","f02","f03");
+		
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).readByProfileCodes("p04");
+		assertThat(profileFunctions).isEmpty();
+		
+		userTransaction.begin();
+		__inject__(ProfileFunctionPersistence.class).deleteAll();
+		__inject__(ProfilePersistence.class).deleteAll();
+		__inject__(FunctionPersistence.class).deleteAll();
+		userTransaction.commit();
+	}
+	
+	@Test
+	public void read_profileFunction_filter_by_profiles() throws Exception{
+		FunctionCategory category = new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
+		userTransaction.begin();
+		__inject__(FunctionCategoryPersistence.class).create(category);
+		__inject__(FunctionPersistence.class).create(new Function().setCode("f01").setName(__getRandomName__()).setCategory(category));
+		__inject__(FunctionPersistence.class).create(new Function().setCode("f02").setName(__getRandomName__()).setCategory(category));
+		__inject__(FunctionPersistence.class).create(new Function().setCode("f03").setName(__getRandomName__()).setCategory(category));
+		
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p01").setName(__getRandomName__()));
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p02").setName(__getRandomName__()));
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p03").setName(__getRandomName__()));
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p04").setName(__getRandomName__()));
+		userTransaction.commit();
+		
+		Map<String,String> filters = new HashMap<>();
+		filters.put(ProfileFunction.FIELD_PROFILE, "p01");
+		Collection<ProfileFunction> profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(filters));
+		assertThat(profileFunctions).isEmpty();
+		userTransaction.begin();
+		__inject__(ProfileFunctionPersistence.class).create(new ProfileFunction().setProfileFromCode("p01").setFunctionFromCode("f01"));
+		userTransaction.commit();
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(filters));
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01");
+		
+		userTransaction.begin();
+		__inject__(ProfileFunctionPersistence.class).create(new ProfileFunction().setProfileFromCode("p02").setFunctionFromCode("f02"));
+		__inject__(ProfileFunctionPersistence.class).create(new ProfileFunction().setProfileFromCode("p02").setFunctionFromCode("f03"));
+		userTransaction.commit();
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(filters));
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01");
+		filters.put(ProfileFunction.FIELD_PROFILE, "p02");
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(filters));
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f02","f03");
+		
+		userTransaction.begin();
+		__inject__(ProfileFunctionPersistence.class).create(new ProfileFunction().setProfileFromCode("p03").setFunctionFromCode("f01"));
+		__inject__(ProfileFunctionPersistence.class).create(new ProfileFunction().setProfileFromCode("p03").setFunctionFromCode("f02"));
+		__inject__(ProfileFunctionPersistence.class).create(new ProfileFunction().setProfileFromCode("p03").setFunctionFromCode("f03"));
+		userTransaction.commit();
+		filters.put(ProfileFunction.FIELD_PROFILE, "p01");
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(filters));
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01");
+		filters.put(ProfileFunction.FIELD_PROFILE, "p02");
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(filters));
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f02","f03");
+		filters.put(ProfileFunction.FIELD_PROFILE, "p03");
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(filters));
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01","f02","f03");
+		
+		filters.put(ProfileFunction.FIELD_PROFILE, "p04");
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(filters));
+		assertThat(profileFunctions).isEmpty();
+		
+		userTransaction.begin();
+		__inject__(ProfileFunctionPersistence.class).deleteAll();
+		__inject__(ProfilePersistence.class).deleteAll();
+		__inject__(FunctionPersistence.class).deleteAll();
+		userTransaction.commit();
+		
 	}
 	
 	@Test

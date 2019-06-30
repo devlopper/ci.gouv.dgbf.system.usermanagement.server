@@ -5,12 +5,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDateTime;
 import java.util.AbstractMap;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.collection.CollectionHelper;
+import org.cyk.utility.map.MapHelper;
 import org.cyk.utility.server.business.test.TestBusinessCreate;
 import org.cyk.utility.server.business.test.arquillian.AbstractBusinessArquillianIntegrationTestWithDefaultDeployment;
 import org.cyk.utility.stream.distributed.Topic;
@@ -22,26 +24,27 @@ import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.UserRepresentation;
 
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionCategoryBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionScopeBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileFunctionBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeTypeBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionCategoryBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.impl.ApplicationScopeLifeCycleListener;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionScopePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Service;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterim;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
 public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrationTestWithDefaultDeployment {
@@ -110,6 +113,60 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		profileFunction.setProfile(profile);
 		profileFunction.setFunction(function);
 		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(function.getCategory(),function,profile).addObjects(profileFunction).execute();
+	}
+	
+	@Test
+	public void read_profileByFunctions() throws Exception{
+		FunctionCategory category = new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(FunctionCategoryBusiness.class).create(category);
+		__inject__(FunctionBusiness.class).create(new Function().setCode("f01").setName(__getRandomName__()).setCategory(category));
+		__inject__(FunctionBusiness.class).create(new Function().setCode("f02").setName(__getRandomName__()).setCategory(category));
+		__inject__(FunctionBusiness.class).create(new Function().setCode("f03").setName(__getRandomName__()).setCategory(category));
+		
+		__inject__(ProfileBusiness.class).create(new Profile().setCode("p01").setName(__getRandomName__()));
+		__inject__(ProfileBusiness.class).create(new Profile().setCode("p02").setName(__getRandomName__()));
+		__inject__(ProfileBusiness.class).create(new Profile().setCode("p03").setName(__getRandomName__()));
+		__inject__(ProfileBusiness.class).create(new Profile().setCode("p04").setName(__getRandomName__()));
+		
+		Collection<ProfileFunction> profileFunctions = __inject__(ProfileFunctionBusiness.class).findMany(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p01")));
+		assertThat(profileFunctions).isEmpty();
+		
+		__inject__(ProfileFunctionBusiness.class).create(new ProfileFunction().setProfileFromCode("p01").setFunctionFromCode("f01"));
+		profileFunctions = __inject__(ProfileFunctionBusiness.class).findMany(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p01")));
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01");
+		
+		__inject__(ProfileFunctionBusiness.class).create(new ProfileFunction().setProfileFromCode("p02").setFunctionFromCode("f02"));
+		__inject__(ProfileFunctionBusiness.class).create(new ProfileFunction().setProfileFromCode("p02").setFunctionFromCode("f03"));
+		
+		profileFunctions = __inject__(ProfileFunctionBusiness.class).findMany(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p01")));
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01");
+		profileFunctions = __inject__(ProfileFunctionBusiness.class).findMany(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p02")));
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f02","f03");
+		
+		__inject__(ProfileFunctionBusiness.class).create(new ProfileFunction().setProfileFromCode("p03").setFunctionFromCode("f01"));
+		__inject__(ProfileFunctionBusiness.class).create(new ProfileFunction().setProfileFromCode("p03").setFunctionFromCode("f02"));
+		__inject__(ProfileFunctionBusiness.class).create(new ProfileFunction().setProfileFromCode("p03").setFunctionFromCode("f03"));
+		
+		profileFunctions = __inject__(ProfileFunctionBusiness.class).findMany(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p01")));
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01");
+		profileFunctions = __inject__(ProfileFunctionBusiness.class).findMany(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p02")));
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f02","f03");
+		profileFunctions = __inject__(ProfileFunctionBusiness.class).findMany(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p03")));
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01","f02","f03");
+		
+		profileFunctions = __inject__(ProfileFunctionBusiness.class).findMany(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p04")));
+		assertThat(profileFunctions).isEmpty();
+		
+		__inject__(ProfileFunctionBusiness.class).deleteAll();
+		__inject__(ProfileBusiness.class).deleteAll();
+		__inject__(FunctionBusiness.class).deleteAll();
+		
 	}
 	
 	@Test

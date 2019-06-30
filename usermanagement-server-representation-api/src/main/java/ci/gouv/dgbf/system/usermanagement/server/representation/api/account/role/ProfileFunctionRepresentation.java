@@ -11,6 +11,6 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 @Path(ProfileFunctionRepresentation.PATH)
 public interface ProfileFunctionRepresentation extends RepresentationEntity<ProfileFunction,ProfileFunctionDto,ProfileFunctionDtoCollection> {
 	
-	String PATH = "/profilefonction";
+	String PATH = ProfileRepresentation.PATH+FunctionRepresentation.PATH;
 	
 }

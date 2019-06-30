@@ -35,6 +35,16 @@ public class ProfileFunction extends AbstractIdentifiedByString implements Seria
 		return (ProfileFunction) super.setIdentifier(identifier);
 	}
 	
+	public ProfileFunction setProfileFromCode(String code) {
+		setProfile(__getFromBusinessIdentifier__(Profile.class, code));
+		return this;
+	}
+	
+	public ProfileFunction setFunctionFromCode(String code) {
+		setFunction(__getFromBusinessIdentifier__(Function.class, code));
+		return this;
+	}
+	
 	/**/
 	
 	public static final String FIELD_PROFILE = "profile";
