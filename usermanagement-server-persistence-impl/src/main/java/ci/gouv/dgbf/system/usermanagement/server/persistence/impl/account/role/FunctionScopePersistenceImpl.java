@@ -9,7 +9,6 @@ import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.array.ArrayHelper;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
 import org.cyk.utility.server.persistence.PersistenceFunctionReader;
-import org.cyk.utility.server.persistence.PersistenceServiceProvider;
 import org.cyk.utility.server.persistence.query.PersistenceQuery;
 import org.cyk.utility.server.persistence.query.PersistenceQueryRepository;
 
@@ -26,20 +25,6 @@ public class FunctionScopePersistenceImpl extends AbstractPersistenceEntityImpl<
 	protected void __listenPostConstructPersistenceQueries__() {
 		super.__listenPostConstructPersistenceQueries__();
 		addQueryCollectInstances(readWhereNameContains, "SELECT tuple FROM FunctionScope tuple WHERE lower(tuple.code) LIKE lower(:query) OR lower(tuple.name) LIKE lower(:query)");
-	}
-	
-	@Override
-	public PersistenceServiceProvider<FunctionScope> create(FunctionScope functionScope, Properties properties) {
-		super.create(functionScope, properties);
-		//__inject__(KeycloakHelper.class).createRole(functionScope.getCode(), functionScope.getName(), "POSTE",functionScope.getFunction().getCode());
-		return this;
-	}
-	
-	@Override
-	public PersistenceServiceProvider<FunctionScope> delete(FunctionScope functionScope, Properties properties) {
-		super.delete(functionScope, properties);
-		//__inject__(KeycloakHelper.class).deleteRole(functionScope.getCode());
-		return this;
 	}
 	
 	@SuppressWarnings("unchecked")

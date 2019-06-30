@@ -13,8 +13,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @XmlRootElement @Getter @Setter @Accessors(chain=true) @NoArgsConstructor
-@XmlSeeAlso(RoleCategoryDto.class)
-public class RoleCategoryDtoCollection extends AbstractEntityCollection<RoleCategoryDto> implements Serializable {
+@XmlSeeAlso(FunctionCategoryDto.class)
+public class FunctionCategoryDtoCollection extends AbstractEntityCollection<FunctionCategoryDto> implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 }

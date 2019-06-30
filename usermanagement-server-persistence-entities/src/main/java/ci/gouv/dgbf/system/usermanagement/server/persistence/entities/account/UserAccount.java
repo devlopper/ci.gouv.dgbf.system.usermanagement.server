@@ -38,7 +38,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	@ManyToOne @JoinColumn(name=COLUMN_ACCOUNT) @NotNull private Account account;
 	
 	@Transient private Profiles profiles;
-	@Transient private FunctionScopes postes;
+	@Transient private FunctionScopes functionScopes;
 	@Transient private Boolean isNotifiableByMail;
 	
 	/**/
@@ -74,18 +74,18 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 		return this;
 	}
 	
-	public FunctionScopes getPostes(Boolean injectIfNull) {
-		return (FunctionScopes) __getInjectIfNull__(FIELD_POSTES, injectIfNull);
+	public FunctionScopes getFunctionScopes(Boolean injectIfNull) {
+		return (FunctionScopes) __getInjectIfNull__(FIELD_FUNCTION_SCOPES, injectIfNull);
 	}
 	
-	public UserAccount addPostes(Collection<FunctionScope> rolePostes) {
-		getPostes(Boolean.TRUE).add(rolePostes);
+	public UserAccount addFunctionScopes(Collection<FunctionScope> functionScopes) {
+		getFunctionScopes(Boolean.TRUE).add(functionScopes);
 		return this;
 	}
 	
-	public UserAccount addRolePostes(FunctionScope...rolePostes) {
-		if(__inject__(ArrayHelper.class).isNotEmpty(rolePostes)) {
-			addPostes(__inject__(CollectionHelper.class).instanciate(rolePostes));
+	public UserAccount addFunctionScopes(FunctionScope...functionScopes) {
+		if(__inject__(ArrayHelper.class).isNotEmpty(functionScopes)) {
+			addFunctionScopes(__inject__(CollectionHelper.class).instanciate(functionScopes));
 		}
 		return this;
 	}
@@ -95,7 +95,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	public static final String FIELD_USER = "user";
 	public static final String FIELD_ACCOUNT = "account";
 	public static final String FIELD_PROFILES = "profiles";
-	public static final String FIELD_POSTES = "postes";
+	public static final String FIELD_FUNCTION_SCOPES = "functionScopes";
 	
 	public static final String TABLE_NAME = Account.TABLE_NAME+"_"+User.TABLE_NAME;
 	

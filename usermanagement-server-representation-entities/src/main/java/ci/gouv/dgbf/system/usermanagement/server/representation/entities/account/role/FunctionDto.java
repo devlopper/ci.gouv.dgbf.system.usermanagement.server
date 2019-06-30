@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
 public class FunctionDto extends AbstractEntityFromPersistenceEntityCodedAndNamed implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	private RoleCategoryDto category;
+	private FunctionCategoryDto category;
 	
 	@Override
 	public FunctionDto setCode(String code) {

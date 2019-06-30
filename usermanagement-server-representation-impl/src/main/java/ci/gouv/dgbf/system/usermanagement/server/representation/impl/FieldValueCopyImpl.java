@@ -22,17 +22,17 @@ public class FieldValueCopyImpl extends AbstractFieldValueCopyImpl implements Se
 
 	@Override
 	protected Object __processValue__(Field source, Field destination, Object value) {
-		if(__injectFieldHelper__().getField(UserAccountDto.class, UserAccountDto.FIELD_POSTES).equals(source) 
-				&& __injectFieldHelper__().getField(UserAccount.class, UserAccount.FIELD_POSTES).equals(destination)) {
-			FunctionScopes postes = null;
+		if(__injectFieldHelper__().getField(UserAccountDto.class, UserAccountDto.FIELD_FUNCTION_SCOPES).equals(source) 
+				&& __injectFieldHelper__().getField(UserAccount.class, UserAccount.FIELD_FUNCTION_SCOPES).equals(destination)) {
+			FunctionScopes functionScopes = null;
 			FunctionScopeDtoCollection rolePosteDtoCollection = ((FunctionScopeDtoCollection) value);
 			if(rolePosteDtoCollection != null && Boolean.TRUE.equals(__injectCollectionHelper__().isNotEmpty(rolePosteDtoCollection.getCollection()))) {
-				postes = __inject__(FunctionScopes.class);
+				functionScopes = __inject__(FunctionScopes.class);
 				for(FunctionScopeDto index : rolePosteDtoCollection.getCollection()) {
-					postes.add(__inject__(FunctionScopePersistence.class).readOneByBusinessIdentifier(index.getCode()));
+					functionScopes.add(__inject__(FunctionScopePersistence.class).readOneByBusinessIdentifier(index.getCode()));
 				}
 			}
-			return postes;
+			return functionScopes;
 		}else if(__injectFieldHelper__().getField(UserAccountDto.class, UserAccountDto.FIELD_PROFILES).equals(source) 
 				&& __injectFieldHelper__().getField(UserAccount.class, UserAccount.FIELD_PROFILES).equals(destination)) {
 			Profiles profiles = null;

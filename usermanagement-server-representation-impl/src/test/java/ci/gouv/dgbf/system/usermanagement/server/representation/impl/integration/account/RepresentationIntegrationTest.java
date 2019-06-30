@@ -17,7 +17,7 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.User
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.ScopeRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.ScopeTypeRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.ProfileRepresentation;
-import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.RoleCategoryRepresentation;
+import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.FunctionCategoryRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.FunctionRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.FunctionScopeRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountDto;
@@ -27,7 +27,7 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeTypeDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileFunctionDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RoleCategoryDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionCategoryDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionScopeDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.impl.ApplicationScopeLifeCycleListener;
@@ -43,12 +43,12 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 	
 	@Test
 	public void create_roleCategory() throws Exception{
-		__inject__(TestRepresentationCreate.class).addObjects(new RoleCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__())).execute();
+		__inject__(TestRepresentationCreate.class).addObjects(new FunctionCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__())).execute();
 	}
 	
 	@Test
 	public void create_roleFunction() throws Exception{
-		RoleCategoryDto category = new RoleCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
+		FunctionCategoryDto category = new FunctionCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
 		__inject__(TestRepresentationCreate.class).addObjectsToBeCreatedArray(category)
 			.addObjects(new FunctionDto().setCode(__getRandomCode__()).setName(__getRandomName__()).setCategory(category)).execute();
 	}
@@ -57,7 +57,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 	public void create_scope() throws Exception{
 		ScopeTypeDto scopeType = new ScopeTypeDto().setCode(__getRandomCode__()).setName(__getRandomCode__());
 		ScopeDto scope = new ScopeDto().setIdentifier("21").setType(scopeType);
-		RoleCategoryDto category = new RoleCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
+		FunctionCategoryDto category = new FunctionCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
 		FunctionDto function = new FunctionDto().setCode(__getRandomCode__()).setName(__getRandomName__()).setCategory(category);
 		__inject__(TestRepresentationCreate.class).addObjectsToBeCreatedArray(scopeType,scope,category,function)
 			.addObjects(new FunctionScopeDto().setCode(__getRandomCode__()).setName(__getRandomName__()).setFunction(function).setScope(scope)).execute();
@@ -73,7 +73,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 	@Test
 	public void create_profileRoleFunction() throws Exception{
 		FunctionDto function = new FunctionDto().setCode(__getRandomCode__()).setName(__getRandomName__());
-		function.setCategory(new RoleCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__()));
+		function.setCategory(new FunctionCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__()));
 		ProfileDto profile = new ProfileDto();
 		profile.setCode(__getRandomCode__()).setName(__getRandomName__());
 		ProfileFunctionDto profileRoleFunction = new ProfileFunctionDto();
@@ -95,27 +95,27 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		
 		ScopeTypeDto scopeType = new ScopeTypeDto().setCode("MINISTERE").setName("Ministère");
 		ScopeDto scope = new ScopeDto().setIdentifier("21").setType(scopeType);
-		RoleCategoryDto category = new RoleCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
+		FunctionCategoryDto category = new FunctionCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
 		FunctionDto function = new FunctionDto().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setCategory(category);
-		FunctionScopeDto poste = new FunctionScopeDto().setFunction(function).setScope(scope);
+		FunctionScopeDto functionScope = new FunctionScopeDto().setFunction(function).setScope(scope);
 		ProfileDto profile = new ProfileDto().setCode("p001").setName(__getRandomName__());
 		
 		UserAccountDto userAccount = new UserAccountDto();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__());
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
-		userAccount.addPostes(poste).addProfiles(profile);
-		__inject__(TestRepresentationCreate.class).setName("Create user account").addObjectsToBeCreatedArray(scopeType,scope,category,function,poste,profile).addObjects(userAccount).addTryEndRunnables(new Runnable() {
+		userAccount.addFunctionScopes(functionScope).addProfiles(profile);
+		__inject__(TestRepresentationCreate.class).setName("Create user account").addObjectsToBeCreatedArray(scopeType,scope,category,function,functionScope,profile).addObjects(userAccount).addTryEndRunnables(new Runnable() {
 			@Override
 			public void run() {
 				UserAccountDto userAccount01 = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null, null).getEntity();
 				assertThat(userAccount01).as("user account is null").isNotNull();
-				assertThat(userAccount01.getPostes()).as("user account roles collection is not null").isNull();
+				assertThat(userAccount01.getFunctionScopes()).as("user account roles collection is not null").isNull();
 				
-				userAccount01 = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_POSTES).getEntity();
+				userAccount01 = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES).getEntity();
 				assertThat(userAccount01).as("user account is null").isNotNull();
-				assertThat(userAccount01.getPostes()).as("user account roles collection is null").isNotNull();
-				assertThat(userAccount01.getPostes().getCollection()).as("user account roles collection is empty").isNotEmpty();
-				assertThat(userAccount01.getPostes().getCollection().stream().map(FunctionScopeDto::getCode).collect(Collectors.toList())).contains("ASSISTANT_SAISIE_MINISTERE_21");
+				assertThat(userAccount01.getFunctionScopes()).as("user account roles collection is null").isNotNull();
+				assertThat(userAccount01.getFunctionScopes().getCollection()).as("user account roles collection is empty").isNotEmpty();
+				assertThat(userAccount01.getFunctionScopes().getCollection().stream().map(FunctionScopeDto::getCode).collect(Collectors.toList())).contains("ASSISTANT_SAISIE_MINISTERE_21");
 				assertThat(userAccount01.getProfiles()).as("user account profiles collection is null").isNotNull();
 				assertThat(userAccount01.getProfiles().getCollection()).as("user account profiles collection is empty").isNotEmpty();
 				assertThat(userAccount01.getProfiles().getCollection().stream().map(ProfileDto::getCode).collect(Collectors.toList())).contains("p001");
@@ -152,46 +152,46 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		__inject__(ScopeTypeRepresentation.class).createOne(scopeType);
 		ScopeDto scope = new ScopeDto().setIdentifier("21").setType(scopeType);
 		__inject__(ScopeRepresentation.class).createOne(scope);
-		RoleCategoryDto category = new RoleCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
-		__inject__(RoleCategoryRepresentation.class).createOne(category);
+		FunctionCategoryDto category = new FunctionCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(FunctionCategoryRepresentation.class).createOne(category);
 		FunctionDto function = new FunctionDto().setCode("CONTROLEUR_FINANCIER").setName(__getRandomName__()).setCategory(category);
 		__inject__(FunctionRepresentation.class).createOne(function);
-		FunctionScopeDto poste = new FunctionScopeDto().setFunction(function).setScope(scope);
-		__inject__(FunctionScopeRepresentation.class).createOne(poste);
+		FunctionScopeDto functionScope = new FunctionScopeDto().setFunction(function).setScope(scope);
+		__inject__(FunctionScopeRepresentation.class).createOne(functionScope);
 		ProfileDto profile = new ProfileDto().setCode("p001").setName(__getRandomName__());
 		__inject__(ProfileRepresentation.class).createOne(profile);
 		
 		UserAccountDto userAccount = new UserAccountDto();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__());
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
-		userAccount.addPostes(poste).addProfiles(profile);
+		userAccount.addFunctionScopes(functionScope).addProfiles(profile);
 		
 		__inject__(UserAccountRepresentation.class).createOne(userAccount);
 		
-		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_POSTES).getEntity();
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES).getEntity();
 		assertThat(userAccount).isNotNull();
-		assertThat(userAccount.getPostes()).isNotNull();
-		assertThat(userAccount.getPostes().getCollection()).isNotEmpty();
-		assertThat(userAccount.getPostes().getCollection().stream().map(FunctionScopeDto::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
+		assertThat(userAccount.getFunctionScopes()).isNotNull();
+		assertThat(userAccount.getFunctionScopes().getCollection()).isNotEmpty();
+		assertThat(userAccount.getFunctionScopes().getCollection().stream().map(FunctionScopeDto::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
 		assertThat(userAccount.getProfiles()).as("user account profiles collection is null").isNotNull();
 		assertThat(userAccount.getProfiles().getCollection()).as("user account profiles collection is empty").isNotEmpty();
 		assertThat(userAccount.getProfiles().getCollection().stream().map(ProfileDto::getCode).collect(Collectors.toList())).contains("p001");
 		
 		function = new FunctionDto().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setCategory(category);
 		__inject__(FunctionRepresentation.class).createOne(function);
-		poste = new FunctionScopeDto().setFunction(function).setScope(scope);
-		__inject__(FunctionScopeRepresentation.class).createOne(poste);
+		functionScope = new FunctionScopeDto().setFunction(function).setScope(scope);
+		__inject__(FunctionScopeRepresentation.class).createOne(functionScope);
 		profile = new ProfileDto().setCode("p002").setName(__getRandomName__());
 		__inject__(ProfileRepresentation.class).createOne(profile);
 		
-		userAccount.addPostes(poste).addProfiles(profile);
-		__inject__(UserAccountRepresentation.class).updateOne(userAccount,UserAccountDto.FIELD_PROFILES+","+UserAccountDto.FIELD_POSTES);
+		userAccount.addFunctionScopes(functionScope).addProfiles(profile);
+		__inject__(UserAccountRepresentation.class).updateOne(userAccount,UserAccountDto.FIELD_PROFILES+","+UserAccountDto.FIELD_FUNCTION_SCOPES);
 		
-		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null,UserAccountDto.FIELD_PROFILES+","+UserAccount.FIELD_POSTES).getEntity();
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null,UserAccountDto.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES).getEntity();
 		assertThat(userAccount).isNotNull();
-		assertThat(userAccount.getPostes()).isNotNull();
-		assertThat(userAccount.getPostes().getCollection()).isNotEmpty();
-		assertThat(userAccount.getPostes().getCollection().stream().map(FunctionScopeDto::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21"
+		assertThat(userAccount.getFunctionScopes()).isNotNull();
+		assertThat(userAccount.getFunctionScopes().getCollection()).isNotEmpty();
+		assertThat(userAccount.getFunctionScopes().getCollection().stream().map(FunctionScopeDto::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21"
 				,"ASSISTANT_SAISIE_MINISTERE_21");
 		assertThat(userAccount.getProfiles()).as("user account profiles collection is null").isNotNull();
 		assertThat(userAccount.getProfiles().getCollection()).as("user account profiles collection is empty").isNotEmpty();

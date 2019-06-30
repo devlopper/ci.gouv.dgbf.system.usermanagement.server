@@ -37,15 +37,15 @@ public interface KeycloakHelper extends Helper {
 	String saveUserAccount(String identifier,String firstName,String lastNames,String electronicMailAddress,String userName,String pass,Collection<String> rolesCodes,Map<String,List<String>> attributes);
 	String saveUserAccount(UserAccount userAccount);
 	KeycloakHelper addUserAccountAttributeValue(String identifier,String attributeName,String attributeValue);
-	KeycloakHelper addUserAccountAttributesValues(UserAccountFunctionScope userAccountRolePoste);
+	KeycloakHelper addUserAccountAttributesValues(UserAccountFunctionScope userAccountFunctionScope);
 	KeycloakHelper removeUserAccountAttributeValue(String identifier,String attributeName,String attributeValue);
-	KeycloakHelper removeUserAccountAttributesValues(UserAccountFunctionScope userAccountRolePoste);
+	KeycloakHelper removeUserAccountAttributesValues(UserAccountFunctionScope userAccountFunctionScope);
 	KeycloakHelper deleteUserAccount(String identifier);
 	
 	KeycloakHelper load();
 	KeycloakHelper loadRoleCategory();
 	KeycloakHelper loadFunction();
-	KeycloakHelper loadRolePoste();
+	KeycloakHelper loadFunctionScope();
 	
 	String ROLE_ATTRIBUTE_NAME = "nom";
 	

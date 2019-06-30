@@ -29,9 +29,9 @@ public class UserAccountFunctionScopePersistenceImpl extends AbstractPersistence
 	}
 	
 	@Override
-	public PersistenceServiceProvider<UserAccountFunctionScope> create(UserAccountFunctionScope userAccountRolePoste, Properties properties) {
-		super.create(userAccountRolePoste, properties);
-		__inject__(KeycloakHelper.class).addUserAccountAttributesValues(userAccountRolePoste);
+	public PersistenceServiceProvider<UserAccountFunctionScope> create(UserAccountFunctionScope userAccountFunctionScope, Properties properties) {
+		super.create(userAccountFunctionScope, properties);
+		__inject__(KeycloakHelper.class).addUserAccountAttributesValues(userAccountFunctionScope);
 		return this;	
 	}
 	
@@ -42,16 +42,16 @@ public class UserAccountFunctionScopePersistenceImpl extends AbstractPersistence
 	}
 	
 	@Override
-	public PersistenceServiceProvider<UserAccountFunctionScope> update(UserAccountFunctionScope userAccountRolePoste, Properties properties) {
-		super.update(userAccountRolePoste, properties);
-		__inject__(KeycloakHelper.class).addUserAccountAttributesValues(userAccountRolePoste);
+	public PersistenceServiceProvider<UserAccountFunctionScope> update(UserAccountFunctionScope userAccountFunctionScope, Properties properties) {
+		super.update(userAccountFunctionScope, properties);
+		__inject__(KeycloakHelper.class).addUserAccountAttributesValues(userAccountFunctionScope);
 		return this;
 	}
 	
 	@Override
-	public PersistenceServiceProvider<UserAccountFunctionScope> delete(UserAccountFunctionScope userAccountRolePoste, Properties properties) {
-		super.delete(userAccountRolePoste, properties);
-		__inject__(KeycloakHelper.class).removeUserAccountAttributesValues(userAccountRolePoste);
+	public PersistenceServiceProvider<UserAccountFunctionScope> delete(UserAccountFunctionScope userAccountFunctionScope, Properties properties) {
+		super.delete(userAccountFunctionScope, properties);
+		__inject__(KeycloakHelper.class).removeUserAccountAttributesValues(userAccountFunctionScope);
 		return this;
 	}
 	

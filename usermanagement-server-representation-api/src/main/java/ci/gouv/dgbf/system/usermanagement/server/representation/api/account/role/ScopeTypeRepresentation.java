@@ -11,6 +11,6 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 @Path(ScopeTypeRepresentation.PATH)
 public interface ScopeTypeRepresentation extends RepresentationEntity<ScopeType,ScopeTypeDto,ScopeTypeDtoCollection> {
 	
-	String PATH = "/typestructure";
+	String PATH = "type"+ScopeRepresentation.PATH;
 	
 }

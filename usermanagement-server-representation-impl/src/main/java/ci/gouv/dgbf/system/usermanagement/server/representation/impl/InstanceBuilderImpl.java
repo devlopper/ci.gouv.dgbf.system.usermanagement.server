@@ -14,7 +14,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Us
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.AccountDto;
@@ -23,7 +23,7 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeTypeDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.RoleCategoryDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionCategoryDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionScopeDto;
 
@@ -40,9 +40,9 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			representation.setIdentifier(persistence.getIdentifier());
 			representation.setName(persistence.getName()); 
 			representation.setType(__inject__(InstanceHelper.class).buildOne(ScopeTypeDto.class, persistence.getType())); 
-		}else if(source instanceof RoleCategory && destination instanceof RoleCategoryDto) {
-			RoleCategory persistence = (RoleCategory) source;
-			RoleCategoryDto representation = (RoleCategoryDto) destination;
+		}else if(source instanceof FunctionCategory && destination instanceof FunctionCategoryDto) {
+			FunctionCategory persistence = (FunctionCategory) source;
+			FunctionCategoryDto representation = (FunctionCategoryDto) destination;
 			representation.setIdentifier(persistence.getIdentifier());
 			representation.setCode(persistence.getCode());
 			representation.setName(persistence.getName()); 
@@ -52,7 +52,7 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			representation.setIdentifier(persistence.getIdentifier());
 			representation.setCode(persistence.getCode());
 			representation.setName(persistence.getName()); 
-			representation.setCategory(__inject__(InstanceHelper.class).buildOne(RoleCategoryDto.class, persistence.getCategory())); 
+			representation.setCategory(__inject__(InstanceHelper.class).buildOne(FunctionCategoryDto.class, persistence.getCategory())); 
 		}else if(source instanceof FunctionScope && destination instanceof FunctionScopeDto) {
 			FunctionScope persistence = (FunctionScope) source;
 			FunctionScopeDto representation = (FunctionScopeDto) destination;
@@ -72,9 +72,9 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			representation.setIdentifier(persistence.getIdentifier());
 			representation.setUser(__inject__(InstanceHelper.class).buildOne(UserDto.class, persistence.getUser()));
 			representation.setAccount(__inject__(InstanceHelper.class).buildOne(AccountDto.class, persistence.getAccount()));
-			if(__injectCollectionHelper__().isNotEmpty(persistence.getPostes()))
-				for(FunctionScope index : persistence.getPostes().get())
-					representation.addPostes(__inject__(InstanceHelper.class).buildOne(FunctionScopeDto.class, index));
+			if(__injectCollectionHelper__().isNotEmpty(persistence.getFunctionScopes()))
+				for(FunctionScope index : persistence.getFunctionScopes().get())
+					representation.addFunctionScopes(__inject__(InstanceHelper.class).buildOne(FunctionScopeDto.class, index));
 			if(__injectCollectionHelper__().isNotEmpty(persistence.getProfiles()))
 				for(Profile index : persistence.getProfiles().get())
 					representation.addProfiles(__inject__(InstanceHelper.class).buildOne(ProfileDto.class, index));
@@ -86,16 +86,16 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			persistence.setIdentifier(representation.getIdentifier());
 			persistence.setUser(__inject__(InstanceHelper.class).buildOne(User.class, representation.getUser()));
 			persistence.setAccount(__inject__(InstanceHelper.class).buildOne(Account.class, representation.getAccount()));
-			persistence.setPostes(null).setProfiles(null);
-			if(representation.getPostes()!=null && __injectCollectionHelper__().isNotEmpty(representation.getPostes().getCollection()))
-				for(FunctionScopeDto index : representation.getPostes().getCollection()) {
-					FunctionScope rolePoste = null;
+			persistence.setFunctionScopes(null).setProfiles(null);
+			if(representation.getFunctionScopes()!=null && __injectCollectionHelper__().isNotEmpty(representation.getFunctionScopes().getCollection()))
+				for(FunctionScopeDto index : representation.getFunctionScopes().getCollection()) {
+					FunctionScope functionScope = null;
 					if(__inject__(StringHelper.class).isBlank(index.getIdentifier()))
-						rolePoste = __inject__(FunctionScopePersistence.class).readOneByBusinessIdentifier(index.getCode());
+						functionScope = __inject__(FunctionScopePersistence.class).readOneByBusinessIdentifier(index.getCode());
 					else
-						rolePoste = __inject__(FunctionScopePersistence.class).readOneBySystemIdentifier(index.getIdentifier());
-					if(rolePoste != null)
-						persistence.getPostes(Boolean.TRUE).add(rolePoste);
+						functionScope = __inject__(FunctionScopePersistence.class).readOneBySystemIdentifier(index.getIdentifier());
+					if(functionScope != null)
+						persistence.getFunctionScopes(Boolean.TRUE).add(functionScope);
 				}
 			if(representation.getProfiles()!=null && __injectCollectionHelper__().isNotEmpty(representation.getProfiles().getCollection()))
 				for(ProfileDto index : representation.getProfiles().getCollection()) {

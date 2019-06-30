@@ -4,7 +4,7 @@
     	<jta-data-source>${data.source.jndi.name}</jta-data-source>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope</class>
-    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory</class>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile</class>

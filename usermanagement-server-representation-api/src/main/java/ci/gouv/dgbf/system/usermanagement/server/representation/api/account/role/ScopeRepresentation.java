@@ -11,6 +11,6 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 @Path(ScopeRepresentation.PATH)
 public interface ScopeRepresentation extends RepresentationEntity<Scope,ScopeDto,ScopeDtoCollection> {
 	
-	String PATH = "/structure";
+	String PATH = "champaction";
 	
 }

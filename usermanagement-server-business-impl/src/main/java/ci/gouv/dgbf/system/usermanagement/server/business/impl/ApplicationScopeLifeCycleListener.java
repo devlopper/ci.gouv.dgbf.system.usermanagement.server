@@ -13,12 +13,12 @@ import org.cyk.utility.server.business.AbstractApplicationScopeLifeCycleListener
 
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeTypeBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.RoleCategoryBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionCategoryBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 
@@ -94,41 +94,41 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("catégorie");
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		arrayInstance = reader.execute().getOutput();
-		Collection<RoleCategory> roleCategories = new ArrayList<>();
+		Collection<FunctionCategory> roleCategories = new ArrayList<>();
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 30; index = index + 1)
-			roleCategories.add(new RoleCategory().setCode(arrayInstance.get(index, 0)).setName(arrayInstance.get(index, 1)));
+			roleCategories.add(new FunctionCategory().setCode(arrayInstance.get(index, 0)).setName(arrayInstance.get(index, 1)));
 		__logInfo__("Creating "+roleCategories.size()+" role categories");
-		__inject__(RoleCategoryBusiness.class).saveManyByBatch(roleCategories,100);
+		__inject__(FunctionCategoryBusiness.class).saveManyByBatch(roleCategories,100);
 		
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("fonction");
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		arrayInstance = reader.execute().getOutput();
-		Collection<Function> roleFonctions = new ArrayList<>();
-		Collection<FunctionScope> rolePostes = new ArrayList<>();
+		Collection<Function> functions = new ArrayList<>();
+		Collection<FunctionScope> functionScopes = new ArrayList<>();
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 30; index = index + 1) {
 			Function function = new Function().setCode(arrayInstance.get(index, 0)).setName(arrayInstance.get(index, 1))
 					.setCategory(__inject__(CollectionHelper.class).getElementAt(roleCategories, arrayInstance.get(index, 2).startsWith("ADMIN") ? 0 : 1));
 			function.setIsProfileCreatableOnCreate(Boolean.TRUE);
-			roleFonctions.add(function);
+			functions.add(function);
 			if(arrayInstance.get(index, 3).startsWith("oui")) {
 				for(Scope indexMinistry : sections)
-					rolePostes.add(new FunctionScope().setFunction(function).setScope(indexMinistry));
+					functionScopes.add(new FunctionScope().setFunction(function).setScope(indexMinistry));
 			}
 			if(arrayInstance.get(index, 4).startsWith("oui")) {
 				for(Scope indexProgram : ugps)
-					rolePostes.add(new FunctionScope().setFunction(function).setScope(indexProgram));
+					functionScopes.add(new FunctionScope().setFunction(function).setScope(indexProgram));
 			}
 			if(arrayInstance.get(index, 7).startsWith("oui")) {
 				for(Scope indexAdministrativeUnit : uas)
-					rolePostes.add(new FunctionScope().setFunction(function).setScope(indexAdministrativeUnit));
+					functionScopes.add(new FunctionScope().setFunction(function).setScope(indexAdministrativeUnit));
 			}
 		}
-		__logInfo__("Creating "+roleFonctions.size()+" role functions");
-		__inject__(FunctionBusiness.class).saveManyByBatch(roleFonctions,100);
+		__logInfo__("Creating "+functions.size()+" functions");
+		__inject__(FunctionBusiness.class).saveManyByBatch(functions,100);
 		
-		__logInfo__("Creating "+rolePostes.size()+" role postes");
-		__inject__(FunctionScopeBusiness.class).saveManyByBatch(rolePostes,100);
+		__logInfo__("Creating "+functionScopes.size()+" function scopes");
+		__inject__(FunctionScopeBusiness.class).saveManyByBatch(functionScopes,100);
 	}
 	
 }

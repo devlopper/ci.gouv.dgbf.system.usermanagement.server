@@ -22,7 +22,7 @@ import lombok.experimental.Accessors;
 public class Function extends AbstractIdentifiedByStringAndCodedAndNamed implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@ManyToOne @JoinColumn(name=COLUMN_CATEGORY) @NotNull private RoleCategory category;
+	@ManyToOne @JoinColumn(name=COLUMN_CATEGORY) @NotNull private FunctionCategory category;
 	
 	@Transient private Boolean isProfileCreatableOnCreate;
 	

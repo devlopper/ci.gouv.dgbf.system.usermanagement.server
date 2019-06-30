@@ -25,7 +25,7 @@ import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccoun
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeTypeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.RoleCategoryBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionCategoryBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.impl.ApplicationScopeLifeCycleListener;
@@ -39,7 +39,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.RoleCategory;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
@@ -60,26 +60,25 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	}
 	
 	@Test
-	public void create_roleCategory() throws Exception{
-		RoleCategory role = new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomCode__());
-		__inject__(TestBusinessCreate.class).addObjects(role).execute();
+	public void create_functionCategory() throws Exception{
+		__inject__(TestBusinessCreate.class).addObjects(new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomCode__())).execute();
 	}
 	
 	@Test
-	public void create_roleFunction() throws Exception{
-		RoleCategory roleCategory = new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
-		Function role = new Function().setCode(__getRandomCode__()).setName(__getRandomCode__()).setCategory(roleCategory);
-		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(roleCategory).addObjects(role).execute();
+	public void create_function() throws Exception{
+		FunctionCategory functionCategory = new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
+		Function function = new Function().setCode(__getRandomCode__()).setName(__getRandomCode__()).setCategory(functionCategory);
+		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(functionCategory).addObjects(function).execute();
 	}
 	
 	@Test
-	public void create_rolePoste() throws Exception{
-		ScopeType locationType = new ScopeType().setCode("MINISTERE").setName("Ministère");
-		Scope location = new Scope().setIdentifier("21").setType(locationType);
-		RoleCategory roleCategory = new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
-		Function roleFunction = new Function().setCode("ASSISTANT").setName("Assistant").setCategory(roleCategory);
-		FunctionScope role = new FunctionScope().setFunction(roleFunction).setScope(location);
-		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(locationType,location,roleCategory,roleFunction).addObjects(role).addTryEndRunnables(new Runnable() {
+	public void create_functionScope() throws Exception{
+		ScopeType scopeType = new ScopeType().setCode("MINISTERE").setName("Ministère");
+		Scope scope = new Scope().setIdentifier("21").setType(scopeType);
+		FunctionCategory functionCategory = new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
+		Function function = new Function().setCode("ASSISTANT").setName("Assistant").setCategory(functionCategory);
+		FunctionScope role = new FunctionScope().setFunction(function).setScope(scope);
+		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(scopeType,scope,functionCategory,function).addObjects(role).addTryEndRunnables(new Runnable() {
 			@Override
 			public void run() {
 				assertThat(role.getCode()).isEqualTo("ASSISTANT_MINISTERE_21");
@@ -102,15 +101,15 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	}
 	
 	@Test
-	public void create_profileRoleFunction() throws Exception{
+	public void create_profileFunction() throws Exception{
 		Function function = new Function().setCode(__getRandomCode__()).setName(__getRandomName__());
-		function.setCategory(new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__()));
+		function.setCategory(new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__()));
 		Profile profile = new Profile();
 		profile.setCode(__getRandomCode__()).setName(__getRandomName__());
-		ProfileFunction profileRoleFunction = new ProfileFunction();
-		profileRoleFunction.setProfile(profile);
-		profileRoleFunction.setFunction(function);
-		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(function.getCategory(),function,profile).addObjects(profileRoleFunction).execute();
+		ProfileFunction profileFunction = new ProfileFunction();
+		profileFunction.setProfile(profile);
+		profileFunction.setFunction(function);
+		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(function.getCategory(),function,profile).addObjects(profileFunction).execute();
 	}
 	
 	@Test
@@ -126,36 +125,36 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 			__inject__(TimeHelper.class).pause(1000l * 15);
 		}
 		
-		ScopeType locationType = new ScopeType().setCode("MINISTERE").setName("Ministère");
-		__inject__(ScopeTypeBusiness.class).create(locationType);
-		Scope location = new Scope().setIdentifier("21").setType(locationType);
-		__inject__(ScopeBusiness.class).create(location);
-		RoleCategory roleCategory = new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
-		__inject__(RoleCategoryBusiness.class).create(roleCategory);
-		Function roleFunction = new Function().setCode("CONTROLEUR_FINANCIER").setName(__getRandomName__()).setCategory(roleCategory);
-		__inject__(FunctionBusiness.class).create(roleFunction);
-		FunctionScope rolePoste = new FunctionScope().setFunction(roleFunction).setScope(location);
-		__inject__(FunctionScopeBusiness.class).create(rolePoste);
+		ScopeType scopeType = new ScopeType().setCode("MINISTERE").setName("Ministère");
+		__inject__(ScopeTypeBusiness.class).create(scopeType);
+		Scope scope = new Scope().setIdentifier("21").setType(scopeType);
+		__inject__(ScopeBusiness.class).create(scope);
+		FunctionCategory functionCategory = new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(FunctionCategoryBusiness.class).create(functionCategory);
+		Function function = new Function().setCode("CONTROLEUR_FINANCIER").setName(__getRandomName__()).setCategory(functionCategory);
+		__inject__(FunctionBusiness.class).create(function);
+		FunctionScope functionScope = new FunctionScope().setFunction(function).setScope(scope);
+		__inject__(FunctionScopeBusiness.class).create(functionScope);
 		Profile profile = new Profile().setCode("p001").setName(__getRandomName__());
 		__inject__(ProfileBusiness.class).create(profile);
 		
 		UserAccount userAccount = new UserAccount();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__());
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
-		userAccount.addRolePostes(rolePoste);
+		userAccount.addFunctionScopes(functionScope);
 		userAccount.addProfiles(profile);
 		__inject__(TestBusinessCreate.class).setName("Create user account").addObjects(userAccount).addTryEndRunnables(new Runnable() {
 			@Override
 			public void run() {
 				UserAccount userAccount01 = __inject__(UserAccountBusiness.class).findOneBySystemIdentifier(userAccount.getIdentifier());
 				assertThat(userAccount01).isNotNull();
-				assertThat(userAccount01.getPostes()).isNull();
+				assertThat(userAccount01.getFunctionScopes()).isNull();
 				
-				userAccount01 = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_POSTES));
+				userAccount01 = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_FUNCTION_SCOPES));
 				assertThat(userAccount01).isNotNull();
-				assertThat(userAccount01.getPostes()).isNotNull();
-				assertThat(userAccount01.getPostes().get()).isNotEmpty();
-				assertThat(userAccount01.getPostes().get().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
+				assertThat(userAccount01.getFunctionScopes()).isNotNull();
+				assertThat(userAccount01.getFunctionScopes().get()).isNotEmpty();
+				assertThat(userAccount01.getFunctionScopes().get().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
 				assertThat(userAccount01.getProfiles()).isNull();
 				
 				userAccount01 = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_PROFILES));
@@ -163,13 +162,13 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 				assertThat(userAccount01.getProfiles()).isNotNull();
 				assertThat(userAccount01.getProfiles().get()).isNotEmpty();
 				assertThat(userAccount01.getProfiles().get().stream().map(Profile::getCode).collect(Collectors.toList())).contains("p001");
-				assertThat(userAccount01.getPostes()).isNull();
+				assertThat(userAccount01.getFunctionScopes()).isNull();
 				
-				userAccount01 = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(),new Properties().setFields(Arrays.asList(UserAccount.FIELD_POSTES,UserAccount.FIELD_PROFILES)));
+				userAccount01 = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(),new Properties().setFields(Arrays.asList(UserAccount.FIELD_FUNCTION_SCOPES,UserAccount.FIELD_PROFILES)));
 				assertThat(userAccount01).isNotNull();
-				assertThat(userAccount01.getPostes()).isNotNull();
-				assertThat(userAccount01.getPostes().get()).isNotEmpty();
-				assertThat(userAccount01.getPostes().get().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
+				assertThat(userAccount01.getFunctionScopes()).isNotNull();
+				assertThat(userAccount01.getFunctionScopes().get()).isNotEmpty();
+				assertThat(userAccount01.getFunctionScopes().get().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
 				assertThat(userAccount01.getProfiles()).isNotNull();
 				assertThat(userAccount01.getProfiles().get()).isNotEmpty();
 				assertThat(userAccount01.getProfiles().get().stream().map(Profile::getCode).collect(Collectors.toList())).contains("p001");
@@ -187,7 +186,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		__inject__(ProfileBusiness.class).deleteAll();
 		__inject__(FunctionScopeBusiness.class).deleteAll();
 		__inject__(FunctionBusiness.class).deleteAll();
-		__inject__(RoleCategoryBusiness.class).deleteAll();
+		__inject__(FunctionCategoryBusiness.class).deleteAll();
 		__inject__(ScopeBusiness.class).deleteAll();
 		__inject__(ScopeTypeBusiness.class).deleteAll();
 		
@@ -212,27 +211,27 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	
 	@Test
 	public void update_userAccount() throws Exception{
-		ScopeType locationType = new ScopeType().setCode("MINISTERE").setName("Ministère");
-		__inject__(ScopeTypeBusiness.class).create(locationType);
-		Scope location = new Scope().setIdentifier("21").setType(locationType);
-		__inject__(ScopeBusiness.class).create(location);
-		RoleCategory roleCategory = new RoleCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
-		__inject__(RoleCategoryBusiness.class).create(roleCategory);
-		Function roleFunction = new Function().setCode("CONTROLEUR_FINANCIER").setName(__getRandomName__()).setCategory(roleCategory);
-		__inject__(FunctionBusiness.class).create(roleFunction);
-		FunctionScope rolePoste = new FunctionScope().setFunction(roleFunction).setScope(location);
-		__inject__(FunctionScopeBusiness.class).create(rolePoste);
-		roleFunction = new Function().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setCategory(roleCategory);
-		__inject__(FunctionBusiness.class).create(roleFunction);
-		rolePoste = new FunctionScope().setFunction(roleFunction).setScope(location);
-		__inject__(FunctionScopeBusiness.class).create(rolePoste);
+		ScopeType scopeType = new ScopeType().setCode("MINISTERE").setName("Ministère");
+		__inject__(ScopeTypeBusiness.class).create(scopeType);
+		Scope scope = new Scope().setIdentifier("21").setType(scopeType);
+		__inject__(ScopeBusiness.class).create(scope);
+		FunctionCategory functionCategory = new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(FunctionCategoryBusiness.class).create(functionCategory);
+		Function function = new Function().setCode("CONTROLEUR_FINANCIER").setName(__getRandomName__()).setCategory(functionCategory);
+		__inject__(FunctionBusiness.class).create(function);
+		FunctionScope functionScope = new FunctionScope().setFunction(function).setScope(scope);
+		__inject__(FunctionScopeBusiness.class).create(functionScope);
+		function = new Function().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setCategory(functionCategory);
+		__inject__(FunctionBusiness.class).create(function);
+		functionScope = new FunctionScope().setFunction(function).setScope(scope);
+		__inject__(FunctionScopeBusiness.class).create(functionScope);
 		__inject__(ProfileBusiness.class).create(new Profile().setCode("p001").setName(__getRandomName__()));
 		__inject__(ProfileBusiness.class).create(new Profile().setCode("p002").setName(__getRandomName__()));
 		
 		UserAccount userAccount = new UserAccount();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__());
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
-		userAccount.addRolePostes(__inject__(FunctionScopePersistence.class).readOneByBusinessIdentifier("CONTROLEUR_FINANCIER_MINISTERE_21"));
+		userAccount.addFunctionScopes(__inject__(FunctionScopePersistence.class).readOneByBusinessIdentifier("CONTROLEUR_FINANCIER_MINISTERE_21"));
 		userAccount.addProfiles(__inject__(ProfilePersistence.class).readOneByBusinessIdentifier("p001"));
 		__inject__(UserAccountBusiness.class).create(userAccount);
 		
@@ -244,25 +243,25 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 				).hasSize(1);
 		
 		userAccount = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(), new Properties().setFields(__inject__(Strings.class)
-				.add(UserAccount.FIELD_PROFILES,UserAccount.FIELD_POSTES)));
+				.add(UserAccount.FIELD_PROFILES,UserAccount.FIELD_FUNCTION_SCOPES)));
 		assertThat(userAccount).isNotNull();
-		assertThat(userAccount.getPostes()).isNotNull();
-		assertThat(userAccount.getPostes().get()).isNotEmpty();
-		assertThat(userAccount.getPostes().get().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
+		assertThat(userAccount.getFunctionScopes()).isNotNull();
+		assertThat(userAccount.getFunctionScopes().get()).isNotEmpty();
+		assertThat(userAccount.getFunctionScopes().get().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
 		assertThat(userAccount.getProfiles()).isNotNull();
 		assertThat(userAccount.getProfiles().get()).isNotEmpty();
 		assertThat(userAccount.getProfiles().get().stream().map(Profile::getCode).collect(Collectors.toList())).contains("p001");
 		
-		userAccount.addRolePostes(__inject__(FunctionScopePersistence.class).readOneByBusinessIdentifier("ASSISTANT_SAISIE_MINISTERE_21"));
+		userAccount.addFunctionScopes(__inject__(FunctionScopePersistence.class).readOneByBusinessIdentifier("ASSISTANT_SAISIE_MINISTERE_21"));
 		userAccount.addProfiles(__inject__(ProfilePersistence.class).readOneByBusinessIdentifier("p002"));
-		__inject__(UserAccountBusiness.class).update(userAccount,new Properties().setFields(UserAccount.FIELD_POSTES));
+		__inject__(UserAccountBusiness.class).update(userAccount,new Properties().setFields(UserAccount.FIELD_FUNCTION_SCOPES));
 		
 		userAccount = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(), new Properties().setFields(__inject__(Strings.class)
-				.add(UserAccount.FIELD_PROFILES,UserAccount.FIELD_POSTES)));
+				.add(UserAccount.FIELD_PROFILES,UserAccount.FIELD_FUNCTION_SCOPES)));
 		assertThat(userAccount).isNotNull();
-		assertThat(userAccount.getPostes()).isNotNull();
-		assertThat(userAccount.getPostes().get()).isNotEmpty();
-		assertThat(userAccount.getPostes().get().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21"
+		assertThat(userAccount.getFunctionScopes()).isNotNull();
+		assertThat(userAccount.getFunctionScopes().get()).isNotEmpty();
+		assertThat(userAccount.getFunctionScopes().get().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21"
 				,"ASSISTANT_SAISIE_MINISTERE_21");
 		assertThat(userAccount.getProfiles()).isNotNull();
 		assertThat(userAccount.getProfiles().get()).isNotEmpty();
@@ -275,20 +274,20 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 				new AbstractMap.SimpleEntry<String, List<String>>("MINISTERE",(List<String>)__inject__(CollectionHelper.class).instanciate("21"))
 				).hasSize(1);
 		
-		location = new Scope().setIdentifier("18").setType(locationType);
-		__inject__(ScopeBusiness.class).create(location);
-		rolePoste = new FunctionScope().setFunction(roleFunction).setScope(location);
-		__inject__(FunctionScopeBusiness.class).create(rolePoste);
+		scope = new Scope().setIdentifier("18").setType(scopeType);
+		__inject__(ScopeBusiness.class).create(scope);
+		functionScope = new FunctionScope().setFunction(function).setScope(scope);
+		__inject__(FunctionScopeBusiness.class).create(functionScope);
 		
-		userAccount.addRolePostes(__inject__(FunctionScopePersistence.class).readOneByBusinessIdentifier("ASSISTANT_SAISIE_MINISTERE_18"));
-		__inject__(UserAccountBusiness.class).update(userAccount,new Properties().setFields(UserAccount.FIELD_POSTES));
+		userAccount.addFunctionScopes(__inject__(FunctionScopePersistence.class).readOneByBusinessIdentifier("ASSISTANT_SAISIE_MINISTERE_18"));
+		__inject__(UserAccountBusiness.class).update(userAccount,new Properties().setFields(UserAccount.FIELD_FUNCTION_SCOPES));
 		
 		userAccount = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(), new Properties().setFields(__inject__(Strings.class)
-				.add(UserAccount.FIELD_PROFILES,UserAccount.FIELD_POSTES)));
+				.add(UserAccount.FIELD_PROFILES,UserAccount.FIELD_FUNCTION_SCOPES)));
 		assertThat(userAccount).isNotNull();
-		assertThat(userAccount.getPostes()).isNotNull();
-		assertThat(userAccount.getPostes().get()).isNotEmpty();
-		assertThat(userAccount.getPostes().get().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21"
+		assertThat(userAccount.getFunctionScopes()).isNotNull();
+		assertThat(userAccount.getFunctionScopes().get()).isNotEmpty();
+		assertThat(userAccount.getFunctionScopes().get().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21"
 				,"ASSISTANT_SAISIE_MINISTERE_21","ASSISTANT_SAISIE_MINISTERE_18");
 		assertThat(userAccount.getProfiles()).isNotNull();
 		assertThat(userAccount.getProfiles().get()).isNotEmpty();
@@ -305,7 +304,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		__inject__(ProfileBusiness.class).deleteAll();
 		__inject__(FunctionScopeBusiness.class).deleteAll();
 		__inject__(FunctionBusiness.class).deleteAll();
-		__inject__(RoleCategoryBusiness.class).deleteAll();
+		__inject__(FunctionCategoryBusiness.class).deleteAll();
 		__inject__(ScopeBusiness.class).deleteAll();
 		__inject__(ScopeTypeBusiness.class).deleteAll();
 	}

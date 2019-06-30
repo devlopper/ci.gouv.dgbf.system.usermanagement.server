@@ -20,11 +20,11 @@ public class EntitiesUnitTest extends AbstractArquillianUnitTest {
 				.execute().getOutput();
 		assertThat(dto.getLink()).isEqualTo("2521444c-0058-4ab7-b18e-c5d27f785da3");
 		assertThat(dto.getName()).isEqualTo("TRANSPORT TERRESTRE");
-		Scope posteLocation = new Scope().setIdentifier("myid");
-		__inject__(FieldValueCopy.class).setSource(dto).setDestination(posteLocation).setIsOverridable(Boolean.FALSE).execute();
-		assertThat(posteLocation.getIdentifier()).isEqualTo("myid");
-		assertThat(posteLocation.getLink()).isEqualTo("2521444c-0058-4ab7-b18e-c5d27f785da3");
-		assertThat(posteLocation.getName()).isEqualTo("TRANSPORT TERRESTRE");
+		Scope scope = new Scope().setIdentifier("myid");
+		__inject__(FieldValueCopy.class).setSource(dto).setDestination(scope).setIsOverridable(Boolean.FALSE).execute();
+		assertThat(scope.getIdentifier()).isEqualTo("myid");
+		assertThat(scope.getLink()).isEqualTo("2521444c-0058-4ab7-b18e-c5d27f785da3");
+		assertThat(scope.getName()).isEqualTo("TRANSPORT TERRESTRE");
 	}
 	
 	//@Test

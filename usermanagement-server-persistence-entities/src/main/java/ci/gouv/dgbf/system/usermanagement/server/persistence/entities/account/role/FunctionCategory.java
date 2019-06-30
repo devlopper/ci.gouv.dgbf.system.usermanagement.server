@@ -14,25 +14,25 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @Entity @Getter @Setter @Accessors(chain=true) @Access(AccessType.FIELD)
-@Table(name=RoleCategory.TABLE_NAME)
-public class RoleCategory extends AbstractIdentifiedByStringAndCodedAndNamed implements Serializable {
+@Table(name=FunctionCategory.TABLE_NAME)
+public class FunctionCategory extends AbstractIdentifiedByStringAndCodedAndNamed implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**/
 	
 	@Override
-	public RoleCategory setIdentifier(String identifier) {
-		return (RoleCategory) super.setIdentifier(identifier);
+	public FunctionCategory setIdentifier(String identifier) {
+		return (FunctionCategory) super.setIdentifier(identifier);
 	}
 	
 	@Override
-	public RoleCategory setCode(String code) {
-		return (RoleCategory) super.setCode(code);
+	public FunctionCategory setCode(String code) {
+		return (FunctionCategory) super.setCode(code);
 	}
 	
 	@Override
-	public RoleCategory setName(String name) {
-		return (RoleCategory) super.setName(name);
+	public FunctionCategory setName(String name) {
+		return (FunctionCategory) super.setName(name);
 	}
 	
 	/**/

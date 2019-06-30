@@ -29,7 +29,7 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 	private AccountDto account;
 	private FunctionDtoCollection functions;
 	private ProfileDtoCollection profiles;
-	private FunctionScopeDtoCollection postes;
+	private FunctionScopeDtoCollection functionScopes;
 	
 	public UserDto getUser(Boolean injectIfNull) {
 		return (UserDto) __getInjectIfNull__(FIELD_USER, injectIfNull);
@@ -39,35 +39,35 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 		return (AccountDto) __getInjectIfNull__(FIELD_ACCOUNT, injectIfNull);
 	}
 	
-	public UserAccountDto addPostesByCodes(Collection<String> rolePostesCodes) {
-		if(__inject__(CollectionHelper.class).isNotEmpty(rolePostesCodes)) {
-			for(String index : rolePostesCodes)
+	public UserAccountDto addFunctionScopesByCodes(Collection<String> functionScopesCodes) {
+		if(__inject__(CollectionHelper.class).isNotEmpty(functionScopesCodes)) {
+			for(String index : functionScopesCodes)
 				if(__inject__(StringHelper.class).isNotBlank(index))
-					addPostes(new FunctionScopeDto().setCode(index));
+					addFunctionScopes(new FunctionScopeDto().setCode(index));
 		}
 		return this;
 	}
 	
-	public UserAccountDto addPostesByCodes(String...rolePostesCodes) {
-		if(__inject__(ArrayHelper.class).isNotEmpty(rolePostesCodes))
-			addPostesByCodes(__inject__(CollectionHelper.class).instanciate(rolePostesCodes));
+	public UserAccountDto addFunctionScopesByCodes(String...functionScopesCodes) {
+		if(__inject__(ArrayHelper.class).isNotEmpty(functionScopesCodes))
+			addFunctionScopesByCodes(__inject__(CollectionHelper.class).instanciate(functionScopesCodes));
 		return this;
 	}
 	
-	public UserAccountDto addPostes(Collection<FunctionScopeDto> rolePostes) {
-		if(__inject__(CollectionHelper.class).isNotEmpty(rolePostes))
-			getPostes(Boolean.TRUE).add(rolePostes);	
+	public UserAccountDto addFunctionScopes(Collection<FunctionScopeDto> functionScopes) {
+		if(__inject__(CollectionHelper.class).isNotEmpty(functionScopes))
+			getFunctionScopes(Boolean.TRUE).add(functionScopes);	
 		return this;
 	}
 	
-	public UserAccountDto addPostes(FunctionScopeDto...rolePostes) {
-		if(__inject__(ArrayHelper.class).isNotEmpty(rolePostes))
-			addPostes(__inject__(CollectionHelper.class).instanciate(rolePostes));
+	public UserAccountDto addFunctionScopes(FunctionScopeDto...functionScopes) {
+		if(__inject__(ArrayHelper.class).isNotEmpty(functionScopes))
+			addFunctionScopes(__inject__(CollectionHelper.class).instanciate(functionScopes));
 		return this;
 	}
 	
-	public FunctionScopeDtoCollection getPostes(Boolean instanciateIfNull) {
-		return (FunctionScopeDtoCollection) __getInstanciateIfNull__(FIELD_POSTES, instanciateIfNull);
+	public FunctionScopeDtoCollection getFunctionScopes(Boolean instanciateIfNull) {
+		return (FunctionScopeDtoCollection) __getInstanciateIfNull__(FIELD_FUNCTION_SCOPES, instanciateIfNull);
 	}
 	
 	/**/
@@ -109,6 +109,6 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 	public static final String FIELD_ACCOUNT = "account";
 	public static final String FIELD_FUNCTIONS = "functions";
 	public static final String FIELD_PROFILES = "profiles";
-	public static final String FIELD_POSTES = "postes";
+	public static final String FIELD_FUNCTION_SCOPES = "functionScopes";
 	
 }
