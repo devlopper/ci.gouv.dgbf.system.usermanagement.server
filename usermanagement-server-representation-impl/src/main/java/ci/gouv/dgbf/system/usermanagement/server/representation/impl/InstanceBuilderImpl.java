@@ -8,6 +8,7 @@ import org.cyk.utility.instance.InstanceHelper;
 import org.cyk.utility.string.StringHelper;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Account;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.User;
@@ -63,6 +64,15 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			representation.setName(persistence.getName()); 
 			representation.setFunction(__inject__(InstanceHelper.class).buildOne(FunctionDto.class, persistence.getFunction()));
 			representation.setScope(__inject__(InstanceHelper.class).buildOne(ScopeDto.class, persistence.getScope()));
+		}else if(source instanceof Profile && destination instanceof ProfileDto) {
+			Profile persistence = (Profile) source;
+			ProfileDto representation = (ProfileDto) destination;
+			representation.setIdentifier(persistence.getIdentifier());
+			representation.setCode(persistence.getCode());
+			representation.setName(persistence.getName()); 
+			if(__injectCollectionHelper__().isNotEmpty(persistence.getFunctions()))
+				for(Function index : persistence.getFunctions().get())
+					representation.addFunctions(__inject__(InstanceHelper.class).buildOne(FunctionDto.class, index));
 		}else if(source instanceof ProfileFunction && destination instanceof ProfileFunctionDto) {
 			ProfileFunction persistence = (ProfileFunction) source;
 			ProfileFunctionDto representation = (ProfileFunctionDto) destination;
@@ -110,9 +120,24 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 					if(profile != null)
 						persistence.getProfiles(Boolean.TRUE).add(profile);
 				}
-		}
-		
-		else
+		}else if(source instanceof ProfileDto && destination instanceof Profile) {
+			ProfileDto representation = (ProfileDto) source;
+			Profile persistence = (Profile) destination;
+			persistence.setIdentifier(representation.getIdentifier());
+			persistence.setCode(representation.getCode());
+			persistence.setName(representation.getName());
+			persistence.setFunctions(null);
+			if(representation.getFunctions()!=null && __injectCollectionHelper__().isNotEmpty(representation.getFunctions().getCollection()))
+				for(FunctionDto index : representation.getFunctions().getCollection()) {
+					Function function = null;
+					if(__inject__(StringHelper.class).isBlank(index.getIdentifier()))
+						function = __inject__(FunctionPersistence.class).readOneByBusinessIdentifier(index.getCode());
+					else
+						function = __inject__(FunctionPersistence.class).readOneBySystemIdentifier(index.getIdentifier());
+					if(function != null)
+						persistence.getFunctions(Boolean.TRUE).add(function);
+				}
+		}else
 			super.__copy__(source, destination, properties);
 	}
 	

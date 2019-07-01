@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.map.MapHelper;
 import org.cyk.utility.object.ObjectToStringBuilder;
 import org.cyk.utility.server.representation.AbstractEntityCollection;
@@ -16,33 +15,27 @@ import org.cyk.utility.stream.distributed.Topic;
 import org.cyk.utility.time.TimeHelper;
 import org.junit.Test;
 
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionCategoryBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileFunctionBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.UserAccountRepresentation;
-import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.ScopeRepresentation;
-import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.ScopeTypeRepresentation;
-import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.ProfileRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.FunctionCategoryRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.FunctionRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.FunctionScopeRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.ProfileFunctionRepresentation;
+import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.ProfileRepresentation;
+import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.ScopeRepresentation;
+import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.ScopeTypeRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountInterimDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountProfileDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeTypeDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileFunctionDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionCategoryDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionScopeDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileFunctionDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeTypeDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.impl.ApplicationScopeLifeCycleListener;
 
 public class RepresentationIntegrationTest extends AbstractRepresentationArquillianIntegrationTestWithDefaultDeployment {
@@ -81,6 +74,28 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		ProfileDto profile = new ProfileDto();
 		profile.setCode(__getRandomCode__()).setName(__getRandomName__());
 		__inject__(TestRepresentationCreate.class).addObjects(profile).execute();
+	}
+	
+	@Test
+	public void create_profile_withFunctions() throws Exception{
+		FunctionCategoryDto category = new FunctionCategoryDto().setCode("c01").setName(__getRandomName__());
+		__inject__(FunctionCategoryRepresentation.class).createOne(category);
+		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("f01").setName(__getRandomName__()).setCategory(new FunctionCategoryDto().setCode("c01")));
+		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("f02").setName(__getRandomName__()).setCategory(new FunctionCategoryDto().setCode("c01")));
+		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("f03").setName(__getRandomName__()).setCategory(new FunctionCategoryDto().setCode("c01")));
+		assertThat(__inject__(ProfileFunctionRepresentation.class).count(null).getEntity()).isEqualTo(0l);
+		__inject__(ProfileRepresentation.class).createOne(new ProfileDto().setCode("p01").setName(__getRandomName__()).addFunctionsByCodes("f01","f03"));
+		assertThat(__inject__(ProfileFunctionRepresentation.class).count(null).getEntity()).isEqualTo(2l);
+		__inject__(ProfileRepresentation.class).createOne(new ProfileDto().setCode("p02").setName(__getRandomName__()).addFunctionsByCodes("f01","f02","f03"));
+		assertThat(__inject__(ProfileFunctionRepresentation.class).count(null).getEntity()).isEqualTo(5l);
+		__inject__(ProfileRepresentation.class).updateOne(new ProfileDto().setCode("p02").setName(__getRandomName__()).addFunctionsByCodes("f02"),Profile.FIELD_FUNCTIONS);
+		assertThat(__inject__(ProfileFunctionRepresentation.class).count(null).getEntity()).isEqualTo(3l);
+		__inject__(ProfileRepresentation.class).deleteOne(new ProfileDto().setCode("p01"));
+		assertThat(__inject__(ProfileFunctionRepresentation.class).count(null).getEntity()).isEqualTo(1l);
+		
+		__inject__(ProfileRepresentation.class).deleteAll();
+		__inject__(FunctionRepresentation.class).deleteAll();
+		__inject__(FunctionCategoryRepresentation.class).deleteAll();
 	}
 	
 	@Test

@@ -32,7 +32,9 @@ import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.Profi
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeTypeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.impl.ApplicationScopeLifeCycleListener;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionScopePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Service;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
@@ -101,6 +103,38 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		Profile profile = new Profile();
 		profile.setCode(__getRandomCode__()).setName(__getRandomName__());
 		__inject__(TestBusinessCreate.class).addObjects(profile).execute();
+	}
+	
+	@Test
+	public void create_profile_with_functions() throws Exception{
+		FunctionCategory category = new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(FunctionCategoryBusiness.class).create(category);
+		__inject__(FunctionBusiness.class).create(new Function().setCode("f01").setName(__getRandomName__()).setCategory(category));
+		__inject__(FunctionBusiness.class).create(new Function().setCode("f02").setName(__getRandomName__()).setCategory(category));
+		__inject__(FunctionBusiness.class).create(new Function().setCode("f03").setName(__getRandomName__()).setCategory(category));
+		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(0);
+		__inject__(ProfileBusiness.class).create(new Profile().setCode("p01").setName(__getRandomName__())
+				.addFunctions(__inject__(FunctionPersistence.class).readOneByBusinessIdentifier("f01"))
+				.addFunctions(__inject__(FunctionPersistence.class).readOneByBusinessIdentifier("f03"))
+				);
+		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(2);
+		__inject__(ProfileBusiness.class).create(new Profile().setCode("p02").setName(__getRandomName__())
+				.addFunctions(__inject__(FunctionPersistence.class).readOneByBusinessIdentifier("f01"))
+				.addFunctions(__inject__(FunctionPersistence.class).readOneByBusinessIdentifier("f02"))
+				.addFunctions(__inject__(FunctionPersistence.class).readOneByBusinessIdentifier("f03"))
+				);
+		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(5);
+		Profile profile = __inject__(ProfileBusiness.class).findOneByBusinessIdentifier("p02");
+		profile.getFunctions(Boolean.TRUE).removeAll();
+		profile.getFunctions(Boolean.TRUE).add(__inject__(FunctionPersistence.class).readOneByBusinessIdentifier("f02"));
+		__inject__(ProfileBusiness.class).update(profile);
+		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(3);
+		__inject__(ProfileBusiness.class).deleteByBusinessIdentifier("p01");
+		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(1);
+		
+		__inject__(ProfileBusiness.class).deleteAll();
+		__inject__(FunctionBusiness.class).deleteAll();
+		__inject__(FunctionCategoryBusiness.class).deleteAll();
 	}
 	
 	@Test
