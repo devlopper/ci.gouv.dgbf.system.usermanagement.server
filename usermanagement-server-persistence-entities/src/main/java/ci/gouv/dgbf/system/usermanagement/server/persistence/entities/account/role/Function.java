@@ -47,7 +47,7 @@ public class Function extends AbstractIdentifiedByStringAndCodedAndNamed impleme
 	
 	public static final String FIELD_CATEGORY = "category";
 	
-	public static final String TABLE_NAME = "fonction";
+	public static final String TABLE_NAME = "fct";
 	
 	public static final String COLUMN_CATEGORY = "categorie";
 	

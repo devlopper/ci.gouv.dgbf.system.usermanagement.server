@@ -50,10 +50,10 @@ public class ProfileFunction extends AbstractIdentifiedByString implements Seria
 	public static final String FIELD_PROFILE = "profile";
 	public static final String FIELD_FUNCTION = "function";
 	
-	public static final String TABLE_NAME = Profile.TABLE_NAME+"_"+Function.TABLE_NAME;
+	public static final String TABLE_NAME = Profile.TABLE_NAME+Function.TABLE_NAME;
 	
 	public static final String COLUMN_PROFILE = Profile.TABLE_NAME;
 	public static final String COLUMN_FUNCTION = Function.TABLE_NAME;
 	
-	public static final String UNIQUE_CONSTRAINT_PROFILE_FUNCTION_NAME = COLUMN_PROFILE+ "_"+COLUMN_FUNCTION;
+	public static final String UNIQUE_CONSTRAINT_PROFILE_FUNCTION_NAME = COLUMN_PROFILE+COLUMN_FUNCTION;
 }

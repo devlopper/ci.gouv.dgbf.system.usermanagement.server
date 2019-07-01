@@ -37,6 +37,6 @@ public class FunctionCategory extends AbstractIdentifiedByStringAndCodedAndNamed
 	
 	/**/
 
-	public static final String TABLE_NAME = "categrole";
+	public static final String TABLE_NAME = "categ"+Function.TABLE_NAME;
 	
 }

@@ -46,7 +46,7 @@ public class FunctionScope extends AbstractIdentifiedByStringAndCodedAndNamed im
 	public static final String FIELD_FUNCTION = "function";
 	public static final String FIELD_SCOPE = "scope";
 	
-	public static final String TABLE_NAME = Function.TABLE_NAME+"_"+Scope.TABLE_NAME;
+	public static final String TABLE_NAME = Function.TABLE_NAME+Scope.TABLE_NAME;
 	
 	public static final String COLUMN_FUNCTION = Function.TABLE_NAME;
 	public static final String COLUMN_SCOPE = Scope.TABLE_NAME;

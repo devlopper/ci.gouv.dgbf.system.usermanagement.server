@@ -61,6 +61,6 @@ public class Profile extends AbstractIdentifiedByStringAndCodedAndNamed implemen
 	
 	public static final String FIELD_FUNCTIONS = "functions";
 	
-	public static final String TABLE_NAME = "profile";
+	public static final String TABLE_NAME = "pfl";
 	
 }

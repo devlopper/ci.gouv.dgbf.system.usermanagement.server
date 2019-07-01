@@ -52,7 +52,7 @@ public class Scope extends AbstractIdentifiedByStringAndLinkedByStringAndNamed i
 	
 	public static final String COLUMN_TYPE = "type";
 	
-	public static final String TABLE_NAME = "champ_action";
+	public static final String TABLE_NAME = "dmn";
 	
-	public static final String UNIQUE_CONSTRAINT_IDENTIFIER_TYPE = COLUMN_IDENTIFIER+"_"+COLUMN_TYPE;
+	public static final String UNIQUE_CONSTRAINT_IDENTIFIER_TYPE = COLUMN_IDENTIFIER+COLUMN_TYPE;
 }

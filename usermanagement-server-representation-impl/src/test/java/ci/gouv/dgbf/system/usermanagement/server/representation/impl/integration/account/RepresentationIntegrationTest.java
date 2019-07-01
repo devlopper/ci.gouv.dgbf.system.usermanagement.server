@@ -133,6 +133,11 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 				,__inject__(ObjectToStringBuilder.class).setObject(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p01")).execute().getOutput()).getEntity();
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01");
+
+		profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(Boolean.FALSE,null,null,null
+				,__inject__(ObjectToStringBuilder.class).setObject(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "f01")).execute().getOutput()).getEntity();
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getProfile().getCode())).containsOnly("p01");
 		
 		__inject__(ProfileFunctionRepresentation.class).createOne(new ProfileFunctionDto().setProfile(new ProfileDto().setCode("p02")).setFunction(new FunctionDto().setCode("f02")));
 		__inject__(ProfileFunctionRepresentation.class).createOne(new ProfileFunctionDto().setProfile(new ProfileDto().setCode("p02")).setFunction(new FunctionDto().setCode("f03")));
@@ -145,6 +150,22 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 				,__inject__(ObjectToStringBuilder.class).setObject(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p02")).execute().getOutput()).getEntity();
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f02","f03");
+		
+		profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(Boolean.FALSE,null,null,null
+				,__inject__(ObjectToStringBuilder.class).setObject(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "f01")).execute().getOutput()).getEntity();
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getProfile().getCode())).containsOnly("p01");
+		
+		profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(Boolean.FALSE,null,null,null
+				,__inject__(ObjectToStringBuilder.class).setObject(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "f02")).execute().getOutput()).getEntity();
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getProfile().getCode())).containsOnly("p02");
+		
+		profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(Boolean.FALSE,null,null,null
+				,__inject__(ObjectToStringBuilder.class).setObject(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "f03")).execute().getOutput()).getEntity();
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getProfile().getCode())).containsOnly("p02");
+		
 		/*
 		__inject__(ProfileFunctionRepresentation.class).createOne(new ProfileFunction().setProfileFromCode("p03").setFunctionFromCode("f01"));
 		__inject__(ProfileFunctionRepresentation.class).createOne(new ProfileFunction().setProfileFromCode("p03").setFunctionFromCode("f02"));

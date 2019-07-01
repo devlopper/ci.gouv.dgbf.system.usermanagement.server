@@ -37,6 +37,6 @@ public class ScopeType extends AbstractIdentifiedByStringAndCodedAndNamed implem
 	
 	/**/
 
-	public static final String TABLE_NAME = "type_"+Scope.TABLE_NAME;
+	public static final String TABLE_NAME = "typ"+Scope.TABLE_NAME;
 	
 }

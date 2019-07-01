@@ -37,12 +37,12 @@ public class UserAccountFunctionScope extends AbstractIdentifiedByString impleme
 	public static final String FIELD_FUNCTION_SCOPE = "functionScope";
 	public static final String FIELD_IS_INTERIM = "isInterim";
 	
-	public static final String TABLE_NAME = UserAccount.TABLE_NAME+"_"+FunctionScope.TABLE_NAME;
+	public static final String TABLE_NAME = UserAccount.TABLE_NAME+FunctionScope.TABLE_NAME;
 	
 	public static final String COLUMN_USER_ACCOUNT = UserAccount.TABLE_NAME;
 	public static final String COLUMN_FUNCTION_SCOPE = FunctionScope.TABLE_NAME;
 	public static final String COLUMN_IS_INTERIM = "est_"+UserAccountInterim.TABLE_NAME;
 	
-	public static final String UNIQUE_CONSTRAINT_USER_ACCOUNT_ROLE_POSTE_NAME = COLUMN_USER_ACCOUNT+ "_"+COLUMN_FUNCTION_SCOPE;
+	public static final String UNIQUE_CONSTRAINT_USER_ACCOUNT_ROLE_POSTE_NAME = COLUMN_USER_ACCOUNT+COLUMN_FUNCTION_SCOPE;
 	
 }

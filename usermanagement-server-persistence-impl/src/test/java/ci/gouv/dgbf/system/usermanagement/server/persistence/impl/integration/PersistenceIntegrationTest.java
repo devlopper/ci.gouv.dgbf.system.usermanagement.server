@@ -5,12 +5,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDateTime;
 import java.util.AbstractMap;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.collection.CollectionHelper;
+import org.cyk.utility.map.MapHelper;
 import org.cyk.utility.server.persistence.test.TestPersistenceCreate;
 import org.cyk.utility.server.persistence.test.arquillian.AbstractPersistenceArquillianIntegrationTestWithDefaultDeployment;
 import org.junit.Test;
@@ -172,26 +173,28 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		__inject__(ProfilePersistence.class).create(new Profile().setCode("p04").setName(__getRandomName__()));
 		userTransaction.commit();
 		
-		Map<String,String> filters = new HashMap<>();
-		filters.put(ProfileFunction.FIELD_PROFILE, "p01");
-		Collection<ProfileFunction> profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(filters));
+		Collection<ProfileFunction> profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p01")));
 		assertThat(profileFunctions).isEmpty();
 		userTransaction.begin();
 		__inject__(ProfileFunctionPersistence.class).create(new ProfileFunction().setProfileFromCode("p01").setFunctionFromCode("f01"));
 		userTransaction.commit();
-		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(filters));
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p01")));
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01");
+		
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_FUNCTION, "f01")));
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getProfile().getCode())).containsOnly("p01");
 		
 		userTransaction.begin();
 		__inject__(ProfileFunctionPersistence.class).create(new ProfileFunction().setProfileFromCode("p02").setFunctionFromCode("f02"));
 		__inject__(ProfileFunctionPersistence.class).create(new ProfileFunction().setProfileFromCode("p02").setFunctionFromCode("f03"));
 		userTransaction.commit();
-		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(filters));
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p01")));
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01");
-		filters.put(ProfileFunction.FIELD_PROFILE, "p02");
-		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(filters));
+		
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p02")));
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f02","f03");
 		
@@ -200,22 +203,29 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		__inject__(ProfileFunctionPersistence.class).create(new ProfileFunction().setProfileFromCode("p03").setFunctionFromCode("f02"));
 		__inject__(ProfileFunctionPersistence.class).create(new ProfileFunction().setProfileFromCode("p03").setFunctionFromCode("f03"));
 		userTransaction.commit();
-		filters.put(ProfileFunction.FIELD_PROFILE, "p01");
-		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(filters));
+		
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p01")));
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01");
-		filters.put(ProfileFunction.FIELD_PROFILE, "p02");
-		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(filters));
+		
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p02")));
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f02","f03");
-		filters.put(ProfileFunction.FIELD_PROFILE, "p03");
-		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(filters));
+		
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p03")));
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01","f02","f03");
 		
-		filters.put(ProfileFunction.FIELD_PROFILE, "p04");
-		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(filters));
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p04")));
 		assertThat(profileFunctions).isEmpty();
+		
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_FUNCTION, "f01")));
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getProfile().getCode())).containsOnly("p01","p03");
+		
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_FUNCTION, "f01,f02")));
+		assertThat(profileFunctions).isNotEmpty();
+		assertThat(profileFunctions.stream().map(x -> x.getProfile().getCode()).collect(Collectors.toSet())).containsOnly("p01","p02","p03");
 		
 		userTransaction.begin();
 		__inject__(ProfileFunctionPersistence.class).deleteAll();

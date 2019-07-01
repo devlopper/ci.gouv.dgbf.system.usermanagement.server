@@ -34,7 +34,7 @@ public class Account extends AbstractIdentifiedByString implements Serializable 
 	
 	public static final String FIELD_PASS = "pass";
 	
-	public static final String TABLE_NAME = "compte";
+	public static final String TABLE_NAME = "cpt";
 	
 	public static final String COLUMN_PASS = "pass";
 	

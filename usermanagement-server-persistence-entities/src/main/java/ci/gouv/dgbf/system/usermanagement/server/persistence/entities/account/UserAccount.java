@@ -97,11 +97,11 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	public static final String FIELD_PROFILES = "profiles";
 	public static final String FIELD_FUNCTION_SCOPES = "functionScopes";
 	
-	public static final String TABLE_NAME = Account.TABLE_NAME+"_"+User.TABLE_NAME;
+	public static final String TABLE_NAME = Account.TABLE_NAME+User.TABLE_NAME;
 	
 	public static final String COLUMN_USER = User.TABLE_NAME;
 	public static final String COLUMN_ACCOUNT = Account.TABLE_NAME;
 	
-	public static final String UNIQUE_CONSTRAINT_USER_ACCOUNT_NAME = COLUMN_USER+ "_"+COLUMN_ACCOUNT;
+	public static final String UNIQUE_CONSTRAINT_USER_ACCOUNT_NAME = COLUMN_USER+COLUMN_ACCOUNT;
 	
 }

@@ -35,11 +35,11 @@ public class UserAccountProfile extends AbstractIdentifiedByString implements Se
 	public static final String FIELD_USER_ACCOUNT = "userAccount";
 	public static final String FIELD_PROFILE = "profile";
 	
-	public static final String TABLE_NAME = UserAccount.TABLE_NAME+"_"+Profile.TABLE_NAME;
+	public static final String TABLE_NAME = UserAccount.TABLE_NAME+Profile.TABLE_NAME;
 	
 	public static final String COLUMN_USER_ACCOUNT = UserAccount.TABLE_NAME;
 	public static final String COLUMN_PROFILE = Profile.TABLE_NAME;
 	
-	public static final String UNIQUE_CONSTRAINT_USER_ACCOUNT_PROFILE_NAME = COLUMN_USER_ACCOUNT+ "_"+COLUMN_PROFILE;
+	public static final String UNIQUE_CONSTRAINT_USER_ACCOUNT_PROFILE_NAME = COLUMN_USER_ACCOUNT+COLUMN_PROFILE;
 	
 }

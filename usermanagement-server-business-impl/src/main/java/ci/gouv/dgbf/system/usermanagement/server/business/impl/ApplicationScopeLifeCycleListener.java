@@ -75,7 +75,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		arrayInstance = reader.execute().getOutput();
 		Collection<Scope> ugps = new ArrayList<>();
-		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 30; index = index + 1)
+		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 1000; index = index + 1)
 			ugps.add(new Scope().setIdentifier(arrayInstance.get(index, 0)).setType(ugp));
 		__logInfo__("Creating "+ugps.size()+" ugp");
 		__inject__(ScopeBusiness.class).saveManyByBatch(ugps,100);
@@ -85,7 +85,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		arrayInstance = reader.execute().getOutput();
 		Collection<Scope> uas = new ArrayList<>();
-		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 30; index = index + 1)
+		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 1000; index = index + 1)
 			uas.add(new Scope().setIdentifier(arrayInstance.get(index, 0)).setType(ua));
 		__logInfo__("Creating "+uas.size()+" ua");
 		__inject__(ScopeBusiness.class).saveManyByBatch(uas,100);
@@ -95,9 +95,9 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		arrayInstance = reader.execute().getOutput();
 		Collection<FunctionCategory> roleCategories = new ArrayList<>();
-		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 30; index = index + 1)
+		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 1000; index = index + 1)
 			roleCategories.add(new FunctionCategory().setCode(arrayInstance.get(index, 0)).setName(arrayInstance.get(index, 1)));
-		__logInfo__("Creating "+roleCategories.size()+" role categories");
+		__logInfo__("Creating "+roleCategories.size()+" categories de fonction");
 		__inject__(FunctionCategoryBusiness.class).saveManyByBatch(roleCategories,100);
 		
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
@@ -106,7 +106,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		arrayInstance = reader.execute().getOutput();
 		Collection<Function> functions = new ArrayList<>();
 		Collection<FunctionScope> functionScopes = new ArrayList<>();
-		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 30; index = index + 1) {
+		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 1000; index = index + 1) {
 			Function function = new Function().setCode(arrayInstance.get(index, 0)).setName(arrayInstance.get(index, 1))
 					.setCategory(__inject__(CollectionHelper.class).getElementAt(roleCategories, arrayInstance.get(index, 2).startsWith("ADMIN") ? 0 : 1));
 			function.setIsProfileCreatableOnCreate(Boolean.TRUE);
@@ -124,10 +124,10 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 					functionScopes.add(new FunctionScope().setFunction(function).setScope(indexAdministrativeUnit));
 			}
 		}
-		__logInfo__("Creating "+functions.size()+" functions");
+		__logInfo__("Creating "+functions.size()+" fonctions");
 		__inject__(FunctionBusiness.class).saveManyByBatch(functions,100);
 		
-		__logInfo__("Creating "+functionScopes.size()+" function scopes");
+		__logInfo__("Creating "+functionScopes.size()+" fonctions et champs d'actions");
 		__inject__(FunctionScopeBusiness.class).saveManyByBatch(functionScopes,100);
 	}
 	
