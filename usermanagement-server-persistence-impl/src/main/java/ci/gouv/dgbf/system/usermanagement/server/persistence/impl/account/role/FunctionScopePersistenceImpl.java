@@ -1,7 +1,6 @@
 package ci.gouv.dgbf.system.usermanagement.server.persistence.impl.account.role;
 
 import java.io.Serializable;
-import java.util.Collection;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -9,7 +8,7 @@ import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.array.ArrayHelper;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
 import org.cyk.utility.server.persistence.PersistenceFunctionReader;
-import org.cyk.utility.server.persistence.query.PersistenceQuery;
+import org.cyk.utility.server.persistence.query.PersistenceQueryContext;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
@@ -27,13 +26,13 @@ public class FunctionScopePersistenceImpl extends AbstractPersistenceEntityImpl<
 	}
 	
 	@Override
-	protected Object[] __getQueryParameters__(PersistenceQuery query, Properties properties, Object... objects) {
-		if(query.isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readWhereNameContains)) {
+	protected Object[] __getQueryParameters__(PersistenceQueryContext queryContext, Properties properties,Object... objects) {
+		if(queryContext.getQuery().isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readWhereNameContains)) {
 			if(Boolean.TRUE.equals(__inject__(ArrayHelper.class).isEmpty(objects)))
-				objects = new Object[] {__injectCollectionHelper__().getFirst((Collection<String>) Properties.getFromPath(properties,Properties.QUERY_FILTERS))};
+				objects = new Object[] {queryContext.getFilterByKeysValue("__global_query__")};
 			return new Object[]{"query", "%"+objects[0]+"%"};
 		}
-		return super.__getQueryParameters__(query, properties, objects);
+		return super.__getQueryParameters__(queryContext, properties, objects);
 	}
 	
 	@Override

@@ -87,7 +87,23 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 			@Override
 			public void run() {
 				assertThat(role.getCode()).isEqualTo("ASSISTANT_MINISTERE_21");
-				assertThat(role.getName()).isEqualTo("Assistant du ministère 21");
+				assertThat(role.getName()).isEqualTo("Assistant ministère 21");
+			}
+		}).execute();
+	}
+	
+	@Test
+	public void create_functionScope_ua() throws Exception{
+		ScopeType scopeType = new ScopeType().setCode("UA").setName("Unité administrative");
+		Scope scope = new Scope().setIdentifier("21").setType(scopeType);
+		FunctionCategory functionCategory = new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
+		Function function = new Function().setCode("RUA").setName("Responsable unité administrative").setCategory(functionCategory);
+		FunctionScope role = new FunctionScope().setFunction(function).setScope(scope);
+		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(scopeType,scope,functionCategory,function).addObjects(role).addTryEndRunnables(new Runnable() {
+			@Override
+			public void run() {
+				assertThat(role.getCode()).isEqualTo("RUA_UA_21");
+				assertThat(role.getName()).isEqualTo("Responsable unité administrative 21");
 			}
 		}).execute();
 	}
@@ -345,7 +361,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		
 		userAccount.addFunctionScopes(__inject__(FunctionScopePersistence.class).readOneByBusinessIdentifier("ASSISTANT_SAISIE_MINISTERE_21"));
 		userAccount.addProfiles(__inject__(ProfilePersistence.class).readOneByBusinessIdentifier("p002"));
-		__inject__(UserAccountBusiness.class).update(userAccount,new Properties().setFields(UserAccount.FIELD_FUNCTION_SCOPES));
+		__inject__(UserAccountBusiness.class).update(userAccount,new Properties().setFields(__inject__(Strings.class).add(UserAccount.FIELD_FUNCTION_SCOPES,UserAccount.FIELD_PROFILES)));
 		
 		userAccount = __inject__(UserAccountBusiness.class).findOne(userAccount.getIdentifier(), new Properties().setFields(__inject__(Strings.class)
 				.add(UserAccount.FIELD_PROFILES,UserAccount.FIELD_FUNCTION_SCOPES)));

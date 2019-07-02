@@ -71,9 +71,9 @@
 				<data.source.user>GESTION_ACTEUR</data.source.user>
 				<data.source.password>GESTION_ACTEUR</data.source.password>
 				<keycloak.server.url>http://10.3.4.20:31000/auth/</keycloak.server.url>
-				<keycloak.realm.name>SIIBDemo</keycloak.realm.name>
+				<keycloak.realm.name>SIB</keycloak.realm.name>
 				<keycloak.client.identifier>admin-cli</keycloak.client.identifier>
-				<keycloak.client.secret>7b7d69ef-612a-4361-b66f-33f09837cf05</keycloak.client.secret>
+				<keycloak.client.secret>b235602b-e5c9-4ddb-bfe5-aaaf79dacb71</keycloak.client.secret>
 				<keycloak.credential.username>admin</keycloak.credential.username>
 				<keycloak.credential.password>admin</keycloak.credential.password>
 			</properties>

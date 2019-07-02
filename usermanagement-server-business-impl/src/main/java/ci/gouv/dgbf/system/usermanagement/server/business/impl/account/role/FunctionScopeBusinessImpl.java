@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.apache.commons.lang3.StringUtils;
 import org.cyk.utility.__kernel__.constant.ConstantCharacter;
 import org.cyk.utility.__kernel__.constant.ConstantEmpty;
 import org.cyk.utility.__kernel__.properties.Properties;
@@ -31,13 +30,20 @@ public class FunctionScopeBusinessImpl extends AbstractBusinessEntityImpl<Functi
 		
 		if(__injectStringHelper__().isBlank(functionScope.getName())) {
 			if(functionScope.getScope() != null) {
-				String name = functionScope.getScope().getType().getName().toLowerCase()+ConstantCharacter.SPACE+functionScope.getScope().getIdentifier();
+				String name = functionScope.getFunction().getName();
+				if(!name.toLowerCase().endsWith(functionScope.getScope().getType().getName().toLowerCase())) {
+					name = name + ConstantCharacter.SPACE + functionScope.getScope().getType().getName().toLowerCase();
+				}
+				name = name+ConstantCharacter.SPACE+functionScope.getScope().getIdentifier();
+				/*
 				if(StringUtils.startsWithAny(name, "a","e","i","o","u")) {
 					name = "de l' " + name;
 				}else {
 					name = "du " + name;
 				}
-				functionScope.setName(functionScope.getFunction().getName()+(__injectStringHelper__().isBlank(name) ? ConstantEmpty.STRING : (ConstantCharacter.SPACE+name)));	
+				*/
+				functionScope.setName(name);
+				//functionScope.setName(functionScope.getFunction().getName()+(__injectStringHelper__().isBlank(name) ? ConstantEmpty.STRING : (ConstantCharacter.SPACE+name)));	
 			}
 		}
 	}

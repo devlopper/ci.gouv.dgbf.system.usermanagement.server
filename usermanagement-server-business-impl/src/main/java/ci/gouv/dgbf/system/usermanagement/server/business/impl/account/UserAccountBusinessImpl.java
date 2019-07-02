@@ -98,22 +98,29 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 	@Override
 	protected void __listenExecuteUpdateOneBefore__(UserAccount userAccount, Properties properties,BusinessFunctionModifier function) {
 		super.__listenExecuteUpdateOneBefore__(userAccount, properties, function);
-		__inject__(UserBusiness.class).save(userAccount.getUser());
-		__inject__(AccountBusiness.class).save(userAccount.getAccount());
-		
-		Collection<UserAccountFunctionScope> databaseCollection = __inject__(UserAccountFunctionScopePersistence.class).readByUserAccount(userAccount);
-		Collection<FunctionScope> databaseRolePostes = __injectCollectionHelper__().isEmpty(databaseCollection) ? null : databaseCollection.stream()
-				.map(UserAccountFunctionScope::getFunctionScope).collect(Collectors.toList());
-		
-		__delete__(userAccount.getFunctionScopes(), databaseCollection,UserAccountFunctionScope.FIELD_FUNCTION_SCOPE);
-		__save__(UserAccountFunctionScope.class,userAccount.getFunctionScopes(), databaseRolePostes, UserAccountFunctionScope.FIELD_FUNCTION_SCOPE, userAccount, UserAccountFunctionScope.FIELD_USER_ACCOUNT);
-		
-		Collection<UserAccountProfile> databaseUserAccountProfiles = __inject__(UserAccountProfilePersistence.class).readByUserAccount(userAccount);
-		Collection<Profile> databaseProfiles = __injectCollectionHelper__().isEmpty(databaseCollection) ? null : databaseUserAccountProfiles.stream()
-				.map(UserAccountProfile::getProfile).collect(Collectors.toList());
-		
-		__delete__(userAccount.getProfiles(), databaseUserAccountProfiles,UserAccountProfile.FIELD_PROFILE);
-		__save__(UserAccountProfile.class,userAccount.getProfiles(), databaseProfiles, UserAccountProfile.FIELD_PROFILE, userAccount, UserAccountProfile.FIELD_USER_ACCOUNT);
+		Strings fields = __getFieldsFromProperties__(properties);
+		if(__injectCollectionHelper__().isNotEmpty(fields)) {
+			for(String index : fields.get()) {
+				if(UserAccount.FIELD_PROFILES.equals(index)) {
+					Collection<UserAccountProfile> databaseUserAccountProfiles = __inject__(UserAccountProfilePersistence.class).readByUserAccount(userAccount);
+					Collection<Profile> databaseProfiles = __injectCollectionHelper__().isEmpty(databaseUserAccountProfiles) ? null : databaseUserAccountProfiles.stream()
+							.map(UserAccountProfile::getProfile).collect(Collectors.toList());
+					
+					__delete__(userAccount.getProfiles(), databaseUserAccountProfiles,UserAccountProfile.FIELD_PROFILE);
+					__save__(UserAccountProfile.class,userAccount.getProfiles(), databaseProfiles, UserAccountProfile.FIELD_PROFILE, userAccount, UserAccountProfile.FIELD_USER_ACCOUNT);
+				}else if(UserAccount.FIELD_FUNCTION_SCOPES.equals(index)) {
+					__inject__(UserBusiness.class).save(userAccount.getUser());
+					__inject__(AccountBusiness.class).save(userAccount.getAccount());
+					
+					Collection<UserAccountFunctionScope> databaseCollection = __inject__(UserAccountFunctionScopePersistence.class).readByUserAccount(userAccount);
+					Collection<FunctionScope> databaseRolePostes = __injectCollectionHelper__().isEmpty(databaseCollection) ? null : databaseCollection.stream()
+							.map(UserAccountFunctionScope::getFunctionScope).collect(Collectors.toList());
+					
+					__delete__(userAccount.getFunctionScopes(), databaseCollection,UserAccountFunctionScope.FIELD_FUNCTION_SCOPE);
+					__save__(UserAccountFunctionScope.class,userAccount.getFunctionScopes(), databaseRolePostes, UserAccountFunctionScope.FIELD_FUNCTION_SCOPE, userAccount, UserAccountFunctionScope.FIELD_USER_ACCOUNT);
+				}
+			}
+		}	
 	}
 	
 	@Override

@@ -1,7 +1,6 @@
 package ci.gouv.dgbf.system.usermanagement.server.persistence.impl.account.role;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -70,13 +69,14 @@ public class ProfileFunctionPersistenceImpl extends AbstractPersistenceEntityImp
 	@Override
 	protected Object[] __getQueryParameters__(PersistenceQueryContext queryContext, Properties properties,Object... objects) {
 		if(queryContext.getQuery().isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readByFunctionCodes)) {
-			if(__inject__(ArrayHelper.class).isEmpty(objects))
-				objects = new Object[] {Arrays.asList(queryContext.getFilterByKeysValue(ProfileFunction.FIELD_FUNCTION).toString().split(","))};
+			if(__inject__(ArrayHelper.class).isEmpty(objects)) {
+				objects = new Object[] {queryContext.getFilterByKeysValue(ProfileFunction.FIELD_FUNCTION)};
+			}
 			return new Object[]{"functionCodes",objects[0]};
 		}
 		if(queryContext.getQuery().isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readByProfileCodes)) {
 			if(__inject__(ArrayHelper.class).isEmpty(objects))
-				objects = new Object[] {Arrays.asList(queryContext.getFilterByKeysValue(ProfileFunction.FIELD_PROFILE).toString().split(","))};
+				objects = new Object[] {queryContext.getFilterByKeysValue(ProfileFunction.FIELD_PROFILE)};
 			return new Object[]{"profileCodes",objects[0]};
 		}
 		return super.__getQueryParameters__(queryContext, properties, objects);

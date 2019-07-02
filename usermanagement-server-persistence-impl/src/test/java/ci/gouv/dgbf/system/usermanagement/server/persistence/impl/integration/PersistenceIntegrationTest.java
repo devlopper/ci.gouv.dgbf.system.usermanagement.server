@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -223,7 +224,7 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getProfile().getCode())).containsOnly("p01","p03");
 		
-		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_FUNCTION, "f01,f02")));
+		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_FUNCTION, Arrays.asList("f01","f02"))));
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getProfile().getCode()).collect(Collectors.toSet())).containsOnly("p01","p02","p03");
 		

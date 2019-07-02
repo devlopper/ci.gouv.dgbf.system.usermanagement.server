@@ -52,7 +52,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 	public void saveDataFromResources() {
 		//super.__saveData__();
 		ScopeType section = new ScopeType().setCode("SECTION").setName("Section");
-		ScopeType ugp = new ScopeType().setCode("UGP").setName("Unité de gestion programmatique");
+		ScopeType ugp = new ScopeType().setCode("UGP").setName("Unité de gestion de la performance");
 		ScopeType ua = new ScopeType().setCode("UA").setName("Unité administrative");
 		
 		__inject__(ScopeTypeBusiness.class).createMany(__inject__(CollectionHelper.class).instanciate(section,ugp,ua));
@@ -85,7 +85,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		arrayInstance = reader.execute().getOutput();
 		Collection<Scope> uas = new ArrayList<>();
-		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 1000; index = index + 1)
+		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 100; index = index + 1)
 			uas.add(new Scope().setIdentifier(arrayInstance.get(index, 0)).setType(ua));
 		__logInfo__("Creating "+uas.size()+" ua");
 		__inject__(ScopeBusiness.class).saveManyByBatch(uas,100);
