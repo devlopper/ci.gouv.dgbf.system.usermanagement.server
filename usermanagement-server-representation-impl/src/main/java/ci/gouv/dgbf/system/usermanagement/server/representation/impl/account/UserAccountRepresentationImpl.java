@@ -33,7 +33,7 @@ public class UserAccountRepresentationImpl extends AbstractRepresentationEntityI
 					Account account = __inject__(AccountPersistence.class).readOneBySystemIdentifier(index.getUsername());
 					if(account == null) {
 						UserAccount userAccount = new UserAccount();
-						userAccount.getUser(Boolean.TRUE).setIdentifier(index.getId());
+						userAccount.setIdentifier(index.getId());
 						userAccount.getUser(Boolean.TRUE).setFirstName(index.getFirstName());
 						userAccount.getUser(Boolean.TRUE).setLastNames(index.getLastName());
 						userAccount.getUser(Boolean.TRUE).setElectronicMailAddress(index.getEmail());
