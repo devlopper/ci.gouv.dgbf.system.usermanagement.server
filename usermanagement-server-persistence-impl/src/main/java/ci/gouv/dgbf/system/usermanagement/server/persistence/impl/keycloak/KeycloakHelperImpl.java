@@ -261,7 +261,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 			CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
 			credentialRepresentation.setTemporary(Boolean.TRUE);
 			credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
-			credentialRepresentation.setValue(__inject__(ValueHelper.class).defaultToIfNull(pass, "1234"));
+			credentialRepresentation.setValue(__inject__(ValueHelper.class).defaultToIfNull(pass, "123"));
 			userResource.resetPassword(credentialRepresentation);
 		}
 				
@@ -271,7 +271,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 					RoleRepresentation roleRepresentation = getRealmResource().roles().get(index).toRepresentation();
 					userResource.roles().realmLevel().add(Arrays.asList(roleRepresentation));
 				} catch (NotFoundException exception) {
-					System.out.println("Role "+exception+" : "+index);
+					System.out.println("Saving user account. Role "+exception+" : "+index);
 				}
 			}
 			
@@ -280,8 +280,8 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	
 	@Override
 	public String saveUserAccount(UserAccount userAccount) {
-		Collection<String> rolesCodes = __inject__(CollectionHelper.class).isEmpty(userAccount.getFunctionScopes()) ? null : userAccount.getFunctionScopes().get()
-				.stream().map(x -> x.getFunction().getCode()).collect(Collectors.toList());
+		Collection<String> rolesCodes = __inject__(CollectionHelper.class).isEmpty(userAccount.getProfiles()) ? null : userAccount.getProfiles().get()
+				.stream().map(x -> x.getCode()).collect(Collectors.toList());
 		
 		String identifier = saveUserAccount(userAccount.getIdentifier(),userAccount.getUser().getFirstName(), userAccount.getUser().getLastNames(), userAccount.getUser().getElectronicMailAddress()
 				, userAccount.getAccount().getIdentifier(),  userAccount.getAccount().getPass(),  rolesCodes,null);

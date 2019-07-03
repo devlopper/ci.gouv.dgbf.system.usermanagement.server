@@ -8,7 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
 
 import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByString;
 import org.cyk.utility.string.StringHelper;
@@ -24,11 +23,11 @@ public class User extends AbstractIdentifiedByString implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	//Names
-	@NotNull private String firstName;
-	private String lastNames;
+	@Column(name=COLUMN_FIRST_NAME) private String firstName;
+	@Column(name=COLUMN_LAST_NAMES) private String lastNames;
 	
 	//Contacts
-	@Column(name=COLUMN_ELECTRONIC_MAIL_ADDRESS) @NotNull private String electronicMailAddress;
+	@Column(name=COLUMN_ELECTRONIC_MAIL_ADDRESS) private String electronicMailAddress;
 	@Column(name=COLUMN_PHONE_NUMBER) private String phoneNumber;
 	
 	/**/
@@ -61,6 +60,8 @@ public class User extends AbstractIdentifiedByString implements Serializable {
 	
 	public static final String TABLE_NAME = "util";
 	
+	public static final String COLUMN_FIRST_NAME = "nom";
+	public static final String COLUMN_LAST_NAMES = "prenoms";
 	public static final String COLUMN_ELECTRONIC_MAIL_ADDRESS = "adresse_electronique";
 	public static final String COLUMN_PHONE_NUMBER = "numero_telephone";
 	

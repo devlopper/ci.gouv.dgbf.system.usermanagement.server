@@ -6,6 +6,4 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Ac
 
 public interface AccountPersistence extends PersistenceEntity<Account> {
 
-	Account readByCodeByPass(String code,String pass);
-	
 }

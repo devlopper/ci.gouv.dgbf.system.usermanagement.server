@@ -39,7 +39,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	
 	@Transient private Profiles profiles;
 	@Transient private FunctionScopes functionScopes;
-	@Transient private Boolean isNotifiableByMail;
+	@Transient private Boolean isNotifiableByMail,isPersistToKeycloakOnCreate;
 	
 	/**/
 	

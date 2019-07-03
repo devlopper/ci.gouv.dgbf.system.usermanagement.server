@@ -15,6 +15,7 @@ import org.cyk.utility.array.ArrayInstanceTwoDimensionString;
 import org.cyk.utility.collection.CollectionHelper;
 import org.cyk.utility.file.excel.FileExcelSheetDataArrayReader;
 import org.cyk.utility.string.StringHelper;
+import org.jboss.weld.environment.se.Weld;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -29,8 +30,8 @@ public class PopulateKeycloak extends AbstractObject {
 	private static final long serialVersionUID = 1L;
 
 	public static void main(String[] args) {
-		//Weld weld = new Weld();
-	    //weld.initialize();
+		Weld weld = new Weld();
+	    weld.initialize();
 	    
 		String url = "http://localhost:8230/auth/";
 		String realmName = "TestPopulate";
@@ -79,7 +80,7 @@ public class PopulateKeycloak extends AbstractObject {
 		//populateKeycloak.deleteClients(client.realm(realmName).clients());
 		//populateKeycloak.saveClients(serviceArrayInstance,client.realm(realmName).clients());
 		
-		//weld.shutdown();
+		weld.shutdown();
 	}
 	
 	private void saveRole(RolesResource rolesResource,String code,String name,String type,Properties properties) {

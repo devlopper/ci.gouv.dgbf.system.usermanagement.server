@@ -13,8 +13,6 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Ac
 public class AccountPersistenceImpl extends AbstractPersistenceEntityImpl<Account> implements AccountPersistence,Serializable {
 	private static final long serialVersionUID = 1L;
 
-	//private String readByCodeByPass;
-	
 	@Override
 	protected void __listenPostConstructPersistenceQueries__() {
 		super.__listenPostConstructPersistenceQueries__();
@@ -36,10 +34,4 @@ public class AccountPersistenceImpl extends AbstractPersistenceEntityImpl<Accoun
 	}
 	*/
 	
-	@Override
-	public Account readByCodeByPass(String code, String pass) {
-		return __readOne__(____getQueryParameters____(null,code,pass));
-	}
-	
-
 }

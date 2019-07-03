@@ -28,8 +28,10 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 	
 	@Override
 	public PersistenceServiceProvider<UserAccount> create(UserAccount userAccount, Properties properties) {
-		String identifier = __inject__(KeycloakHelper.class).saveUserAccount(userAccount);
-		userAccount.setIdentifier(identifier);
+		if(Boolean.TRUE.equals(__injectValueHelper__().defaultToIfNull(userAccount.getIsPersistToKeycloakOnCreate(),Boolean.TRUE))) {
+			String identifier = __inject__(KeycloakHelper.class).saveUserAccount(userAccount);
+			userAccount.setIdentifier(identifier);	
+		}
 		super.create(userAccount, properties);
 		return this;
 	}

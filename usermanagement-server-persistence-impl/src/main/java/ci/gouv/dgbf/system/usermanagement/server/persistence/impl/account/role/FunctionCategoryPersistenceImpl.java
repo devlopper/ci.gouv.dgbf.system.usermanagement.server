@@ -10,7 +10,6 @@ import org.cyk.utility.server.persistence.PersistenceServiceProvider;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionCategoryPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
 @ApplicationScoped
 public class FunctionCategoryPersistenceImpl extends AbstractPersistenceEntityImpl<FunctionCategory> implements FunctionCategoryPersistence,Serializable {
@@ -19,14 +18,14 @@ public class FunctionCategoryPersistenceImpl extends AbstractPersistenceEntityIm
 	@Override
 	public PersistenceServiceProvider<FunctionCategory> create(FunctionCategory functionCategory, Properties properties) {
 		super.create(functionCategory, properties);
-		__inject__(KeycloakHelper.class).createRole(functionCategory.getCode(), functionCategory.getName(), "CATEGORIE");
+		//__inject__(KeycloakHelper.class).createRole(functionCategory.getCode(), functionCategory.getName(), "CATEGORIE");
 		return this;
 	}
 	
 	@Override
 	public PersistenceServiceProvider<FunctionCategory> delete(FunctionCategory functionCategory, Properties properties) {
 		super.delete(functionCategory, properties);
-		__inject__(KeycloakHelper.class).deleteRole(functionCategory.getCode());
+		//__inject__(KeycloakHelper.class).deleteRole(functionCategory.getCode());
 		return this;
 	}
 	

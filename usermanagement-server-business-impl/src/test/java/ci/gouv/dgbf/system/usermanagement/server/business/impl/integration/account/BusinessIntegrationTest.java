@@ -247,7 +247,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		
 		UserAccount userAccount = new UserAccount();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__());
-		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
+		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__());
 		userAccount.addFunctionScopes(functionScope);
 		userAccount.addProfiles(profile);
 		__inject__(TestBusinessCreate.class).setName("Create user account").addObjects(userAccount).addTryEndRunnables(new Runnable() {
@@ -309,7 +309,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	public void create_userAccountProfile() throws Exception{
 		UserAccount userAccount = new UserAccount();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
-		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
+		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__());
 		Profile profile = new Profile();
 		profile.setCode(__getRandomCode__()).setName(__getRandomName__());
 		UserAccountProfile userAccountProfile = new UserAccountProfile().setUserAccount(userAccount).setProfile(profile);
@@ -337,7 +337,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		
 		UserAccount userAccount = new UserAccount();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__());
-		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
+		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__());
 		userAccount.addFunctionScopes(__inject__(FunctionScopePersistence.class).readOneByBusinessIdentifier("CONTROLEUR_FINANCIER_MINISTERE_21"));
 		userAccount.addProfiles(__inject__(ProfilePersistence.class).readOneByBusinessIdentifier("p001"));
 		__inject__(UserAccountBusiness.class).create(userAccount);
@@ -420,11 +420,11 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	public void create_userAccountInterim() throws Exception{
 		UserAccount userAccount = new UserAccount();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
-		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
+		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__());
 		
 		UserAccount interim = new UserAccount();
 		interim.getUser(Boolean.TRUE).setFirstName("Yao").setElectronicMailAddress(__getRandomElectronicMailAddress__());
-		interim.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
+		interim.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__());
 		
 		UserAccountInterim userAccountInterim = new UserAccountInterim();
 		userAccountInterim.setUserAccount(userAccount);

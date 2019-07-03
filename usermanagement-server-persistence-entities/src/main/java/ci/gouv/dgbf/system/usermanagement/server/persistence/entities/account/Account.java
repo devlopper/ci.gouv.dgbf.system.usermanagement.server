@@ -4,10 +4,9 @@ import java.io.Serializable;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Transient;
 
 import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByString;
 
@@ -21,7 +20,7 @@ import lombok.experimental.Accessors;
 public class Account extends AbstractIdentifiedByString implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Column(name=COLUMN_PASS) @NotNull private String pass;
+	@Transient private String pass;
 	
 	/**/
 	
@@ -32,10 +31,6 @@ public class Account extends AbstractIdentifiedByString implements Serializable 
 	
 	/**/
 	
-	public static final String FIELD_PASS = "pass";
-	
 	public static final String TABLE_NAME = "cpt";
-	
-	public static final String COLUMN_PASS = "pass";
 	
 }
