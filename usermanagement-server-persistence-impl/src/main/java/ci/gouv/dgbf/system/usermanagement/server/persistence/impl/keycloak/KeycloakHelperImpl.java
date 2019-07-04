@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -25,24 +27,35 @@ import org.cyk.utility.value.ValueHelper;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
+import org.keycloak.admin.client.resource.ClientResource;
 import org.keycloak.admin.client.resource.ClientsResource;
 import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.ResourcePermissionResource;
+import org.keycloak.admin.client.resource.ResourceResource;
+import org.keycloak.admin.client.resource.RolePolicyResource;
 import org.keycloak.admin.client.resource.RoleResource;
 import org.keycloak.admin.client.resource.RolesResource;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.keycloak.representations.idm.authorization.ResourcePermissionRepresentation;
+import org.keycloak.representations.idm.authorization.ResourceRepresentation;
+import org.keycloak.representations.idm.authorization.RolePolicyRepresentation;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionCategoryPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Resource;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Service;
 
 @ApplicationScoped
 public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper,Serializable {
@@ -360,6 +373,166 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	
 	/**/
 	
+	/*protected ClientResource __getClientResource__(Service service) {
+		getClient().realm(realmName).clients().
+	}
+	*/
+	
+	@Override
+	public ClientResource getClientResource(String identifier) {
+		try {
+			return getClient().realm(realmName).clients().get(identifier);
+		} catch (Exception exception) {
+			__logWarning__(String.format("Identifier <<%s>> not found. %s", identifier,exception.toString()));
+		}
+		return null;
+	}
+	
+	@Override
+	public KeycloakHelper createClient(Service service) {
+		ClientRepresentation clientRepresentation = new ClientRepresentation();
+		clientRepresentation.setId(service.getIdentifier());
+		clientRepresentation.setRootUrl(service.getUrl());
+		getClient().realm(realmName).clients().create(clientRepresentation);
+		return this;
+	}
+	
+	@Override
+	public ClientResource getClient(Service service) {
+		return getClientResource(service.getIdentifier());
+	}
+	
+	@Override
+	public KeycloakHelper deleteClient(Service service) {
+		ClientResource clientResource = getClient(service);
+		if(clientResource != null)
+			clientResource.remove();
+		return this;
+	}
+	
+	@Override
+	public KeycloakHelper createResource(Service service, Resource resource) {
+		ClientResource clientResource = getClient(service);
+		if(clientResource != null) {
+			ResourceRepresentation resourceRepresentation = new ResourceRepresentation();
+			resourceRepresentation.setId(service.getIdentifier()+resource.getIdentifier());
+			resourceRepresentation.setName(resource.getName());
+			Set<String> uris = new HashSet<>();
+			uris.add(resource.getUrl());
+			resourceRepresentation.setUris(uris);
+			clientResource.authorization().resources().create(resourceRepresentation);	
+		}
+		return this;
+	}
+	
+	@Override
+	public ResourceResource getResource(Service service, Resource resource) {
+		ClientResource clientResource = getClient(service);
+		if(clientResource != null) {
+			String identifier = service.getIdentifier()+resource.getIdentifier();
+			try {
+				ResourceResource resourceResource = clientResource.authorization().resources().resource(identifier);
+				ResourceRepresentation resourceRepresentation = null;
+				if(resourceResource != null)
+					resourceRepresentation = resourceResource.toRepresentation();//TO be sure that it exist
+				return resourceRepresentation == null ? null : resourceResource;
+			} catch (Exception exception) {
+				__logWarning__(String.format("Identifier <<%s>> not found. %s", identifier,exception.toString()));
+			}	
+		}
+		return null;
+	}
+	
+	@Override
+	public KeycloakHelper deleteResource(Service service, Resource resource) {
+		ResourceResource resourceResource = getResource(service, resource);
+		if(resourceResource != null) {
+			resourceResource.remove();	
+		}
+		return this;
+	}
+	
+	@Override
+	public KeycloakHelper createRolePolicy(Service service,Profile profile) {
+		ClientResource clientResource = getClient().realm(realmName).clients().get(service.getIdentifier());
+		RolePolicyRepresentation rolePolicyRepresentation = new RolePolicyRepresentation();
+		rolePolicyRepresentation.setId(service.getIdentifier()+profile.getIdentifier());
+		rolePolicyRepresentation.setName(profile.getCode());
+		rolePolicyRepresentation.setDescription(profile.getName());
+		rolePolicyRepresentation.addRole(profile.getCode(), Boolean.TRUE);
+		clientResource.authorization().policies().role().create(rolePolicyRepresentation);
+		return this;
+	}
+	
+	@Override
+	public RolePolicyResource getRolePolicy(Service service, Profile profile) {
+		ClientResource clientResource = getClient(service);
+		if(clientResource != null) {
+			String identifier = service.getIdentifier()+profile.getIdentifier();
+			try {
+				return clientResource.authorization().policies().role().findById(identifier);
+			} catch (Exception exception) {
+				__logWarning__(String.format("Identifier <<%s>> not found. %s", identifier,exception.toString()));
+			}	
+		}
+		return null;
+	}
+	
+	@Override
+	public KeycloakHelper deleteRolePolicy(Service service, Profile profile) {
+		RolePolicyResource rolePolicyResource = getRolePolicy(service, profile);
+		if(rolePolicyResource != null)
+			rolePolicyResource.remove();
+		return this;
+	}
+	
+	@Override
+	public KeycloakHelper createPermission(Profile profile,Service service,Resource resource) {
+		ClientResource clientResource = getClient(service);
+		if(clientResource != null) {
+			ResourcePermissionRepresentation resourcePermissionRepresentation = new ResourcePermissionRepresentation();
+			ResourceResource resourceResource = getResource(service, resource);
+			if(resourceResource != null) {
+				RolePolicyResource rolePolicyResource = getRolePolicy(service, profile);
+				if(rolePolicyResource != null) {
+					resourcePermissionRepresentation.setId(profile.getIdentifier()+service.getIdentifier()+resource.getIdentifier());
+					resourcePermissionRepresentation.addResource(resourceResource.toRepresentation().getId());
+					resourcePermissionRepresentation.addPolicy(rolePolicyResource.toRepresentation().getId());
+					clientResource.authorization().permissions().resource().create(resourcePermissionRepresentation);
+				}
+			}	
+		}
+		return this;
+	}
+	
+	@Override
+	public ResourcePermissionResource getPermission(Profile profile, Service service, Resource resource) {
+		ClientResource clientResource = getClient(service);
+		if(clientResource != null) {
+			String identifier = profile.getIdentifier()+service.getIdentifier()+resource.getIdentifier();
+			try {
+				ResourcePermissionResource resourcePermissionResource = clientResource.authorization().permissions().resource().findById(identifier);
+				ResourcePermissionRepresentation resourcePermissionRepresentation = null;
+				if(resourcePermissionResource != null)
+					resourcePermissionRepresentation = resourcePermissionResource.toRepresentation();
+				return resourcePermissionRepresentation == null ? null : resourcePermissionResource;
+			} catch (Exception exception) {
+				__logWarning__(String.format("Identifier <<%s>> not found. %s", identifier,exception.toString()));
+			}	
+		}
+		return null;
+	}
+	
+	@Override
+	public KeycloakHelper deletePermission(Profile profile, Service service, Resource resource) {
+		ResourcePermissionResource resourcePermissionsResource = getPermission(profile, service, resource);
+		if(resourcePermissionsResource != null)
+			resourcePermissionsResource.remove();
+		return this;
+	}
+	
+	/**/
+	
 	@Override
 	public KeycloakHelper load() {
 		loadRoleCategory();
@@ -422,7 +595,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 		UserTransaction userTransaction = __inject__(UserTransaction.class);
 		try {
 			userTransaction.begin();
-			for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "POSTE")) {
+			for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "???")) {
 				FunctionScope functionScope = __inject__(FunctionScopePersistence.class).readOneByBusinessIdentifier(index.getName());
 				if(functionScope == null) {
 					functionScope = __inject__(FunctionScope.class).setCode(index.getName()).setName(index.getAttributes().get(ROLE_ATTRIBUTE_NAME).get(0));

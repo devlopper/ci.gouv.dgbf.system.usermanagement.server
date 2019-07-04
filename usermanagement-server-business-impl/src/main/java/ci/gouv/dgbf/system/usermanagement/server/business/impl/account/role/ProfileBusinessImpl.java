@@ -20,6 +20,7 @@ import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.Profi
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileFunctionBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileServiceResourcePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
@@ -73,7 +74,9 @@ public class ProfileBusinessImpl extends AbstractBusinessEntityImpl<Profile, Pro
 		function.addTryBeginRunnables(new Runnable() {
 			@Override
 			public void run() {
-				__deleteMany__(__inject__(ProfileFunctionPersistence.class).readByProfiles(Arrays.asList(profile)));
+				Collection<Profile> profiles = Arrays.asList(profile);
+				__deleteMany__(__inject__(ProfileFunctionPersistence.class).readByProfiles(profiles));
+				__deleteMany__(__inject__(ProfileServiceResourcePersistence.class).readByProfiles(profiles));
 			}
 		});
 	}

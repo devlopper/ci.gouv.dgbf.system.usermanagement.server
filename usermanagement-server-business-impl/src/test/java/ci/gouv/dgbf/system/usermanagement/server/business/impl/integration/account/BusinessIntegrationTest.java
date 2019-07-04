@@ -12,7 +12,9 @@ import java.util.stream.Collectors;
 
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.collection.CollectionHelper;
+import org.cyk.utility.log.LogLevel;
 import org.cyk.utility.map.MapHelper;
+import org.cyk.utility.server.business.AbstractBusinessFunctionImpl;
 import org.cyk.utility.server.business.test.TestBusinessCreate;
 import org.cyk.utility.server.business.test.arquillian.AbstractBusinessArquillianIntegrationTestWithDefaultDeployment;
 import org.cyk.utility.stream.distributed.Topic;
@@ -36,7 +38,6 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.Fu
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Service;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterim;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile;
@@ -45,8 +46,12 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileServiceResource;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Resource;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Service;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ServiceResource;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
 public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrationTestWithDefaultDeployment {
@@ -54,6 +59,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	
 	@Override
 	protected void __listenBeforeCallCountIsZero__() throws Exception {
+		AbstractBusinessFunctionImpl.LOG_LEVEL = LogLevel.INFO;
 		super.__listenBeforeCallCountIsZero__();
 		__inject__(ApplicationScopeLifeCycleListener.class).initialize(null);
 	}
@@ -110,8 +116,30 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	
 	@Test
 	public void create_service() throws Exception{
-		Service service = new Service().setIdentifier(__getRandomCode__());
-		__inject__(TestBusinessCreate.class).addObjects(service).execute();
+		__inject__(TestBusinessCreate.class).addObjects(new Service().setUrl("url")).execute();
+	}
+	
+	@Test
+	public void create_resource() throws Exception{
+		__inject__(TestBusinessCreate.class).addObjects(new Resource().setCode(__getRandomCode__()).setName(__getRandomName__()).setUrl("url")).execute();
+	}
+	
+	@Test
+	public void create_serviceResource() throws Exception{
+		ServiceResource serviceResource = new ServiceResource();
+		serviceResource.setService(new Service().setUrl("url"));
+		serviceResource.setResource(new Resource().setCode(__getRandomCode__()).setName(__getRandomName__()).setUrl("url"));
+		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(serviceResource.getService(),serviceResource.getResource()).addObjects(serviceResource).execute();
+	}
+	
+	@Test
+	public void create_profileServiceResource() throws Exception{
+		ProfileServiceResource profileServiceResource = new ProfileServiceResource();
+		profileServiceResource.setProfile(new Profile().setCode(__getRandomCode__()).setName(__getRandomName__()));
+		profileServiceResource.setService(new Service().setUrl("url"));
+		profileServiceResource.setResource(new Resource().setCode(__getRandomCode__()).setName(__getRandomName__()).setUrl("url"));
+		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(profileServiceResource.getProfile(),profileServiceResource.getService()
+				,profileServiceResource.getResource()).addObjects(profileServiceResource).execute();
 	}
 	
 	@Test

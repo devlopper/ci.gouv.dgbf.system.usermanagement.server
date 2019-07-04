@@ -22,7 +22,7 @@ import lombok.experimental.Accessors;
 @Entity @Getter @Setter @Accessors(chain=true) @Access(AccessType.FIELD) @ToString
 @Table(name=UserAccountFunctionScope.TABLE_NAME,
 uniqueConstraints= {
-		@UniqueConstraint(name=UserAccountFunctionScope.UNIQUE_CONSTRAINT_USER_ACCOUNT_ROLE_POSTE_NAME,columnNames= {UserAccountFunctionScope.COLUMN_USER_ACCOUNT,UserAccountFunctionScope.COLUMN_FUNCTION_SCOPE}
+		@UniqueConstraint(name=UserAccountFunctionScope.UNIQUE_CONSTRAINT_USER_ACCOUNT_FUNCTION_SCOPE_NAME,columnNames= {UserAccountFunctionScope.COLUMN_USER_ACCOUNT,UserAccountFunctionScope.COLUMN_FUNCTION_SCOPE}
 		)})
 public class UserAccountFunctionScope extends AbstractIdentifiedByString implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -43,6 +43,6 @@ public class UserAccountFunctionScope extends AbstractIdentifiedByString impleme
 	public static final String COLUMN_FUNCTION_SCOPE = FunctionScope.TABLE_NAME;
 	public static final String COLUMN_IS_INTERIM = "est_"+UserAccountInterim.TABLE_NAME;
 	
-	public static final String UNIQUE_CONSTRAINT_USER_ACCOUNT_ROLE_POSTE_NAME = COLUMN_USER_ACCOUNT+COLUMN_FUNCTION_SCOPE;
+	public static final String UNIQUE_CONSTRAINT_USER_ACCOUNT_FUNCTION_SCOPE_NAME = COLUMN_USER_ACCOUNT+COLUMN_FUNCTION_SCOPE;
 	
 }

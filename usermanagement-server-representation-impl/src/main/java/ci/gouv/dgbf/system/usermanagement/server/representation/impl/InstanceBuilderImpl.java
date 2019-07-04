@@ -1,34 +1,33 @@
 package ci.gouv.dgbf.system.usermanagement.server.representation.impl;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 import org.cyk.utility.__kernel__.properties.Properties;
+import org.cyk.utility.collection.CollectionHelper;
 import org.cyk.utility.instance.AbstractInstanceBuilderImpl;
 import org.cyk.utility.instance.InstanceHelper;
 import org.cyk.utility.string.StringHelper;
 
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionScopePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Account;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.User;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.AccountDto;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeTypeDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileFunctionDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionCategoryDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionScopeDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileFunctionDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeDto;
 
 @ci.gouv.dgbf.system.usermanagement.server.annotation.System
 public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements Serializable {
@@ -42,7 +41,7 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			ScopeDto representation = (ScopeDto) destination;
 			representation.setIdentifier(persistence.getIdentifier());
 			representation.setName(persistence.getName()); 
-			representation.setType(__inject__(InstanceHelper.class).buildOne(ScopeTypeDto.class, persistence.getType())); 
+			//representation.setType(__inject__(InstanceHelper.class).buildOne(ScopeTypeDto.class, persistence.getType())); 
 		}else if(source instanceof FunctionCategory && destination instanceof FunctionCategoryDto) {
 			FunctionCategory persistence = (FunctionCategory) source;
 			FunctionCategoryDto representation = (FunctionCategoryDto) destination;
@@ -55,15 +54,15 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			representation.setIdentifier(persistence.getIdentifier());
 			representation.setCode(persistence.getCode());
 			representation.setName(persistence.getName()); 
-			representation.setCategory(__inject__(InstanceHelper.class).buildOne(FunctionCategoryDto.class, persistence.getCategory())); 
+			//representation.setCategory(__inject__(InstanceHelper.class).buildOne(FunctionCategoryDto.class, persistence.getCategory())); 
 		}else if(source instanceof FunctionScope && destination instanceof FunctionScopeDto) {
 			FunctionScope persistence = (FunctionScope) source;
 			FunctionScopeDto representation = (FunctionScopeDto) destination;
 			representation.setIdentifier(persistence.getIdentifier());
 			representation.setCode(persistence.getCode());
 			representation.setName(persistence.getName()); 
-			representation.setFunction(__inject__(InstanceHelper.class).buildOne(FunctionDto.class, persistence.getFunction()));
-			representation.setScope(__inject__(InstanceHelper.class).buildOne(ScopeDto.class, persistence.getScope()));
+			//representation.setFunction(__inject__(InstanceHelper.class).buildOne(FunctionDto.class, persistence.getFunction()));
+			//representation.setScope(__inject__(InstanceHelper.class).buildOne(ScopeDto.class, persistence.getScope()));
 		}else if(source instanceof Profile && destination instanceof ProfileDto) {
 			Profile persistence = (Profile) source;
 			ProfileDto representation = (ProfileDto) destination;
@@ -77,14 +76,18 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			ProfileFunction persistence = (ProfileFunction) source;
 			ProfileFunctionDto representation = (ProfileFunctionDto) destination;
 			representation.setIdentifier(persistence.getIdentifier());
-			representation.setProfile(__inject__(InstanceHelper.class).buildOne(ProfileDto.class, persistence.getProfile()));
-			representation.setFunction(__inject__(InstanceHelper.class).buildOne(FunctionDto.class, persistence.getFunction()));
+			@SuppressWarnings("unchecked")
+			Collection<String> fields = (Collection<String>) properties.getFields();
+			if(__inject__(CollectionHelper.class).contains(fields, ProfileFunction.FIELD_PROFILE))
+				representation.setProfile(__inject__(InstanceHelper.class).buildOne(ProfileDto.class, persistence.getProfile()));
+			if(__inject__(CollectionHelper.class).contains(fields, ProfileFunction.FIELD_FUNCTION))
+				representation.setFunction(__inject__(InstanceHelper.class).buildOne(FunctionDto.class, persistence.getFunction()));
 		}else if(source instanceof UserAccount && destination instanceof UserAccountDto) {
 			UserAccount persistence = (UserAccount) source;
 			UserAccountDto representation = (UserAccountDto) destination;
 			representation.setIdentifier(persistence.getIdentifier());
-			representation.setUser(__inject__(InstanceHelper.class).buildOne(UserDto.class, persistence.getUser()));
-			representation.setAccount(__inject__(InstanceHelper.class).buildOne(AccountDto.class, persistence.getAccount()));
+			//representation.setUser(__inject__(InstanceHelper.class).buildOne(UserDto.class, persistence.getUser()));
+			//representation.setAccount(__inject__(InstanceHelper.class).buildOne(AccountDto.class, persistence.getAccount()));
 			if(__injectCollectionHelper__().isNotEmpty(persistence.getFunctionScopes()))
 				for(FunctionScope index : persistence.getFunctionScopes().get())
 					representation.addFunctionScopes(__inject__(InstanceHelper.class).buildOne(FunctionScopeDto.class, index));

@@ -32,8 +32,12 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileServiceResource;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Resource;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Service;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ServiceResource;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.ApplicationScopeLifeCycleListener;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
@@ -42,7 +46,8 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Override
 	protected void __listenBeforeCallCountIsZero__() throws Exception {
-		super.__listenBeforeCallCountIsZero__();
+		//AbstractPersistenceFunctionImpl.LOG_LEVEL = LogLevel.INFO;
+		super.__listenBeforeCallCountIsZero__();	
 		__inject__(ApplicationScopeLifeCycleListener.class).initialize(null);
 	}
 	
@@ -97,6 +102,34 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		profileFunction.setProfile(profile);
 		profileFunction.setFunction(function);
 		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(function.getCategory(),function,profile).addObjects(profileFunction).execute();
+	}
+	
+	@Test
+	public void create_service() throws Exception{
+		__inject__(TestPersistenceCreate.class).addObjects(new Service().setUrl("url")).execute();
+	}
+	
+	@Test
+	public void create_resource() throws Exception{
+		__inject__(TestPersistenceCreate.class).addObjects(new Resource().setCode(__getRandomCode__()).setName(__getRandomName__()).setUrl("url")).execute();
+	}
+	
+	@Test
+	public void create_serviceResource() throws Exception{
+		ServiceResource serviceResource = new ServiceResource();
+		serviceResource.setService(new Service().setUrl("url"));
+		serviceResource.setResource(new Resource().setCode(__getRandomCode__()).setName(__getRandomName__()).setUrl("url"));
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(serviceResource.getService(),serviceResource.getResource()).addObjects(serviceResource).execute();
+	}
+	
+	@Test
+	public void create_profileServiceResource() throws Exception{
+		ProfileServiceResource profileServiceResource = new ProfileServiceResource();
+		profileServiceResource.setProfile(new Profile().setCode(__getRandomCode__()).setName(__getRandomName__()));
+		profileServiceResource.setService(new Service().setUrl("url"));
+		profileServiceResource.setResource(new Resource().setCode(__getRandomCode__()).setName(__getRandomName__()).setUrl("url"));
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(profileServiceResource.getProfile(),profileServiceResource.getService()
+				,profileServiceResource.getResource()).addObjects(profileServiceResource).execute();
 	}
 	
 	@Test
@@ -238,7 +271,7 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Test
 	public void create_userAccount() throws Exception{
-		UserAccount userAccount = new UserAccount();
+		UserAccount userAccount = new UserAccount().setIsPersistToKeycloakOnCreate(Boolean.FALSE);
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
 		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(userAccount.getUser(),userAccount.getAccount()).addObjects(userAccount).execute();
@@ -246,7 +279,7 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Test
 	public void create_userAccountProfile() throws Exception{
-		UserAccount userAccount = new UserAccount();
+		UserAccount userAccount = new UserAccount().setIsPersistToKeycloakOnCreate(Boolean.FALSE);
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
 		Profile profile = new Profile();
@@ -343,7 +376,7 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Test
 	public void create_userAccountInterim() throws Exception{
-		UserAccount userAccount = new UserAccount();
+		UserAccount userAccount = new UserAccount().setIsPersistToKeycloakOnCreate(Boolean.FALSE);
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
 		

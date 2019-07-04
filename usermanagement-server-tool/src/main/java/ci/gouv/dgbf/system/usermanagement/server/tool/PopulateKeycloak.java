@@ -2,6 +2,7 @@ package ci.gouv.dgbf.system.usermanagement.server.tool;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +78,7 @@ public class PopulateKeycloak extends AbstractObject {
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		ArrayInstanceTwoDimensionString serviceArrayInstance = reader.execute().getOutput();
 		
-		//populateKeycloak.deleteClients(client.realm(realmName).clients());
+		populateKeycloak.deleteClients(client.realm(realmName).clients());
 		//populateKeycloak.saveClients(serviceArrayInstance,client.realm(realmName).clients());
 		
 		weld.shutdown();
@@ -170,21 +171,7 @@ public class PopulateKeycloak extends AbstractObject {
 			saveRoleComposites(rolesResource, code, parents);
 		}
 	}
-	/*
-	private void savePosts(String functionCode,String functionName,String locationCode,String locationName,ArrayInstanceTwoDimensionString locationArrayInstance,RolesResource rolesResource) {
-		System.out.println("Synchronising posts of function "+functionCode);		
-		for(Integer index  = 0; index < locationArrayInstance.getFirstDimensionElementCount(); index = index + 1) {
-			String locationIdentifier = locationArrayInstance.get(index, 0);
-			String code = functionCode+ConstantCharacter.UNDESCORE+locationCode+ConstantCharacter.UNDESCORE+locationIdentifier;
-			String type = "POSTE";
-			String name = functionName+locationName+locationIdentifier;
-			saveRole(rolesResource, code, name, type,new Properties().set(locationCode,locationIdentifier));
-			rolesResource.get(code).addComposites(Arrays.asList(rolesResource.get(functionCode).toRepresentation()));
-			//TODO to be removed. it is there just for test
-			break;
-		}
-	}
-	*/
+	
 	private void saveClients(ArrayInstanceTwoDimensionString serviceArrayInstance,ClientsResource clientsResource) {
 		System.out.println("Synchronising services");
 		for(Integer index  = 0; index < serviceArrayInstance.getFirstDimensionElementCount(); index = index + 1) {
@@ -247,10 +234,19 @@ public class PopulateKeycloak extends AbstractObject {
 	}
 
 	private void deleteClients(ClientsResource clientsResource) {
-		System.out.print("Deleting all clients... ");
-		for(ClientRepresentation index : clientsResource.findAll())
-			if(index.getAttributes()!=null && __inject__(StringHelper.class).isNotBlank(index.getAttributes().get("uuid")))
-				clientsResource.get(index.getId()).remove();
+		List<ClientRepresentation> clientRepresentations = clientsResource.findAll();
+		for(Integer index = 0 ; index <  __inject__(CollectionHelper.class).getSize(clientRepresentations);) {
+			ClientRepresentation clientRepresentation = clientRepresentations.get(index);
+			if(clientRepresentation.getAttributes()!=null && __inject__(StringHelper.class).isNotBlank(clientRepresentation.getAttributes().get("uuid")) && !Arrays.asList("account","admin-cli"
+					,"broker","master-realm","security-admin-console","realm-management").contains(clientRepresentation.getName())) {
+				index = index + 1;
+				clientsResource.get(clientRepresentation.getId()).remove();
+			}else
+				clientRepresentations.remove(index.intValue());
+		}
+		System.out.print("Deleting "+__inject__(CollectionHelper.class).getSize(clientRepresentations)+" clients... ");
+		for(ClientRepresentation clientRepresentation : clientRepresentations)
+			clientsResource.get(clientRepresentation.getId()).remove();
 		System.out.println("OK");
 	}
 	

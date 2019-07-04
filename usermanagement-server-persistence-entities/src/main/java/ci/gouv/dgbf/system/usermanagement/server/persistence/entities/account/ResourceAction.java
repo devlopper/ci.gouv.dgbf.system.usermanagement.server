@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 
 import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByString;
 
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Resource;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
