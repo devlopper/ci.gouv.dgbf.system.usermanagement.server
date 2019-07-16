@@ -15,11 +15,9 @@ import org.cyk.utility.server.business.BusinessFunctionModifier;
 import org.cyk.utility.server.business.BusinessFunctionRemover;
 import org.cyk.utility.string.Strings;
 
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.AccountBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountFunctionScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountProfileBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountFunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountProfilePersistence;
@@ -109,15 +107,14 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 					__delete__(userAccount.getProfiles(), databaseUserAccountProfiles,UserAccountProfile.FIELD_PROFILE);
 					__save__(UserAccountProfile.class,userAccount.getProfiles(), databaseProfiles, UserAccountProfile.FIELD_PROFILE, userAccount, UserAccountProfile.FIELD_USER_ACCOUNT);
 				}else if(UserAccount.FIELD_FUNCTION_SCOPES.equals(index)) {
-					__inject__(UserBusiness.class).save(userAccount.getUser());
-					__inject__(AccountBusiness.class).save(userAccount.getAccount());
+					//__inject__(UserBusiness.class).save(userAccount.getUser());
+					//__inject__(AccountBusiness.class).save(userAccount.getAccount());
 					
 					Collection<UserAccountFunctionScope> databaseCollection = __inject__(UserAccountFunctionScopePersistence.class).readByUserAccount(userAccount);
-					Collection<FunctionScope> databaseRolePostes = __injectCollectionHelper__().isEmpty(databaseCollection) ? null : databaseCollection.stream()
+					Collection<FunctionScope> databaseFunctionScopes = __injectCollectionHelper__().isEmpty(databaseCollection) ? null : databaseCollection.stream()
 							.map(UserAccountFunctionScope::getFunctionScope).collect(Collectors.toList());
-					
 					__delete__(userAccount.getFunctionScopes(), databaseCollection,UserAccountFunctionScope.FIELD_FUNCTION_SCOPE);
-					__save__(UserAccountFunctionScope.class,userAccount.getFunctionScopes(), databaseRolePostes, UserAccountFunctionScope.FIELD_FUNCTION_SCOPE, userAccount, UserAccountFunctionScope.FIELD_USER_ACCOUNT);
+					__save__(UserAccountFunctionScope.class,userAccount.getFunctionScopes(), databaseFunctionScopes, UserAccountFunctionScope.FIELD_FUNCTION_SCOPE, userAccount, UserAccountFunctionScope.FIELD_USER_ACCOUNT);
 				}
 			}
 		}	

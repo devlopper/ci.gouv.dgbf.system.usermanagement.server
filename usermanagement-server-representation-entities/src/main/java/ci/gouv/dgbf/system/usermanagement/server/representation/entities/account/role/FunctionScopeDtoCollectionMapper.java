@@ -2,18 +2,12 @@ package ci.gouv.dgbf.system.usermanagement.server.representation.entities.accoun
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.mapstruct.TargetType;
-
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScopes;
 
-@ApplicationScoped // CDI component model
-public class FunctionScopeDtoCollectionMapper {
+@ApplicationScoped
+public class FunctionScopeDtoCollectionMapper extends AbstractDtoCollectionMapper<FunctionScopeDtoCollection,FunctionScopeDto,FunctionScopes,FunctionScope> {
 
-    public FunctionScopes resolve(FunctionScopeDtoCollection functionScopeDtoCollection, @TargetType Class<?> klass) {
-        return null;
-    }
+	private static final long serialVersionUID = 1L;
 
-    public FunctionScopeDtoCollection to(FunctionScopes functionScopes) {
-        return null;
-    }
 }

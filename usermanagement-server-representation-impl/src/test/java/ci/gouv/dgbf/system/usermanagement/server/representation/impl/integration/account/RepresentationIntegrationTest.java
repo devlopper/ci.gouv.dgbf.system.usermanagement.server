@@ -73,6 +73,21 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 	}
 	
 	@Test
+	public void create_function_sequentially() throws Exception{
+		String functionCategoryCode = __getRandomCode__();
+		__inject__(FunctionCategoryRepresentation.class).createOne(new FunctionCategoryDto().setCode(functionCategoryCode).setName(__getRandomName__()));
+		String functionCode = __getRandomCode__();
+		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode(functionCode).setName(__getRandomName__())
+				.setCategory(new FunctionCategoryDto().setCode(functionCategoryCode)));
+		FunctionDto function = (FunctionDto) __inject__(FunctionRepresentation.class).getOne(functionCode, "business", null).getEntity();
+		assertThat(function).isNotNull();
+		assertThat(function.getCategory()).isNotNull();
+		assertThat(function.getCategory().getCode()).isEqualTo(functionCategoryCode);
+		__inject__(FunctionRepresentation.class).deleteAll();
+		__inject__(FunctionRepresentation.class).deleteAll();
+	}
+	
+	@Test
 	public void create_scope() throws Exception{
 		ScopeTypeDto scopeType = new ScopeTypeDto().setCode(__getRandomCode__()).setName(__getRandomCode__());
 		ScopeDto scope = new ScopeDto().setIdentifier("21").setType(scopeType);
@@ -159,6 +174,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		profileRoleFunction.setFunction(function);
 		__inject__(TestRepresentationCreate.class).addObjectsToBeCreatedArray(function.getCategory(),function,profile).addObjects(profileRoleFunction).execute();
 	}
+	
 	
 	@SuppressWarnings("unchecked")
 	@Test

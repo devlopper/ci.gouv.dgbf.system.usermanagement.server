@@ -2,19 +2,11 @@ package ci.gouv.dgbf.system.usermanagement.server.representation.entities.accoun
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.mapstruct.TargetType;
-
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Functions;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profiles;
 
-@ApplicationScoped // CDI component model
-public class ProfileDtoCollectionMapper {
+@ApplicationScoped
+public class ProfileDtoCollectionMapper extends AbstractDtoCollectionMapper<ProfileDtoCollection,ProfileDto,Profiles,Profile> {
+	private static final long serialVersionUID = 1L;
 
-    public Profiles resolve(ProfileDtoCollection profileDtoCollection, @TargetType Class<?> klass) {
-        return null;
-    }
-
-    public ProfileDtoCollection to(Profiles profiles) {
-        return null;
-    }
 }
