@@ -30,7 +30,7 @@ public class UserAccountRepresentationImpl extends AbstractRepresentationEntityI
 		if(userRepresentations != null)
 			for(UserRepresentation index : userRepresentations) {
 				if(!index.getUsername().equals("admin")) {
-					Account account = __inject__(AccountPersistence.class).readOneBySystemIdentifier(index.getUsername());
+					Account account = __inject__(AccountPersistence.class).readBySystemIdentifier(index.getUsername());
 					if(account == null) {
 						UserAccount userAccount = new UserAccount();
 						userAccount.setIdentifier(index.getId());

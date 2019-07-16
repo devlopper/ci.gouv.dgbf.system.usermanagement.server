@@ -406,7 +406,11 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	public KeycloakHelper deleteClient(Service service) {
 		ClientResource clientResource = getClient(service);
 		if(clientResource != null)
-			clientResource.remove();
+			try {
+				clientResource.remove();
+			} catch (NotFoundException exception) {
+				__logWarning__(String.format("Identifier <<%s>> not found. %s", service.getIdentifier(),exception.toString()));
+			}
 		return this;
 	}
 	
@@ -548,7 +552,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 		try {
 			userTransaction.begin();
 			for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "CATEGORIE")) {
-				FunctionCategory category = __inject__(FunctionCategoryPersistence.class).readOneByBusinessIdentifier(index.getName());
+				FunctionCategory category = __inject__(FunctionCategoryPersistence.class).readByBusinessIdentifier(index.getName());
 				if(category == null) {
 					category = __inject__(FunctionCategory.class).setCode(index.getName()).setName(index.getAttributes().get(ROLE_ATTRIBUTE_NAME).get(0));
 					__inject__(FunctionCategoryPersistence.class).create(category);
@@ -567,11 +571,11 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 		try {
 			userTransaction.begin();
 			for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "FONCTION")) {
-				Function function = __inject__(FunctionPersistence.class).readOneByBusinessIdentifier(index.getName());
+				Function function = __inject__(FunctionPersistence.class).readByBusinessIdentifier(index.getName());
 				if(function == null) {
 					function = __inject__(Function.class).setCode(index.getName()).setName(index.getAttributes().get(ROLE_ATTRIBUTE_NAME).get(0));
 					for(RoleRepresentation indexParent : __inject__(KeycloakHelper.class).getRolesResource().get(index.getName()).getRoleComposites()) {
-						FunctionCategory category = __inject__(FunctionCategoryPersistence.class).readOneByBusinessIdentifier(indexParent.getName());
+						FunctionCategory category = __inject__(FunctionCategoryPersistence.class).readByBusinessIdentifier(indexParent.getName());
 						if(category != null) {
 							function.setCategory(category);
 							break;
@@ -596,11 +600,11 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 		try {
 			userTransaction.begin();
 			for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "???")) {
-				FunctionScope functionScope = __inject__(FunctionScopePersistence.class).readOneByBusinessIdentifier(index.getName());
+				FunctionScope functionScope = __inject__(FunctionScopePersistence.class).readByBusinessIdentifier(index.getName());
 				if(functionScope == null) {
 					functionScope = __inject__(FunctionScope.class).setCode(index.getName()).setName(index.getAttributes().get(ROLE_ATTRIBUTE_NAME).get(0));
 					for(RoleRepresentation indexParent : __inject__(KeycloakHelper.class).getRolesResource().get(index.getName()).getRoleComposites()) {
-						Function function = __inject__(FunctionPersistence.class).readOneByBusinessIdentifier(indexParent.getName());
+						Function function = __inject__(FunctionPersistence.class).readByBusinessIdentifier(indexParent.getName());
 						if(function != null) {
 							functionScope.setFunction(function);
 							break;

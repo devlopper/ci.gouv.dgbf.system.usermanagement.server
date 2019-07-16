@@ -19,8 +19,8 @@ public class FunctionScopeBusinessImpl extends AbstractBusinessEntityImpl<Functi
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected void __listenExecuteCreateOneBefore__(FunctionScope functionScope, Properties properties,BusinessFunctionCreator function) {
-		super.__listenExecuteCreateOneBefore__(functionScope, properties, function);
+	protected void __listenExecuteCreateBefore__(FunctionScope functionScope, Properties properties,BusinessFunctionCreator function) {
+		super.__listenExecuteCreateBefore__(functionScope, properties, function);
 		if(__injectStringHelper__().isBlank(functionScope.getCode())) {
 			if(functionScope.getScope() != null) {
 				String code = functionScope.getScope().getType().getCode()+ConstantCharacter.UNDESCORE+functionScope.getScope().getIdentifier();

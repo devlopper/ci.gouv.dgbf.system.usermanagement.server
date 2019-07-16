@@ -8,7 +8,8 @@ import javax.persistence.NoResultException;
 
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
-import org.cyk.utility.server.persistence.PersistenceServiceProvider;
+import org.cyk.utility.server.persistence.PersistenceFunctionCreator;
+import org.cyk.utility.server.persistence.PersistenceFunctionRemover;
 import org.cyk.utility.server.persistence.query.PersistenceQueryContext;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ServiceResourcePersistence;
@@ -30,10 +31,9 @@ public class ServiceResourcePersistenceImpl extends AbstractPersistenceEntityImp
 	}
 	
 	@Override
-	public PersistenceServiceProvider<ServiceResource> create(ServiceResource serviceResource, Properties properties) {
-		super.create(serviceResource, properties);
+	protected void __listenExecuteCreateAfter__(ServiceResource serviceResource, Properties properties,PersistenceFunctionCreator function) {
+		super.__listenExecuteCreateAfter__(serviceResource, properties, function);
 		__inject__(KeycloakHelper.class).createResource(serviceResource.getService(),serviceResource.getResource());
-		return this;
 	}
 	
 	@Override
@@ -47,9 +47,9 @@ public class ServiceResourcePersistenceImpl extends AbstractPersistenceEntityImp
 	}
 	
 	@Override
-	public PersistenceServiceProvider<ServiceResource> delete(ServiceResource serviceResource, Properties properties) {
+	protected void __listenExecuteDeleteAfter__(ServiceResource serviceResource, Properties properties,PersistenceFunctionRemover function) {
+		super.__listenExecuteDeleteAfter__(serviceResource, properties, function);
 		__inject__(KeycloakHelper.class).deleteResource(serviceResource.getService(),serviceResource.getResource());
-		return super.delete(serviceResource, properties);
 	}
 	
 	@Override

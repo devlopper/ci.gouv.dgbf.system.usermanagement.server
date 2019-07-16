@@ -6,7 +6,8 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
-import org.cyk.utility.server.persistence.PersistenceServiceProvider;
+import org.cyk.utility.server.persistence.PersistenceFunctionCreator;
+import org.cyk.utility.server.persistence.PersistenceFunctionRemover;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ServicePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Service;
@@ -17,16 +18,15 @@ public class ServicePersistenceImpl extends AbstractPersistenceEntityImpl<Servic
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public PersistenceServiceProvider<Service> create(Service service, Properties properties) {
-		super.create(service, properties);
+	protected void __listenExecuteCreateAfter__(Service service, Properties properties,PersistenceFunctionCreator function) {
+		super.__listenExecuteCreateAfter__(service, properties, function);
 		__inject__(KeycloakHelper.class).createClient(service);
-		return this;
 	}
 	
 	@Override
-	public PersistenceServiceProvider<Service> delete(Service service, Properties properties) {
+	protected void __listenExecuteDeleteAfter__(Service service, Properties properties,PersistenceFunctionRemover function) {
+		super.__listenExecuteDeleteAfter__(service, properties, function);
 		__inject__(KeycloakHelper.class).deleteClient(service);
-		return super.delete(service, properties);
 	}
 	
 }

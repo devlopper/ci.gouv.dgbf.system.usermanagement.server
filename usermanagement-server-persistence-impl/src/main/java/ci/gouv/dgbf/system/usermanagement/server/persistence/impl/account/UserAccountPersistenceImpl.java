@@ -6,7 +6,9 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
-import org.cyk.utility.server.persistence.PersistenceServiceProvider;
+import org.cyk.utility.server.persistence.PersistenceFunctionCreator;
+import org.cyk.utility.server.persistence.PersistenceFunctionModifier;
+import org.cyk.utility.server.persistence.PersistenceFunctionRemover;
 import org.cyk.utility.server.persistence.query.PersistenceQuery;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountPersistence;
@@ -27,31 +29,31 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 	}
 	
 	@Override
-	public PersistenceServiceProvider<UserAccount> create(UserAccount userAccount, Properties properties) {
+	protected void __listenExecuteCreateBefore__(UserAccount userAccount, Properties properties,PersistenceFunctionCreator function) {
+		super.__listenExecuteCreateBefore__(userAccount, properties, function);
 		if(Boolean.TRUE.equals(__injectValueHelper__().defaultToIfNull(userAccount.getIsPersistToKeycloakOnCreate(),Boolean.TRUE))) {
 			String identifier = __inject__(KeycloakHelper.class).saveUserAccount(userAccount);
 			userAccount.setIdentifier(identifier);	
 		}
-		super.create(userAccount, properties);
-		return this;
 	}
 	
 	@Override
 	public UserAccount readByAccountIdentifier(String accountIdentifier) {
-		return __readOne__(____getQueryParameters____(null,accountIdentifier));
+		//Properties properties = new Properties();
+		//properties.setQueryIdentifier(readByAccountIdentifier);
+		return __readOne__(null,____getQueryParameters____(null,accountIdentifier));
 	}
 	
 	@Override
-	public PersistenceServiceProvider<UserAccount> update(UserAccount userAccount, Properties properties) {
-		super.update(userAccount, properties);
+	protected void __listenExecuteUpdateAfter__(UserAccount userAccount, Properties properties,PersistenceFunctionModifier function) {
+		super.__listenExecuteUpdateAfter__(userAccount, properties, function);
 		__inject__(KeycloakHelper.class).saveUserAccount(userAccount);
-		return this;
 	}
 	
 	@Override
-	public PersistenceServiceProvider<UserAccount> delete(UserAccount userAccount, Properties properties) {
+	protected void __listenExecuteDeleteAfter__(UserAccount userAccount, Properties properties,PersistenceFunctionRemover function) {
+		super.__listenExecuteDeleteAfter__(userAccount, properties, function);
 		__inject__(KeycloakHelper.class).deleteUserAccount(userAccount.getIdentifier());
-		return super.delete(userAccount,properties);
 	}
 	
 	@Override

@@ -7,7 +7,9 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
-import org.cyk.utility.server.persistence.PersistenceServiceProvider;
+import org.cyk.utility.server.persistence.PersistenceFunctionCreator;
+import org.cyk.utility.server.persistence.PersistenceFunctionModifier;
+import org.cyk.utility.server.persistence.PersistenceFunctionRemover;
 import org.cyk.utility.server.persistence.query.PersistenceQuery;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountFunctionScopePersistence;
@@ -28,10 +30,9 @@ public class UserAccountFunctionScopePersistenceImpl extends AbstractPersistence
 	}
 	
 	@Override
-	public PersistenceServiceProvider<UserAccountFunctionScope> create(UserAccountFunctionScope userAccountFunctionScope, Properties properties) {
-		super.create(userAccountFunctionScope, properties);
+	protected void __listenExecuteCreateAfter__(UserAccountFunctionScope userAccountFunctionScope, Properties properties,PersistenceFunctionCreator function) {
+		super.__listenExecuteCreateAfter__(userAccountFunctionScope, properties, function);
 		__inject__(KeycloakHelper.class).addUserAccountAttributesValues(userAccountFunctionScope);
-		return this;	
 	}
 	
 	@Override
@@ -41,17 +42,15 @@ public class UserAccountFunctionScopePersistenceImpl extends AbstractPersistence
 	}
 	
 	@Override
-	public PersistenceServiceProvider<UserAccountFunctionScope> update(UserAccountFunctionScope userAccountFunctionScope, Properties properties) {
-		super.update(userAccountFunctionScope, properties);
+	protected void __listenExecuteUpdateAfter__(UserAccountFunctionScope userAccountFunctionScope, Properties properties,PersistenceFunctionModifier function) {
+		super.__listenExecuteUpdateAfter__(userAccountFunctionScope, properties, function);
 		__inject__(KeycloakHelper.class).addUserAccountAttributesValues(userAccountFunctionScope);
-		return this;
 	}
 	
 	@Override
-	public PersistenceServiceProvider<UserAccountFunctionScope> delete(UserAccountFunctionScope userAccountFunctionScope, Properties properties) {
-		super.delete(userAccountFunctionScope, properties);
+	protected void __listenExecuteDeleteAfter__(UserAccountFunctionScope userAccountFunctionScope, Properties properties,PersistenceFunctionRemover function) {
+		super.__listenExecuteDeleteAfter__(userAccountFunctionScope, properties, function);
 		__inject__(KeycloakHelper.class).removeUserAccountAttributesValues(userAccountFunctionScope);
-		return this;
 	}
 	
 	@Override

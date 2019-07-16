@@ -107,9 +107,9 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 				for(FunctionScopeDto index : representation.getFunctionScopes().getCollection()) {
 					FunctionScope functionScope = null;
 					if(__inject__(StringHelper.class).isBlank(index.getIdentifier()))
-						functionScope = __inject__(FunctionScopePersistence.class).readOneByBusinessIdentifier(index.getCode());
+						functionScope = __inject__(FunctionScopePersistence.class).readByBusinessIdentifier(index.getCode());
 					else
-						functionScope = __inject__(FunctionScopePersistence.class).readOneBySystemIdentifier(index.getIdentifier());
+						functionScope = __inject__(FunctionScopePersistence.class).readBySystemIdentifier(index.getIdentifier());
 					if(functionScope != null)
 						persistence.getFunctionScopes(Boolean.TRUE).add(functionScope);
 				}
@@ -117,9 +117,9 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 				for(ProfileDto index : representation.getProfiles().getCollection()) {
 					Profile profile = null;
 					if(__inject__(StringHelper.class).isBlank(index.getIdentifier()))
-						profile = __inject__(ProfilePersistence.class).readOneByBusinessIdentifier(index.getCode());
+						profile = __inject__(ProfilePersistence.class).readByBusinessIdentifier(index.getCode());
 					else
-						profile = __inject__(ProfilePersistence.class).readOneBySystemIdentifier(index.getIdentifier());
+						profile = __inject__(ProfilePersistence.class).readBySystemIdentifier(index.getIdentifier());
 					if(profile != null)
 						persistence.getProfiles(Boolean.TRUE).add(profile);
 				}
@@ -134,9 +134,9 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 				for(FunctionDto index : representation.getFunctions().getCollection()) {
 					Function function = null;
 					if(__inject__(StringHelper.class).isBlank(index.getIdentifier()))
-						function = __inject__(FunctionPersistence.class).readOneByBusinessIdentifier(index.getCode());
+						function = __inject__(FunctionPersistence.class).readByBusinessIdentifier(index.getCode());
 					else
-						function = __inject__(FunctionPersistence.class).readOneBySystemIdentifier(index.getIdentifier());
+						function = __inject__(FunctionPersistence.class).readBySystemIdentifier(index.getIdentifier());
 					if(function != null)
 						persistence.getFunctions(Boolean.TRUE).add(function);
 				}

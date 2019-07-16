@@ -20,8 +20,8 @@ public class ProfileServiceResourceBusinessImpl extends AbstractBusinessEntityIm
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected void __listenExecuteCreateOneBefore__(ProfileServiceResource profileServiceResource, Properties properties,BusinessFunctionCreator function) {
-		super.__listenExecuteCreateOneBefore__(profileServiceResource, properties, function);
+	protected void __listenExecuteCreateBefore__(ProfileServiceResource profileServiceResource, Properties properties,BusinessFunctionCreator function) {
+		super.__listenExecuteCreateBefore__(profileServiceResource, properties, function);
 		function.addTryBeginRunnables(new Runnable() {
 			@Override
 			public void run() {
@@ -35,8 +35,8 @@ public class ProfileServiceResourceBusinessImpl extends AbstractBusinessEntityIm
 	}
 	
 	@Override
-	protected void __listenExecuteDeleteOneBefore__(ProfileServiceResource profileServiceResource, Properties properties,BusinessFunctionRemover function) {
-		super.__listenExecuteDeleteOneBefore__(profileServiceResource, properties, function);
+	protected void __listenExecuteDeleteBefore__(ProfileServiceResource profileServiceResource, Properties properties,BusinessFunctionRemover function) {
+		super.__listenExecuteDeleteBefore__(profileServiceResource, properties, function);
 		function.addTryBeginRunnables(new Runnable() {
 			@Override
 			public void run() {
@@ -46,6 +46,11 @@ public class ProfileServiceResourceBusinessImpl extends AbstractBusinessEntityIm
 				}
 			}
 		});
+	}
+	
+	@Override
+	protected Boolean __isCallDeleteByInstanceOnDeleteByIdentifier__() {
+		return Boolean.TRUE;
 	}
 	
 	@Override

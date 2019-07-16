@@ -13,25 +13,4 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Ac
 public class AccountPersistenceImpl extends AbstractPersistenceEntityImpl<Account> implements AccountPersistence,Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Override
-	protected void __listenPostConstructPersistenceQueries__() {
-		super.__listenPostConstructPersistenceQueries__();
-		/*addQueryCollectInstances(readByCodeByPass, __instanciateQuerySelect__()
-				.getWherePredicateBuilderAsGroup().addOperandBuilderByAttribute(Account.FIELD_CODE,ComparisonOperator.EQ).and()
-				.addOperandBuilderByAttribute(Account.FIELD_PASS,ComparisonOperator.EQ)
-				.getParentAsWhereClause().getParentAs(QueryStringBuilderSelect.class));
-		*/
-	}
-	/*
-	@Override
-	protected Object[] __getQueryParameters__(String queryIdentifier, Object... objects) {
-		PersistenceQuery persistenceQuery = __inject__(PersistenceQueryRepository.class).getBySystemIdentifier(queryIdentifier);
-		
-		if(persistenceQuery.isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readByCodeByPass,queryIdentifier))
-			return new Object[]{Account.FIELD_CODE,objects[0],Account.FIELD_PASS,objects[1]};
-		
-		return super.__getQueryParameters__(queryIdentifier, objects);
-	}
-	*/
-	
 }

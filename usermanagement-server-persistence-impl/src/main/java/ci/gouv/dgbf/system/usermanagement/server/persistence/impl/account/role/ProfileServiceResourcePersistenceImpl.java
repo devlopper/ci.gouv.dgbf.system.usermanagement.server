@@ -9,8 +9,9 @@ import javax.enterprise.context.ApplicationScoped;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.array.ArrayHelper;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
+import org.cyk.utility.server.persistence.PersistenceFunctionCreator;
 import org.cyk.utility.server.persistence.PersistenceFunctionReader;
-import org.cyk.utility.server.persistence.PersistenceServiceProvider;
+import org.cyk.utility.server.persistence.PersistenceFunctionRemover;
 import org.cyk.utility.server.persistence.query.PersistenceQueryContext;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileServiceResourcePersistence;
@@ -32,10 +33,9 @@ public class ProfileServiceResourcePersistenceImpl extends AbstractPersistenceEn
 	}
 	
 	@Override
-	public PersistenceServiceProvider<ProfileServiceResource> create(ProfileServiceResource profileServiceResource, Properties properties) {
-		super.create(profileServiceResource, properties);
+	protected void __listenExecuteCreateAfter__(ProfileServiceResource profileServiceResource, Properties properties,PersistenceFunctionCreator function) {
+		super.__listenExecuteCreateAfter__(profileServiceResource, properties, function);
 		__inject__(KeycloakHelper.class).createPermission(profileServiceResource.getProfile(), profileServiceResource.getService(), profileServiceResource.getResource());
-		return this;
 	}
 	
 	@Override
@@ -62,9 +62,9 @@ public class ProfileServiceResourcePersistenceImpl extends AbstractPersistenceEn
 	}
 	
 	@Override
-	public PersistenceServiceProvider<ProfileServiceResource> delete(ProfileServiceResource profileServiceResource, Properties properties) {
+	protected void __listenExecuteDeleteAfter__(ProfileServiceResource profileServiceResource, Properties properties,PersistenceFunctionRemover function) {
+		super.__listenExecuteDeleteAfter__(profileServiceResource, properties, function);
 		__inject__(KeycloakHelper.class).deletePermission(profileServiceResource.getProfile(), profileServiceResource.getService(), profileServiceResource.getResource());
-		return super.delete(profileServiceResource, properties);
 	}
 	
 	@Override

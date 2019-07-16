@@ -30,8 +30,8 @@ public class ProfileBusinessImpl extends AbstractBusinessEntityImpl<Profile, Pro
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected void __listenExecuteCreateOneAfter__(Profile profile, Properties properties,BusinessFunctionCreator function) {
-		super.__listenExecuteCreateOneAfter__(profile, properties, function);
+	protected void __listenExecuteCreateAfter__(Profile profile, Properties properties,BusinessFunctionCreator function) {
+		super.__listenExecuteCreateAfter__(profile, properties, function);
 		if(Boolean.TRUE.equals(__injectCollectionHelper__().isNotEmpty(profile.getFunctions()))) {
 			Collection<ProfileFunction> profileFunctions = new ArrayList<>();
 			for(Function index : profile.getFunctions().get())
@@ -58,8 +58,8 @@ public class ProfileBusinessImpl extends AbstractBusinessEntityImpl<Profile, Pro
 	}
 	
 	@Override
-	protected void __listenExecuteUpdateOneBefore__(Profile profile, Properties properties,BusinessFunctionModifier function) {
-		super.__listenExecuteUpdateOneBefore__(profile, properties, function);
+	protected void __listenExecuteUpdateBefore__(Profile profile, Properties properties,BusinessFunctionModifier function) {
+		super.__listenExecuteUpdateBefore__(profile, properties, function);
 		Collection<ProfileFunction> databaseCollection = __inject__(ProfileFunctionPersistence.class).readByProfiles(Arrays.asList(profile));
 		Collection<Function> databaseFunctions = __injectCollectionHelper__().isEmpty(databaseCollection) ? null : databaseCollection.stream()
 				.map(ProfileFunction::getFunction).collect(Collectors.toList());
@@ -69,8 +69,8 @@ public class ProfileBusinessImpl extends AbstractBusinessEntityImpl<Profile, Pro
 	}
 	
 	@Override
-	protected void __listenExecuteDeleteOneBefore__(Profile profile, Properties properties,BusinessFunctionRemover function) {
-		super.__listenExecuteDeleteOneBefore__(profile, properties, function);
+	protected void __listenExecuteDeleteBefore__(Profile profile, Properties properties,BusinessFunctionRemover function) {
+		super.__listenExecuteDeleteBefore__(profile, properties, function);
 		function.addTryBeginRunnables(new Runnable() {
 			@Override
 			public void run() {
@@ -79,6 +79,11 @@ public class ProfileBusinessImpl extends AbstractBusinessEntityImpl<Profile, Pro
 				__deleteMany__(__inject__(ProfileServiceResourcePersistence.class).readByProfiles(profiles));
 			}
 		});
+	}
+	
+	@Override
+	protected Boolean __isCallDeleteByInstanceOnDeleteByIdentifier__() {
+		return Boolean.TRUE;
 	}
 	
 	@Override

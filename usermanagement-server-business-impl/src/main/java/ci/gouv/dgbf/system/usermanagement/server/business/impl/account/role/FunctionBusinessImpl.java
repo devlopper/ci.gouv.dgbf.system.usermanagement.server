@@ -24,8 +24,8 @@ public class FunctionBusinessImpl extends AbstractBusinessEntityImpl<Function, F
 	}
 
 	@Override
-	protected void __listenExecuteCreateOneAfter__(Function function, Properties properties,BusinessFunctionCreator functionCreator) {
-		super.__listenExecuteCreateOneAfter__(function, properties, functionCreator);
+	protected void __listenExecuteCreateAfter__(Function function, Properties properties,BusinessFunctionCreator functionCreator) {
+		super.__listenExecuteCreateAfter__(function, properties, functionCreator);
 		if(Boolean.TRUE.equals(function.getIsProfileCreatableOnCreate())) {
 			Profile profile = new Profile();
 			profile.setCode(function.getCode());

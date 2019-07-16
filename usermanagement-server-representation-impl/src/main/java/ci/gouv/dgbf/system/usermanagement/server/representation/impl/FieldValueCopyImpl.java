@@ -34,7 +34,7 @@ public class FieldValueCopyImpl extends AbstractFieldValueCopyImpl implements Se
 			if(rolePosteDtoCollection != null && Boolean.TRUE.equals(__injectCollectionHelper__().isNotEmpty(rolePosteDtoCollection.getCollection()))) {
 				functionScopes = __inject__(FunctionScopes.class);
 				for(FunctionScopeDto index : rolePosteDtoCollection.getCollection()) {
-					functionScopes.add(__inject__(FunctionScopePersistence.class).readOneByBusinessIdentifier(index.getCode()));
+					functionScopes.add(__inject__(FunctionScopePersistence.class).readByBusinessIdentifier(index.getCode()));
 				}
 			}
 			return functionScopes;
@@ -45,7 +45,7 @@ public class FieldValueCopyImpl extends AbstractFieldValueCopyImpl implements Se
 			if(profileDtoCollection != null && Boolean.TRUE.equals(__injectCollectionHelper__().isNotEmpty(profileDtoCollection.getCollection()))) {
 				profiles = __inject__(Profiles.class);
 				for(ProfileDto index : profileDtoCollection.getCollection()) {
-					profiles.add(__inject__(ProfilePersistence.class).readOneByBusinessIdentifier(index.getCode()));
+					profiles.add(__inject__(ProfilePersistence.class).readByBusinessIdentifier(index.getCode()));
 				}
 			}
 			return profiles;
@@ -56,7 +56,7 @@ public class FieldValueCopyImpl extends AbstractFieldValueCopyImpl implements Se
 			if(functionDtoCollection != null && Boolean.TRUE.equals(__injectCollectionHelper__().isNotEmpty(functionDtoCollection.getCollection()))) {
 				functions = __inject__(Functions.class);
 				for(FunctionDto index : functionDtoCollection.getCollection()) {
-					functions.add(__inject__(FunctionPersistence.class).readOneByBusinessIdentifier(index.getCode()));
+					functions.add(__inject__(FunctionPersistence.class).readByBusinessIdentifier(index.getCode()));
 				}
 			}
 			return functions;

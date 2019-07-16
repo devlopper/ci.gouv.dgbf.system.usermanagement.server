@@ -23,6 +23,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.Fu
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileServiceResourcePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterim;
@@ -124,12 +125,14 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Test
 	public void create_profileServiceResource() throws Exception{
+		assertThat(__inject__(ProfileServiceResourcePersistence.class).count()).isEqualTo(0l);
 		ProfileServiceResource profileServiceResource = new ProfileServiceResource();
 		profileServiceResource.setProfile(new Profile().setCode(__getRandomCode__()).setName(__getRandomName__()));
 		profileServiceResource.setService(new Service().setUrl("url"));
 		profileServiceResource.setResource(new Resource().setCode(__getRandomCode__()).setName(__getRandomName__()).setUrl("url"));
 		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(profileServiceResource.getProfile(),profileServiceResource.getService()
 				,profileServiceResource.getResource()).addObjects(profileServiceResource).execute();
+		assertThat(__inject__(ProfileServiceResourcePersistence.class).count()).isEqualTo(0l);
 	}
 	
 	@Test

@@ -17,17 +17,17 @@ import org.cyk.utility.string.Strings;
 
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.AccountBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountProfileBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountFunctionScopeBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountProfileBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountFunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountProfilePersistence;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountFunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 
 @ApplicationScoped
 public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAccount, UserAccountPersistence> implements UserAccountBusiness,Serializable {
@@ -39,8 +39,8 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 	}
 	
 	@Override
-	protected void __listenExecuteCreateOneBefore__(UserAccount userAccount, Properties properties,BusinessFunctionCreator function) {
-		super.__listenExecuteCreateOneBefore__(userAccount, properties, function);
+	protected void __listenExecuteCreateBefore__(UserAccount userAccount, Properties properties,BusinessFunctionCreator function) {
+		super.__listenExecuteCreateBefore__(userAccount, properties, function);
 		function.addTryBeginRunnables(new Runnable() {
 			@Override
 			public void run() {
@@ -51,8 +51,8 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 	}
 	
 	@Override
-	protected void __listenExecuteCreateOneAfter__(UserAccount userAccount, Properties properties,BusinessFunctionCreator function) {
-		super.__listenExecuteCreateOneAfter__(userAccount, properties, function);
+	protected void __listenExecuteCreateAfter__(UserAccount userAccount, Properties properties,BusinessFunctionCreator function) {
+		super.__listenExecuteCreateAfter__(userAccount, properties, function);
 		if(Boolean.TRUE.equals(__injectCollectionHelper__().isNotEmpty(userAccount.getProfiles()))) {
 			Collection<UserAccountProfile> userAccountProfiles = new ArrayList<>();
 			for(Profile index : userAccount.getProfiles().get())
@@ -96,8 +96,8 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 	}
 	
 	@Override
-	protected void __listenExecuteUpdateOneBefore__(UserAccount userAccount, Properties properties,BusinessFunctionModifier function) {
-		super.__listenExecuteUpdateOneBefore__(userAccount, properties, function);
+	protected void __listenExecuteUpdateBefore__(UserAccount userAccount, Properties properties,BusinessFunctionModifier function) {
+		super.__listenExecuteUpdateBefore__(userAccount, properties, function);
 		Strings fields = __getFieldsFromProperties__(properties);
 		if(__injectCollectionHelper__().isNotEmpty(fields)) {
 			for(String index : fields.get()) {
@@ -124,8 +124,8 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 	}
 	
 	@Override
-	protected void __listenExecuteDeleteOneBefore__(UserAccount userAccount, Properties properties,BusinessFunctionRemover function) {
-		super.__listenExecuteDeleteOneBefore__(userAccount, properties, function);
+	protected void __listenExecuteDeleteBefore__(UserAccount userAccount, Properties properties,BusinessFunctionRemover function) {
+		super.__listenExecuteDeleteBefore__(userAccount, properties, function);
 		function.addTryBeginRunnables(new Runnable() {
 			@Override
 			public void run() {
@@ -141,6 +141,11 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 				__delete__(userAccount.getAccount());
 			}
 		});
+	}
+	
+	@Override
+	protected Boolean __isCallDeleteByInstanceOnDeleteByIdentifier__() {
+		return Boolean.TRUE;
 	}
 
 }

@@ -68,7 +68,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount(); index = index + 1)
 			sections.add(new Scope().setIdentifier(arrayInstance.get(index, 0)).setType(section));
 		__logInfo__("Creating "+sections.size()+" section");
-		__inject__(ScopeBusiness.class).saveManyByBatch(sections,100);
+		__inject__(ScopeBusiness.class).saveByBatch(sections,100);
 		
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("programme");
@@ -78,7 +78,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 1000; index = index + 1)
 			ugps.add(new Scope().setIdentifier(arrayInstance.get(index, 0)).setType(ugp));
 		__logInfo__("Creating "+ugps.size()+" ugp");
-		__inject__(ScopeBusiness.class).saveManyByBatch(ugps,100);
+		__inject__(ScopeBusiness.class).saveByBatch(ugps,100);
 		
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("unité administrative");
@@ -88,7 +88,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 100; index = index + 1)
 			uas.add(new Scope().setIdentifier(arrayInstance.get(index, 0)).setType(ua));
 		__logInfo__("Creating "+uas.size()+" ua");
-		__inject__(ScopeBusiness.class).saveManyByBatch(uas,100);
+		__inject__(ScopeBusiness.class).saveByBatch(uas,100);
 		
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("catégorie");
@@ -98,7 +98,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 1000; index = index + 1)
 			roleCategories.add(new FunctionCategory().setCode(arrayInstance.get(index, 0)).setName(arrayInstance.get(index, 1)));
 		__logInfo__("Creating "+roleCategories.size()+" categories de fonction");
-		__inject__(FunctionCategoryBusiness.class).saveManyByBatch(roleCategories,100);
+		__inject__(FunctionCategoryBusiness.class).saveByBatch(roleCategories,100);
 		
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("fonction");
@@ -125,10 +125,10 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 			}
 		}
 		__logInfo__("Creating "+functions.size()+" fonctions");
-		__inject__(FunctionBusiness.class).saveManyByBatch(functions,100);
+		__inject__(FunctionBusiness.class).saveByBatch(functions,100);
 		
 		__logInfo__("Creating "+functionScopes.size()+" fonctions et champs d'actions");
-		__inject__(FunctionScopeBusiness.class).saveManyByBatch(functionScopes,100);
+		__inject__(FunctionScopeBusiness.class).saveByBatch(functionScopes,100);
 	}
 	
 }
