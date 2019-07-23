@@ -1,10 +1,13 @@
 package ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.cyk.utility.server.representation.AbstractEntityFromPersistenceEntityCodedAndNamed;
+import org.cyk.utility.string.StringHelper;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,4 +31,13 @@ public class FunctionScopeDto extends AbstractEntityFromPersistenceEntityCodedAn
 		return (FunctionScopeDto) super.setName(name);
 	}
 	
+	@Override
+	public String toString() {
+		Collection<String> strings = new ArrayList<>();
+		if(function != null)
+			strings.add("Function("+function.toString()+")");
+		if(scope != null)
+			strings.add("Scope("+scope.toString()+")");
+		return __inject__(StringHelper.class).concatenate(strings, ",");
+	}
 }

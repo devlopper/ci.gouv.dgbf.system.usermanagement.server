@@ -3,7 +3,6 @@ package ci.gouv.dgbf.system.usermanagement.server.representation.impl.integratio
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -13,24 +12,12 @@ import org.cyk.utility.server.representation.AbstractEntityCollection;
 import org.cyk.utility.server.representation.test.TestRepresentationCreate;
 import org.cyk.utility.server.representation.test.arquillian.AbstractRepresentationArquillianIntegrationTestWithDefaultDeployment;
 import org.cyk.utility.stream.distributed.Topic;
-import org.cyk.utility.time.DurationBuilder;
-import org.cyk.utility.time.DurationStringBuilder;
 import org.cyk.utility.time.TimeHelper;
 import org.junit.Test;
 
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionCategoryBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionScopeBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeTypeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.UserAccountRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.FunctionCategoryRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.FunctionRepresentation;
@@ -58,6 +45,8 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 	protected void __listenBeforeCallCountIsZero__() throws Exception {
 		super.__listenBeforeCallCountIsZero__();
 		__inject__(ApplicationScopeLifeCycleListener.class).initialize(null);
+		//AbstractSystemFunctionImpl.MONITORABLE = Boolean.FALSE;
+		//AbstractSystemFunctionImpl.LOGGABLE = Boolean.FALSE;
 	}
 	
 	@Test
@@ -95,43 +84,6 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		FunctionDto function = new FunctionDto().setCode(__getRandomCode__()).setName(__getRandomName__()).setCategory(category);
 		__inject__(TestRepresentationCreate.class).addObjectsToBeCreatedArray(scopeType,scope,category,function)
 			.addObjects(new FunctionScopeDto().setCode(__getRandomCode__()).setName(__getRandomName__()).setFunction(function).setScope(scope)).execute();
-	}
-	
-	//@Test
-	public void check_duration_read_functionScope() throws Exception{
-		Collection<ScopeType> scopeTypes = new ArrayList<>();
-		Collection<Scope> scopes = new ArrayList<>();
-		Collection<FunctionCategory> functionCategories = new ArrayList<>();
-		Collection<Function> functions = new ArrayList<>();
-		Collection<FunctionScope> functionScopes = new ArrayList<>();
-		for(Integer index = 0 ; index < 10 ; index = index + 1) {
-			ScopeType scopeType = new ScopeType().setCode(__getRandomCode__()).setName(__getRandomName__());
-			scopeTypes.add(scopeType);
-			Scope scope = new Scope().setType(scopeType);
-			scopes.add(scope);
-			FunctionCategory functionCategory = new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
-			functionCategories.add(functionCategory);
-			Function function = new Function().setCode(__getRandomCode__()).setName(__getRandomName__()).setCategory(functionCategory);
-			functions.add(function);
-			FunctionScope functionScope = new FunctionScope().setFunction(function).setScope(scope);
-			functionScopes.add(functionScope);
-		}
-		
-		__inject__(ScopeTypeBusiness.class).createMany(scopeTypes);
-		__inject__(ScopeBusiness.class).createMany(scopes);
-		__inject__(FunctionCategoryBusiness.class).createMany(functionCategories);
-		__inject__(FunctionBusiness.class).createMany(functions);
-		__inject__(FunctionScopeBusiness.class).createMany(functionScopes);
-		
-		DurationBuilder durationBuilder = __inject__(DurationBuilder.class).setBeginToNow();
-		Collection<FunctionScopeDto> functionScopeDtos = (Collection<FunctionScopeDto>) __inject__(FunctionScopeRepresentation.class).getMany(Boolean.FALSE, null, null, null, null).getEntity();
-		System.out.println("RepresentationIntegrationTest.check_duration_read_functionScope() : "+__inject__(DurationStringBuilder.class).setDurationBuilder(durationBuilder.setEndNow()).execute().getOutput());
-		
-		__inject__(FunctionScopeBusiness.class).deleteAll();
-		__inject__(FunctionBusiness.class).deleteAll();
-		__inject__(ScopeBusiness.class).deleteAll();
-		__inject__(ScopeTypeBusiness.class).deleteAll();
-		__inject__(FunctionCategoryBusiness.class).deleteAll();
 	}
 	
 	@Test
