@@ -210,34 +210,37 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		}
 		
 		ScopeTypeDto scopeType = new ScopeTypeDto().setCode("MINISTERE").setName("Ministère");
+		__inject__(ScopeTypeRepresentation.class).createOne(scopeType);
 		ScopeDto scope = new ScopeDto().setIdentifier("21").setType(scopeType);
+		__inject__(ScopeRepresentation.class).createOne(scope);
 		FunctionCategoryDto category = new FunctionCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(FunctionCategoryRepresentation.class).createOne(category);
 		FunctionDto function = new FunctionDto().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setCategory(category);
+		__inject__(FunctionRepresentation.class).createOne(function);
 		FunctionScopeDto functionScope = new FunctionScopeDto().setFunction(function).setScope(scope);
+		__inject__(FunctionScopeRepresentation.class).createOne(functionScope);
 		ProfileDto profile = new ProfileDto().setCode("p001").setName(__getRandomName__());
+		__inject__(ProfileRepresentation.class).createOne(profile);
 		
 		UserAccountDto userAccount = new UserAccountDto();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__());
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
 		userAccount.addFunctionScopes(functionScope).addProfiles(profile);
-		__inject__(TestRepresentationCreate.class).setName("Create user account").addObjectsToBeCreatedArray(scopeType,scope,category,function,functionScope,profile).addObjects(userAccount).addTryEndRunnables(new Runnable() {
-			@Override
-			public void run() {
-				UserAccountDto userAccount01 = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null, null).getEntity();
-				assertThat(userAccount01).as("user account is null").isNotNull();
-				assertThat(userAccount01.getFunctionScopes()).as("user account roles collection is not null").isNull();
-				
-				userAccount01 = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES).getEntity();
-				assertThat(userAccount01).as("user account is null").isNotNull();
-				assertThat(userAccount01.getFunctionScopes()).as("user account roles collection is null").isNotNull();
-				assertThat(userAccount01.getFunctionScopes().getCollection()).as("user account roles collection is empty").isNotEmpty();
-				assertThat(userAccount01.getFunctionScopes().getCollection().stream().map(FunctionScopeDto::getCode).collect(Collectors.toList())).contains("ASSISTANT_SAISIE_MINISTERE_21");
-				assertThat(userAccount01.getProfiles()).as("user account profiles collection is null").isNotNull();
-				assertThat(userAccount01.getProfiles().getCollection()).as("user account profiles collection is empty").isNotEmpty();
-				assertThat(userAccount01.getProfiles().getCollection().stream().map(ProfileDto::getCode).collect(Collectors.toList())).contains("p001");
-			}
-		}).execute();
+		__inject__(UserAccountRepresentation.class).createOne(userAccount);
 		
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null, null).getEntity();
+		assertThat(userAccount).as("user account is null").isNotNull();
+		assertThat(userAccount.getFunctionScopes()).as("user account roles collection is not null").isNull();
+		
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES).getEntity();
+		assertThat(userAccount).as("user account is null").isNotNull();
+		assertThat(userAccount.getFunctionScopes()).as("user account roles collection is null").isNotNull();
+		assertThat(userAccount.getFunctionScopes().getCollection()).as("user account roles collection is empty").isNotEmpty();
+		assertThat(userAccount.getFunctionScopes().getCollection().stream().map(FunctionScopeDto::getCode).collect(Collectors.toList())).contains("ASSISTANT_SAISIE_MINISTERE_21");
+		assertThat(userAccount.getProfiles()).as("user account profiles collection is null").isNotNull();
+		assertThat(userAccount.getProfiles().getCollection()).as("user account profiles collection is empty").isNotEmpty();
+		assertThat(userAccount.getProfiles().getCollection().stream().map(ProfileDto::getCode).collect(Collectors.toList())).contains("p001");
+	
 		if(Boolean.TRUE.equals(Topic.MAIL.getIsConsumerStarted())) {
 			__inject__(TimeHelper.class).pause(1000l * 25);
 			stopServersKafkaAndZookeeper();	
