@@ -168,10 +168,6 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(3);
 		__inject__(ProfileBusiness.class).deleteByBusinessIdentifier("p01");
 		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(1);
-		
-		__inject__(ProfileBusiness.class).deleteAll();
-		__inject__(FunctionBusiness.class).deleteAll();
-		__inject__(FunctionCategoryBusiness.class).deleteAll();
 	}
 	
 	@Test
@@ -233,11 +229,6 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		
 		profileFunctions = __inject__(ProfileFunctionBusiness.class).find(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p04")));
 		assertThat(profileFunctions).isEmpty();
-		
-		__inject__(ProfileFunctionBusiness.class).deleteAll();
-		__inject__(ProfileBusiness.class).deleteAll();
-		__inject__(FunctionBusiness.class).deleteAll();
-		
 	}
 	
 	@Test
@@ -305,15 +296,6 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		assertThat(attributes).contains(
 				new AbstractMap.SimpleEntry<String, List<String>>("MINISTERE",(List<String>)__inject__(CollectionHelper.class).instanciate("21"))
 				).hasSize(1);
-		
-		__inject__(UserAccountBusiness.class).deleteAll();
-		__inject__(ProfileBusiness.class).deleteAll();
-		__inject__(FunctionScopeBusiness.class).deleteAll();
-		__inject__(FunctionBusiness.class).deleteAll();
-		__inject__(FunctionCategoryBusiness.class).deleteAll();
-		__inject__(ScopeBusiness.class).deleteAll();
-		__inject__(ScopeTypeBusiness.class).deleteAll();
-		
 		
 		if(Boolean.TRUE.equals(Topic.MAIL.getIsConsumerStarted())) {
 			__inject__(TimeHelper.class).pause(1000l * 25);

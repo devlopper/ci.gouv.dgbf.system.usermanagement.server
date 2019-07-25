@@ -72,8 +72,6 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		assertThat(function).isNotNull();
 		assertThat(function.getCategory()).isNotNull();
 		assertThat(function.getCategory().getCode()).isEqualTo(functionCategoryCode);
-		__inject__(FunctionRepresentation.class).deleteAll();
-		__inject__(FunctionRepresentation.class).deleteAll();
 	}
 	
 	@Test
@@ -109,10 +107,6 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		assertThat(__inject__(ProfileFunctionRepresentation.class).count(null).getEntity()).isEqualTo(3l);
 		__inject__(ProfileRepresentation.class).deleteOne(new ProfileDto().setCode("p01"));
 		assertThat(__inject__(ProfileFunctionRepresentation.class).count(null).getEntity()).isEqualTo(1l);
-		
-		__inject__(ProfileRepresentation.class).deleteAll();
-		__inject__(FunctionRepresentation.class).deleteAll();
-		__inject__(FunctionCategoryRepresentation.class).deleteAll();
 	}
 	
 	@Test
@@ -201,11 +195,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		
 		profileFunctions = __inject__(ProfileFunctionRepresentation.class).getMany(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p04")));
 		assertThat(profileFunctions).isEmpty();
-		*/
-		__inject__(ProfileFunctionRepresentation.class).deleteAll();
-		__inject__(ProfileRepresentation.class).deleteAll();
-		__inject__(FunctionRepresentation.class).deleteAll();
-		
+		*/		
 	}
 	
 	@Test
@@ -267,9 +257,6 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		
 		UserAccountProfileDto userAccountProfile = new UserAccountProfileDto().setUserAccount(userAccount).setProfile(profile);
 		__inject__(TestRepresentationCreate.class).addObjects(userAccountProfile).execute();
-		
-		__inject__(UserAccountRepresentation.class).deleteAll();
-		__inject__(ProfileRepresentation.class).deleteAll();
 	}
 	
 	@Test
@@ -322,13 +309,6 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		assertThat(userAccount.getProfiles()).as("user account profiles collection is null").isNotNull();
 		assertThat(userAccount.getProfiles().getCollection()).as("user account profiles collection is empty").isNotEmpty();
 		assertThat(userAccount.getProfiles().getCollection().stream().map(ProfileDto::getCode).collect(Collectors.toList())).contains("p001","p002");
-		
-		__inject__(UserAccountRepresentation.class).deleteOne(userAccount);
-		__inject__(FunctionScopeRepresentation.class).deleteAll();
-		__inject__(FunctionRepresentation.class).deleteAll();
-		__inject__(FunctionScopeRepresentation.class).deleteAll();
-		__inject__(ScopeRepresentation.class).deleteAll();
-		__inject__(ScopeTypeRepresentation.class).deleteAll();
 	}
 	
 	@Test

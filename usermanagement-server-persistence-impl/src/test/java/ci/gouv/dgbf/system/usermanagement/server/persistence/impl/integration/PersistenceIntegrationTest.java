@@ -50,6 +50,7 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		//AbstractPersistenceFunctionImpl.LOG_LEVEL = LogLevel.INFO;
 		super.__listenBeforeCallCountIsZero__();	
 		__inject__(ApplicationScopeLifeCycleListener.class).initialize(null);
+		
 	}
 	
 	@Test
@@ -187,12 +188,6 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		
 		profileFunctions = __inject__(ProfileFunctionPersistence.class).readByProfileCodes("p04");
 		assertThat(profileFunctions).isEmpty();
-		
-		userTransaction.begin();
-		__inject__(ProfileFunctionPersistence.class).deleteAll();
-		__inject__(ProfilePersistence.class).deleteAll();
-		__inject__(FunctionPersistence.class).deleteAll();
-		userTransaction.commit();
 	}
 	
 	@Test
@@ -262,14 +257,7 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		
 		profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_FUNCTION, Arrays.asList("f01","f02"))));
 		assertThat(profileFunctions).isNotEmpty();
-		assertThat(profileFunctions.stream().map(x -> x.getProfile().getCode()).collect(Collectors.toSet())).containsOnly("p01","p02","p03");
-		
-		userTransaction.begin();
-		__inject__(ProfileFunctionPersistence.class).deleteAll();
-		__inject__(ProfilePersistence.class).deleteAll();
-		__inject__(FunctionPersistence.class).deleteAll();
-		userTransaction.commit();
-		
+		assertThat(profileFunctions.stream().map(x -> x.getProfile().getCode()).collect(Collectors.toSet())).containsOnly("p01","p02","p03");	
 	}
 	
 	@Test
