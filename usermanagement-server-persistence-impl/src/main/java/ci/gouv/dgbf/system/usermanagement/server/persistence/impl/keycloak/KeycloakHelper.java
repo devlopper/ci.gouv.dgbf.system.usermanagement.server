@@ -70,7 +70,7 @@ public interface KeycloakHelper extends Helper {
 	//KeycloakHelper deleteRole(String code);
 	
 	KeycloakHelper load();
-	KeycloakHelper loadRoleCategory();
+	KeycloakHelper loadFunctionType();
 	KeycloakHelper loadFunction();
 	KeycloakHelper loadFunctionScope();
 	

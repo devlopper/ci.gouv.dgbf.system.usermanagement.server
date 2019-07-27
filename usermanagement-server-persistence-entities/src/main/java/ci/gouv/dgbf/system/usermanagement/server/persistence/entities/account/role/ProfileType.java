@@ -14,29 +14,31 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @Entity @Getter @Setter @Accessors(chain=true) @Access(AccessType.FIELD)
-@Table(name=FunctionCategory.TABLE_NAME)
-public class FunctionCategory extends AbstractIdentifiedByStringAndCodedAndNamed implements Serializable {
+@Table(name=ProfileType.TABLE_NAME)
+public class ProfileType extends AbstractIdentifiedByStringAndCodedAndNamed implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**/
 	
 	@Override
-	public FunctionCategory setIdentifier(String identifier) {
-		return (FunctionCategory) super.setIdentifier(identifier);
+	public ProfileType setIdentifier(String identifier) {
+		return (ProfileType) super.setIdentifier(identifier);
 	}
 	
 	@Override
-	public FunctionCategory setCode(String code) {
-		return (FunctionCategory) super.setCode(code);
+	public ProfileType setCode(String code) {
+		return (ProfileType) super.setCode(code);
 	}
 	
 	@Override
-	public FunctionCategory setName(String name) {
-		return (FunctionCategory) super.setName(name);
+	public ProfileType setName(String name) {
+		return (ProfileType) super.setName(name);
 	}
 	
 	/**/
 
-	public static final String TABLE_NAME = "categ"+Function.TABLE_NAME;
+	public static final String TABLE_NAME = "typ"+Profile.TABLE_NAME;
 	
+	public static final String CODE_SYSTEM = "SYSTEME";
+	public static final String CODE_UTILISATEUR = "UTILISATEUR";
 }

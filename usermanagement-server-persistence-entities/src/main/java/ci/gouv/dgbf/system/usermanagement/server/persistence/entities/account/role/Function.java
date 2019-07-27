@@ -22,7 +22,7 @@ import lombok.experimental.Accessors;
 public class Function extends AbstractIdentifiedByStringAndCodedAndNamed implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@ManyToOne @JoinColumn(name=COLUMN_CATEGORY) @NotNull private FunctionCategory category;
+	@ManyToOne @JoinColumn(name=COLUMN_TYPE) @NotNull private FunctionType type;
 	
 	@Transient private Boolean isProfileCreatableOnCreate;
 	
@@ -45,10 +45,10 @@ public class Function extends AbstractIdentifiedByStringAndCodedAndNamed impleme
 	
 	/**/
 	
-	public static final String FIELD_CATEGORY = "category";
+	public static final String FIELD_TYPE = "type";
 	
 	public static final String TABLE_NAME = "fct";
 	
-	public static final String COLUMN_CATEGORY = "categorie";
+	public static final String COLUMN_TYPE = "type";
 	
 }

@@ -2,23 +2,34 @@
   
     <persistence-unit name="usermanagementPersistenceUnit" transaction-type="JTA">
     	<jta-data-source>${data.source.jndi.name}</jta-data-source>
+    	<!-- What we can do -->
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PrivilegeType</class>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Privilege</class>
+    	
+    	<!-- Where we can do it -->
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope</class>
-    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory</class>
+    	
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionType</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope</class>
+    	
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileType</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction</class>
-    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Service</class>
-    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Resource</class>
-    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ServiceResource</class>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfilePrivilege</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileServiceResource</class>
     	
+    	<!-- TODO : should be removed. already handled by privilege -->
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Resource</class>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Service</class>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ServiceResource</class>
+    	
+    	<!-- Who can do -->
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.User</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Account</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile</class>
-    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Service</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterim</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterimModel</class>

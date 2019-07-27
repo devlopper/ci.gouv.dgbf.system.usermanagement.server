@@ -21,11 +21,13 @@ import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccoun
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountFunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountProfilePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileTypePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileType;
 
 @ApplicationScoped
 public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAccount, UserAccountPersistence> implements UserAccountBusiness,Serializable {
@@ -65,6 +67,18 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 			__inject__(UserAccountFunctionScopeBusiness.class).createMany(userAccountRolePostes);
 		}
 		
+		if(Boolean.TRUE.equals(__injectValueHelper__().defaultToIfNull(userAccount.getIsProfileCreatableOnCreate(),Boolean.TRUE))) {
+			Profile profile = new Profile();
+			profile.setCode(userAccount.getIdentifier());
+			profile.setName(userAccount.getUser().getNames());
+			profile.setType(__inject__(ProfileTypePersistence.class).readByBusinessIdentifier(ProfileType.CODE_UTILISATEUR));
+			__create__(profile);
+			UserAccountProfile userAccountProfile = new UserAccountProfile();
+			userAccountProfile.setUserAccount(userAccount);
+			userAccountProfile.setProfile(profile);
+			__create__(userAccountProfile);
+		}
+		
 		//Notification
 		/*__produceMail__("SIB - Création de compte utilisateur", userAccount.getUser().getFirstName()+" "+userAccount.getUser().getLastNames()
 				+" , un compte utilisateur a été créé avec succès. Le nom utilisateur est : "+userAccount.getAccount().getIdentifier()
@@ -97,6 +111,8 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 	protected void __listenExecuteUpdateBefore__(UserAccount userAccount, Properties properties,BusinessFunctionModifier function) {
 		super.__listenExecuteUpdateBefore__(userAccount, properties, function);
 		Strings fields = __getFieldsFromProperties__(properties);
+		__save__(userAccount.getUser());
+		__save__(userAccount.getAccount());
 		if(__injectCollectionHelper__().isNotEmpty(fields)) {
 			for(String index : fields.get()) {
 				if(UserAccount.FIELD_PROFILES.equals(index)) {
@@ -107,9 +123,6 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 					__delete__(userAccount.getProfiles(), databaseUserAccountProfiles,UserAccountProfile.FIELD_PROFILE);
 					__save__(UserAccountProfile.class,userAccount.getProfiles(), databaseProfiles, UserAccountProfile.FIELD_PROFILE, userAccount, UserAccountProfile.FIELD_USER_ACCOUNT);
 				}else if(UserAccount.FIELD_FUNCTION_SCOPES.equals(index)) {
-					//__inject__(UserBusiness.class).save(userAccount.getUser());
-					//__inject__(AccountBusiness.class).save(userAccount.getAccount());
-					
 					Collection<UserAccountFunctionScope> databaseCollection = __inject__(UserAccountFunctionScopePersistence.class).readByUserAccount(userAccount);
 					Collection<FunctionScope> databaseFunctionScopes = __injectCollectionHelper__().isEmpty(databaseCollection) ? null : databaseCollection.stream()
 							.map(UserAccountFunctionScope::getFunctionScope).collect(Collectors.toList());

@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByStringAndLinkedByStringAndNamed;
@@ -22,9 +21,7 @@ import lombok.experimental.Accessors;
 
 @Entity @Access(AccessType.FIELD)
 @Getter @Setter @Accessors(chain=true)
-@Table(name=Scope.TABLE_NAME,uniqueConstraints= {
-		@UniqueConstraint(name=Scope.UNIQUE_CONSTRAINT_IDENTIFIER_TYPE,columnNames= {Scope.COLUMN_IDENTIFIER,Scope.COLUMN_TYPE})
-})
+@Table(name=Scope.TABLE_NAME)
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Scope extends AbstractIdentifiedByStringAndLinkedByStringAndNamed implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -53,6 +50,4 @@ public class Scope extends AbstractIdentifiedByStringAndLinkedByStringAndNamed i
 	public static final String COLUMN_TYPE = "type";
 	
 	public static final String TABLE_NAME = "dmn";
-	
-	public static final String UNIQUE_CONSTRAINT_IDENTIFIER_TYPE = COLUMN_IDENTIFIER+COLUMN_TYPE;
 }

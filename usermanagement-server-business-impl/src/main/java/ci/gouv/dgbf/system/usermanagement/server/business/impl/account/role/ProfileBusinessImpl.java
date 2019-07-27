@@ -20,15 +20,27 @@ import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.Profi
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileFunctionBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePrivilegePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileServiceResourcePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileTypePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Privilege;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfilePrivilege;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileType;
 
 @ApplicationScoped
 public class ProfileBusinessImpl extends AbstractBusinessEntityImpl<Profile, ProfilePersistence> implements ProfileBusiness,Serializable {
 	private static final long serialVersionUID = 1L;
 
+	@Override
+	protected void __listenExecuteCreateBefore__(Profile profile, Properties properties,BusinessFunctionCreator function) {
+		super.__listenExecuteCreateBefore__(profile, properties, function);
+		if(profile.getType() == null)
+			profile.setType(__inject__(ProfileTypePersistence.class).readByBusinessIdentifier(ProfileType.CODE_SYSTEM)); //TODO use concept of default value
+	}
+	
 	@Override
 	protected void __listenExecuteCreateAfter__(Profile profile, Properties properties,BusinessFunctionCreator function) {
 		super.__listenExecuteCreateAfter__(profile, properties, function);
@@ -52,6 +64,10 @@ public class ProfileBusinessImpl extends AbstractBusinessEntityImpl<Profile, Pro
 						Collection<ProfileFunction> profileFunctions = __inject__(ProfileFunctionPersistence.class).readByProfiles(Arrays.asList(profile));
 						if(__injectCollectionHelper__().isNotEmpty(profileFunctions))
 							profile.getFunctions(Boolean.TRUE).add(profileFunctions.stream().map(ProfileFunction::getFunction).collect(Collectors.toList()));
+					}else if(Profile.FIELD_PRIVILEGES.equals(field)) {
+						Collection<ProfilePrivilege> profilePrivileges = __inject__(ProfilePrivilegePersistence.class).readByProfiles(Arrays.asList(profile));
+						if(__injectCollectionHelper__().isNotEmpty(profilePrivileges))
+							profile.getPrivileges(Boolean.TRUE).add(profilePrivileges.stream().map(ProfilePrivilege::getPrivilege).collect(Collectors.toList()));
 					}
 				}
 			});
@@ -60,12 +76,27 @@ public class ProfileBusinessImpl extends AbstractBusinessEntityImpl<Profile, Pro
 	@Override
 	protected void __listenExecuteUpdateBefore__(Profile profile, Properties properties,BusinessFunctionModifier function) {
 		super.__listenExecuteUpdateBefore__(profile, properties, function);
-		Collection<ProfileFunction> databaseCollection = __inject__(ProfileFunctionPersistence.class).readByProfiles(Arrays.asList(profile));
-		Collection<Function> databaseFunctions = __injectCollectionHelper__().isEmpty(databaseCollection) ? null : databaseCollection.stream()
-				.map(ProfileFunction::getFunction).collect(Collectors.toList());
+		Strings fields = __getFieldsFromProperties__(properties);
+		if(__injectCollectionHelper__().isNotEmpty(fields)) {
+			for(String index : fields.get()) {
+				if(Profile.FIELD_FUNCTIONS.equals(index)) {
+					Collection<ProfileFunction> databaseCollection = __inject__(ProfileFunctionPersistence.class).readByProfiles(Arrays.asList(profile));
+					Collection<Function> databaseFunctions = __injectCollectionHelper__().isEmpty(databaseCollection) ? null : databaseCollection.stream()
+							.map(ProfileFunction::getFunction).collect(Collectors.toList());
+					
+					__delete__(profile.getFunctions(), databaseCollection,ProfileFunction.FIELD_FUNCTION);
+					__save__(ProfileFunction.class,profile.getFunctions(), databaseFunctions, ProfileFunction.FIELD_FUNCTION, profile, ProfileFunction.FIELD_PROFILE);			
+				}else if(Profile.FIELD_PRIVILEGES.equals(index)) {
+					Collection<ProfilePrivilege> databaseCollection = __inject__(ProfilePrivilegePersistence.class).readByProfiles(Arrays.asList(profile));
+					Collection<Privilege> databasePrivileges = __injectCollectionHelper__().isEmpty(databaseCollection) ? null : databaseCollection.stream()
+							.map(ProfilePrivilege::getPrivilege).collect(Collectors.toList());
+					
+					__delete__(profile.getPrivileges(), databaseCollection,ProfilePrivilege.FIELD_PRIVILEGE);
+					__save__(ProfilePrivilege.class,profile.getPrivileges(), databasePrivileges, ProfilePrivilege.FIELD_PRIVILEGE, profile, ProfilePrivilege.FIELD_PROFILE);	
+				}
+			}
+		}
 		
-		__delete__(profile.getFunctions(), databaseCollection,ProfileFunction.FIELD_FUNCTION);
-		__save__(ProfileFunction.class,profile.getFunctions(), databaseFunctions, ProfileFunction.FIELD_FUNCTION, profile, ProfileFunction.FIELD_PROFILE);
 	}
 	
 	@Override
@@ -76,6 +107,7 @@ public class ProfileBusinessImpl extends AbstractBusinessEntityImpl<Profile, Pro
 			public void run() {
 				Collection<Profile> profiles = Arrays.asList(profile);
 				__deleteMany__(__inject__(ProfileFunctionPersistence.class).readByProfiles(profiles));
+				__deleteMany__(__inject__(ProfilePrivilegePersistence.class).readByProfiles(profiles));
 				__deleteMany__(__inject__(ProfileServiceResourcePersistence.class).readByProfiles(profiles));
 			}
 		});

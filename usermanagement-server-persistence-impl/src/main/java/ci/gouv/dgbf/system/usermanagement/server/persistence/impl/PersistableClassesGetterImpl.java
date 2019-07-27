@@ -17,10 +17,14 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Us
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterimModel;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionType;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Privilege;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PrivilegeType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfilePrivilege;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Resource;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
@@ -43,15 +47,20 @@ public class PersistableClassesGetterImpl extends AbstractFunctionWithProperties
 		classes.add(User.class);
 		classes.add(Account.class);
 		
+		classes.add(ProfilePrivilege.class);
 		classes.add(ProfileFunction.class);
 		classes.add(Profile.class);
+		classes.add(ProfileType.class);
 		
 		classes.add(FunctionScope.class);
 		classes.add(Function.class);
-		classes.add(FunctionCategory.class);
+		classes.add(FunctionType.class);
 		
 		classes.add(Scope.class);
 		classes.add(ScopeType.class);
+		
+		classes.add(Privilege.class);
+		classes.add(PrivilegeType.class);
 		
 		classes.add(ServiceResource.class);
 		classes.add(Service.class);

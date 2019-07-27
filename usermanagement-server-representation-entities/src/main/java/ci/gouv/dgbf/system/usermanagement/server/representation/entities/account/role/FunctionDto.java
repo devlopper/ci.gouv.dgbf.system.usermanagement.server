@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
 public class FunctionDto extends AbstractEntityFromPersistenceEntityCodedAndNamed implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	private FunctionCategoryDto category;
+	private FunctionTypeDto type;
 	
 	@Override
 	public FunctionDto setCode(String code) {
@@ -37,8 +37,8 @@ public class FunctionDto extends AbstractEntityFromPersistenceEntityCodedAndName
 			strings.add("code : "+getCode());
 		if(Boolean.TRUE.equals(__inject__(StringHelper.class).isNotBlank(getName())))
 			strings.add("name : "+getName());
-		if(category != null)
-			strings.add("category : "+category.toString());
+		if(type != null)
+			strings.add("type : "+type.toString());
 		return __inject__(StringHelper.class).concatenate(strings, ",");
 	}
 }

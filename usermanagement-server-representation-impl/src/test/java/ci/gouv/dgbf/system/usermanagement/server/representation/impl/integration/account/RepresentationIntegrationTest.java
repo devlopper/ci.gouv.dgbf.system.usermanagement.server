@@ -19,7 +19,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Us
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.UserAccountRepresentation;
-import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.FunctionCategoryRepresentation;
+import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.FunctionTypeRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.FunctionRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.FunctionScopeRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.ProfileFunctionRepresentation;
@@ -29,7 +29,7 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountInterimDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountProfileDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionCategoryDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionTypeDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionScopeDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDto;
@@ -50,37 +50,37 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 	}
 	
 	@Test
-	public void create_functionCategory() throws Exception{
-		__inject__(TestRepresentationCreate.class).addObjects(new FunctionCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__())).execute();
+	public void create_functionType() throws Exception{
+		__inject__(TestRepresentationCreate.class).addObjects(new FunctionTypeDto().setCode(__getRandomCode__()).setName(__getRandomName__())).execute();
 	}
 	
 	@Test
 	public void create_function() throws Exception{
-		FunctionCategoryDto category = new FunctionCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
-		__inject__(TestRepresentationCreate.class).addObjectsToBeCreatedArray(category)
-			.addObjects(new FunctionDto().setCode(__getRandomCode__()).setName(__getRandomName__()).setCategory(category)).execute();
+		FunctionTypeDto functionType = new FunctionTypeDto().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(TestRepresentationCreate.class).addObjectsToBeCreatedArray(functionType)
+			.addObjects(new FunctionDto().setCode(__getRandomCode__()).setName(__getRandomName__()).setType(functionType)).execute();
 	}
 	
 	@Test
 	public void create_function_sequentially() throws Exception{
-		String functionCategoryCode = __getRandomCode__();
-		__inject__(FunctionCategoryRepresentation.class).createOne(new FunctionCategoryDto().setCode(functionCategoryCode).setName(__getRandomName__()));
+		String functionTypeCode = __getRandomCode__();
+		__inject__(FunctionTypeRepresentation.class).createOne(new FunctionTypeDto().setCode(functionTypeCode).setName(__getRandomName__()));
 		String functionCode = __getRandomCode__();
 		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode(functionCode).setName(__getRandomName__())
-				.setCategory(new FunctionCategoryDto().setCode(functionCategoryCode)));
+				.setType(new FunctionTypeDto().setCode(functionTypeCode)));
 		FunctionDto function = (FunctionDto) __inject__(FunctionRepresentation.class).getOne(functionCode, "business", null).getEntity();
 		assertThat(function).isNotNull();
-		assertThat(function.getCategory()).isNotNull();
-		assertThat(function.getCategory().getCode()).isEqualTo(functionCategoryCode);
+		assertThat(function.getType()).isNotNull();
+		assertThat(function.getType().getCode()).isEqualTo(functionTypeCode);
 	}
 	
 	@Test
 	public void create_scope() throws Exception{
 		ScopeTypeDto scopeType = new ScopeTypeDto().setCode(__getRandomCode__()).setName(__getRandomCode__());
 		ScopeDto scope = new ScopeDto().setIdentifier("21").setType(scopeType);
-		FunctionCategoryDto category = new FunctionCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
-		FunctionDto function = new FunctionDto().setCode(__getRandomCode__()).setName(__getRandomName__()).setCategory(category);
-		__inject__(TestRepresentationCreate.class).addObjectsToBeCreatedArray(scopeType,scope,category,function)
+		FunctionTypeDto functionType = new FunctionTypeDto().setCode(__getRandomCode__()).setName(__getRandomName__());
+		FunctionDto function = new FunctionDto().setCode(__getRandomCode__()).setName(__getRandomName__()).setType(functionType);
+		__inject__(TestRepresentationCreate.class).addObjectsToBeCreatedArray(scopeType,scope,functionType,function)
 			.addObjects(new FunctionScopeDto().setCode(__getRandomCode__()).setName(__getRandomName__()).setFunction(function).setScope(scope)).execute();
 	}
 	
@@ -93,11 +93,11 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 	
 	@Test
 	public void create_profile_withFunctions() throws Exception{
-		FunctionCategoryDto category = new FunctionCategoryDto().setCode("c01").setName(__getRandomName__());
-		__inject__(FunctionCategoryRepresentation.class).createOne(category);
-		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("f01").setName(__getRandomName__()).setCategory(new FunctionCategoryDto().setCode("c01")));
-		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("f02").setName(__getRandomName__()).setCategory(new FunctionCategoryDto().setCode("c01")));
-		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("f03").setName(__getRandomName__()).setCategory(new FunctionCategoryDto().setCode("c01")));
+		FunctionTypeDto functionType = new FunctionTypeDto().setCode("c01").setName(__getRandomName__());
+		__inject__(FunctionTypeRepresentation.class).createOne(functionType);
+		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("f01").setName(__getRandomName__()).setType(new FunctionTypeDto().setCode("c01")));
+		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("f02").setName(__getRandomName__()).setType(new FunctionTypeDto().setCode("c01")));
+		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("f03").setName(__getRandomName__()).setType(new FunctionTypeDto().setCode("c01")));
 		assertThat(__inject__(ProfileFunctionRepresentation.class).count(null).getEntity()).isEqualTo(0l);
 		__inject__(ProfileRepresentation.class).createOne(new ProfileDto().setCode("p01").setName(__getRandomName__()).addFunctionsByCodes("f01","f03"));
 		assertThat(__inject__(ProfileFunctionRepresentation.class).count(null).getEntity()).isEqualTo(2l);
@@ -112,24 +112,24 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 	@Test
 	public void create_profileRoleFunction() throws Exception{
 		FunctionDto function = new FunctionDto().setCode(__getRandomCode__()).setName(__getRandomName__());
-		function.setCategory(new FunctionCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__()));
+		function.setType(new FunctionTypeDto().setCode(__getRandomCode__()).setName(__getRandomName__()));
 		ProfileDto profile = new ProfileDto();
 		profile.setCode(__getRandomCode__()).setName(__getRandomName__());
 		ProfileFunctionDto profileRoleFunction = new ProfileFunctionDto();
 		profileRoleFunction.setProfile(profile);
 		profileRoleFunction.setFunction(function);
-		__inject__(TestRepresentationCreate.class).addObjectsToBeCreatedArray(function.getCategory(),function,profile).addObjects(profileRoleFunction).execute();
+		__inject__(TestRepresentationCreate.class).addObjectsToBeCreatedArray(function.getType(),function,profile).addObjects(profileRoleFunction).execute();
 	}
 	
 	
 	@SuppressWarnings("unchecked")
 	@Test
 	public void get_many_profileByFunctions() throws Exception{
-		FunctionCategoryDto category = new FunctionCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
-		__inject__(FunctionCategoryRepresentation.class).createOne(category);
-		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("f01").setName(__getRandomName__()).setCategory(category));
-		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("f02").setName(__getRandomName__()).setCategory(category));
-		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("f03").setName(__getRandomName__()).setCategory(category));
+		FunctionTypeDto functionType = new FunctionTypeDto().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(FunctionTypeRepresentation.class).createOne(functionType);
+		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("f01").setName(__getRandomName__()).setType(functionType));
+		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("f02").setName(__getRandomName__()).setType(functionType));
+		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("f03").setName(__getRandomName__()).setType(functionType));
 		
 		__inject__(ProfileRepresentation.class).createOne(new ProfileDto().setCode("p01").setName(__getRandomName__()));
 		__inject__(ProfileRepresentation.class).createOne(new ProfileDto().setCode("p02").setName(__getRandomName__()));
@@ -213,9 +213,9 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		__inject__(ScopeTypeRepresentation.class).createOne(scopeType);
 		ScopeDto scope = new ScopeDto().setIdentifier("21").setType(scopeType);
 		__inject__(ScopeRepresentation.class).createOne(scope);
-		FunctionCategoryDto category = new FunctionCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
-		__inject__(FunctionCategoryRepresentation.class).createOne(category);
-		FunctionDto function = new FunctionDto().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setCategory(category);
+		FunctionTypeDto functionType = new FunctionTypeDto().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(FunctionTypeRepresentation.class).createOne(functionType);
+		FunctionDto function = new FunctionDto().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setType(functionType);
 		__inject__(FunctionRepresentation.class).createOne(function);
 		FunctionScopeDto functionScope = new FunctionScopeDto().setFunction(function).setScope(scope);
 		__inject__(FunctionScopeRepresentation.class).createOne(functionScope);
@@ -268,9 +268,9 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		__inject__(ScopeTypeRepresentation.class).createOne(scopeType);
 		ScopeDto scope = new ScopeDto().setIdentifier("21").setType(scopeType);
 		__inject__(ScopeRepresentation.class).createOne(scope);
-		FunctionCategoryDto category = new FunctionCategoryDto().setCode(__getRandomCode__()).setName(__getRandomName__());
-		__inject__(FunctionCategoryRepresentation.class).createOne(category);
-		FunctionDto function = new FunctionDto().setCode("CONTROLEUR_FINANCIER").setName(__getRandomName__()).setCategory(category);
+		FunctionTypeDto functionType = new FunctionTypeDto().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(FunctionTypeRepresentation.class).createOne(functionType);
+		FunctionDto function = new FunctionDto().setCode("CONTROLEUR_FINANCIER").setName(__getRandomName__()).setType(functionType);
 		__inject__(FunctionRepresentation.class).createOne(function);
 		FunctionScopeDto functionScope = new FunctionScopeDto().setFunction(function).setScope(scope);
 		__inject__(FunctionScopeRepresentation.class).createOne(functionScope);
@@ -293,7 +293,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		assertThat(userAccount.getProfiles().getCollection()).as("user account profiles collection is empty").isNotEmpty();
 		assertThat(userAccount.getProfiles().getCollection().stream().map(ProfileDto::getCode).collect(Collectors.toList())).contains("p001");
 		
-		function = new FunctionDto().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setCategory(category);
+		function = new FunctionDto().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setType(functionType);
 		__inject__(FunctionRepresentation.class).createOne(function);
 		functionScope = new FunctionScopeDto().setFunction(function).setScope(scope);
 		__inject__(FunctionScopeRepresentation.class).createOne(functionScope);

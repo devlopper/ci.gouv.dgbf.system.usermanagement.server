@@ -45,13 +45,13 @@ import org.keycloak.representations.idm.authorization.ResourcePermissionRepresen
 import org.keycloak.representations.idm.authorization.ResourceRepresentation;
 import org.keycloak.representations.idm.authorization.RolePolicyRepresentation;
 
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionCategoryPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionTypePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Resource;
@@ -539,7 +539,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	
 	@Override
 	public KeycloakHelper load() {
-		loadRoleCategory();
+		loadFunctionType();
 		loadFunction();
 		loadFunctionScope();
 		__logInfo__("Data from keycloak loaded into database");
@@ -547,15 +547,15 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	}
 	
 	@Override
-	public KeycloakHelper loadRoleCategory() {
+	public KeycloakHelper loadFunctionType() {
 		UserTransaction userTransaction = __inject__(UserTransaction.class);
 		try {
 			userTransaction.begin();
 			for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "CATEGORIE")) {
-				FunctionCategory category = __inject__(FunctionCategoryPersistence.class).readByBusinessIdentifier(index.getName());
-				if(category == null) {
-					category = __inject__(FunctionCategory.class).setCode(index.getName()).setName(index.getAttributes().get(ROLE_ATTRIBUTE_NAME).get(0));
-					__inject__(FunctionCategoryPersistence.class).create(category);
+				FunctionType functionType = __inject__(FunctionTypePersistence.class).readByBusinessIdentifier(index.getName());
+				if(functionType == null) {
+					functionType = __inject__(FunctionType.class).setCode(index.getName()).setName(index.getAttributes().get(ROLE_ATTRIBUTE_NAME).get(0));
+					__inject__(FunctionTypePersistence.class).create(functionType);
 				}
 			}
 			userTransaction.commit();	
@@ -575,13 +575,13 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 				if(function == null) {
 					function = __inject__(Function.class).setCode(index.getName()).setName(index.getAttributes().get(ROLE_ATTRIBUTE_NAME).get(0));
 					for(RoleRepresentation indexParent : __inject__(KeycloakHelper.class).getRolesResource().get(index.getName()).getRoleComposites()) {
-						FunctionCategory category = __inject__(FunctionCategoryPersistence.class).readByBusinessIdentifier(indexParent.getName());
-						if(category != null) {
-							function.setCategory(category);
+						FunctionType functionType = __inject__(FunctionTypePersistence.class).readByBusinessIdentifier(indexParent.getName());
+						if(functionType != null) {
+							function.setType(functionType);
 							break;
 						}
 					}
-					if(function.getCategory() != null) {
+					if(function.getType() != null) {
 						__inject__(FunctionPersistence.class).create(function);	
 					}
 				}

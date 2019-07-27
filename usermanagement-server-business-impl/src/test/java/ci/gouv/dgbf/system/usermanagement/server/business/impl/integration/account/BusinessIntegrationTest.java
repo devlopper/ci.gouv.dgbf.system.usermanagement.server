@@ -23,22 +23,29 @@ import org.keycloak.representations.idm.UserRepresentation;
 
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionCategoryBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionScopeBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionTypeBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.PrivilegeBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.PrivilegeTypeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileFunctionBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileTypeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeTypeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.impl.ApplicationScopeLifeCycleListener;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileFunctionPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePrivilegePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionType;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Privilege;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PrivilegeType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileServiceResource;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Resource;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
@@ -50,11 +57,11 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	private static final long serialVersionUID = 1L;
 	
 	@Override
-	protected void __listenBeforeCallCountIsZero__() throws Exception {
-		super.__listenBeforeCallCountIsZero__();
-		//AbstractPersistenceFunctionImpl.LOG_LEVEL = LogLevel.INFO;
-		//AbstractBusinessFunctionImpl.LOG_LEVEL = LogLevel.INFO;
+	protected void __listenBefore__() {
+		super.__listenBefore__();
 		__inject__(ApplicationScopeLifeCycleListener.class).initialize(null);
+		__inject__(ProfileTypeBusiness.class).createMany(__inject__(CollectionHelper.class).instanciate(new ProfileType().setCode(ProfileType.CODE_SYSTEM).setName("Système")
+				,new ProfileType().setCode(ProfileType.CODE_UTILISATEUR).setName("Utilisateur")));
 	}
 	
 	//@Test
@@ -64,25 +71,25 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	}
 	
 	@Test
-	public void create_functionCategory() throws Exception{
-		__inject__(TestBusinessCreate.class).addObjects(new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomCode__())).execute();
+	public void create_functionType() throws Exception{
+		__inject__(TestBusinessCreate.class).addObjects(new FunctionType().setCode(__getRandomCode__()).setName(__getRandomCode__())).execute();
 	}
 	
 	@Test
 	public void create_function() throws Exception{
-		FunctionCategory functionCategory = new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
-		Function function = new Function().setCode(__getRandomCode__()).setName(__getRandomCode__()).setCategory(functionCategory);
-		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(functionCategory).addObjects(function).execute();
+		FunctionType functionType = new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		Function function = new Function().setCode(__getRandomCode__()).setName(__getRandomCode__()).setType(functionType);
+		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(functionType).addObjects(function).execute();
 	}
 	
 	@Test
 	public void create_functionScope() throws Exception{
 		ScopeType scopeType = new ScopeType().setCode("MINISTERE").setName("Ministère");
 		Scope scope = new Scope().setIdentifier("21").setType(scopeType);
-		FunctionCategory functionCategory = new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
-		Function function = new Function().setCode("ASSISTANT").setName("Assistant").setCategory(functionCategory);
+		FunctionType functionType = new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		Function function = new Function().setCode("ASSISTANT").setName("Assistant").setType(functionType);
 		FunctionScope role = new FunctionScope().setFunction(function).setScope(scope);
-		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(scopeType,scope,functionCategory,function).addObjects(role).addTryEndRunnables(new Runnable() {
+		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(scopeType,scope,functionType,function).addObjects(role).addTryEndRunnables(new Runnable() {
 			@Override
 			public void run() {
 				assertThat(role.getCode()).isEqualTo("ASSISTANT_MINISTERE_21");
@@ -95,10 +102,10 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	public void create_functionScope_ua() throws Exception{
 		ScopeType scopeType = new ScopeType().setCode("UA").setName("Unité administrative");
 		Scope scope = new Scope().setIdentifier("21").setType(scopeType);
-		FunctionCategory functionCategory = new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
-		Function function = new Function().setCode("RUA").setName("Responsable unité administrative").setCategory(functionCategory);
+		FunctionType functionType = new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		Function function = new Function().setCode("RUA").setName("Responsable unité administrative").setType(functionType);
 		FunctionScope role = new FunctionScope().setFunction(function).setScope(scope);
-		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(scopeType,scope,functionCategory,function).addObjects(role).addTryEndRunnables(new Runnable() {
+		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(scopeType,scope,functionType,function).addObjects(role).addTryEndRunnables(new Runnable() {
 			@Override
 			public void run() {
 				assertThat(role.getCode()).isEqualTo("RUA_UA_21");
@@ -144,51 +151,83 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	
 	@Test
 	public void create_profile_with_functions() throws Exception{
-		FunctionCategory category = new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
-		__inject__(FunctionCategoryBusiness.class).create(category);
-		__inject__(FunctionBusiness.class).create(new Function().setCode("f01").setName(__getRandomName__()).setCategory(category));
-		__inject__(FunctionBusiness.class).create(new Function().setCode("f02").setName(__getRandomName__()).setCategory(category));
-		__inject__(FunctionBusiness.class).create(new Function().setCode("f03").setName(__getRandomName__()).setCategory(category));
-		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(0);
+		FunctionType functionType = new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(0l);
+		__inject__(FunctionTypeBusiness.class).create(functionType);
+		__inject__(FunctionBusiness.class).create(new Function().setCode("f01").setName(__getRandomName__()).setType(functionType));
+		__inject__(FunctionBusiness.class).create(new Function().setCode("f02").setName(__getRandomName__()).setType(functionType));
+		__inject__(FunctionBusiness.class).create(new Function().setCode("f03").setName(__getRandomName__()).setType(functionType));
+		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(3l);
 		__inject__(ProfileBusiness.class).create(new Profile().setCode("p01").setName(__getRandomName__())
 				.addFunctions(__inject__(FunctionPersistence.class).readByBusinessIdentifier("f01"))
 				.addFunctions(__inject__(FunctionPersistence.class).readByBusinessIdentifier("f03"))
 				);
-		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(2);
+		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(5l);
 		__inject__(ProfileBusiness.class).create(new Profile().setCode("p02").setName(__getRandomName__())
 				.addFunctions(__inject__(FunctionPersistence.class).readByBusinessIdentifier("f01"))
 				.addFunctions(__inject__(FunctionPersistence.class).readByBusinessIdentifier("f02"))
 				.addFunctions(__inject__(FunctionPersistence.class).readByBusinessIdentifier("f03"))
 				);
-		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(5);
+		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(8l);
 		Profile profile = __inject__(ProfileBusiness.class).findByBusinessIdentifier("p02");
 		profile.getFunctions(Boolean.TRUE).removeAll();
 		profile.getFunctions(Boolean.TRUE).add(__inject__(FunctionPersistence.class).readByBusinessIdentifier("f02"));
-		__inject__(ProfileBusiness.class).update(profile);
-		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(3);
+		__inject__(ProfileBusiness.class).update(profile,new Properties().setFields(Profile.FIELD_FUNCTIONS));
+		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(6l);
 		__inject__(ProfileBusiness.class).deleteByBusinessIdentifier("p01");
-		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(1);
+		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(4l);
+	}
+	
+	@Test
+	public void crud_profile_user_with_privileges() throws Exception{
+		PrivilegeType privilegeType = new PrivilegeType().setCode("type").setName(__getRandomName__());
+		Privilege privilegeModule01 = new Privilege().setCode("m01").setName(__getRandomName__()).setType(privilegeType);
+		Privilege privilegeService01 = new Privilege().setCode("s01").setName(__getRandomName__()).setType(privilegeType).setParent(privilegeModule01);
+		Privilege privilegeService02 = new Privilege().setCode("s02").setName(__getRandomName__()).setType(privilegeType).setParent(privilegeModule01);
+		Privilege privilegeAction01 = new Privilege().setCode("a01").setName(__getRandomName__()).setType(privilegeType).setParent(privilegeService02);
+		Privilege privilegeAction02 = new Privilege().setCode("a02").setName(__getRandomName__()).setType(privilegeType).setParent(privilegeService02);
+		Privilege privilegeModule02 = new Privilege().setCode("m02").setName(__getRandomName__()).setType(privilegeType);
+		Privilege privilegeModule03 = new Privilege().setCode("m03").setName(__getRandomName__()).setType(privilegeType);
+		Privilege privilegeService03 = new Privilege().setCode("s03").setName(__getRandomName__()).setType(privilegeType).setParent(privilegeModule03);
+		Privilege privilegeAction03 = new Privilege().setCode("a03").setName(__getRandomName__()).setType(privilegeType).setParent(privilegeService03);
+		__inject__(PrivilegeTypeBusiness.class).createMany(__inject__(CollectionHelper.class).instanciate(privilegeType));
+		__inject__(PrivilegeBusiness.class).createMany(__inject__(CollectionHelper.class).instanciate(privilegeModule01,privilegeService01,privilegeService02
+				,privilegeAction01,privilegeAction02,privilegeModule02,privilegeModule03,privilegeService03,privilegeAction03));
+		Profile profile;
+		profile = new Profile().setCode("up01").setName(__getRandomName__());
+		__inject__(ProfileBusiness.class).create(profile);
+		assertThat(__inject__(ProfilePrivilegePersistence.class).count()).isEqualTo(0l);
+		profile = __inject__(ProfileBusiness.class).findByBusinessIdentifier("up01");
+		assertThat(profile.getPrivileges()).isNull();
+		profile.addPrivilegesByCodes("m01");
+		__inject__(ProfileBusiness.class).update(profile,new Properties().setFields(Profile.FIELD_PRIVILEGES));
+		assertThat(__inject__(ProfilePrivilegePersistence.class).count()).isEqualTo(1l);
+		profile = __inject__(ProfileBusiness.class).findByBusinessIdentifier("up01");
+		assertThat(profile.getPrivileges()).isNull();
+		profile = __inject__(ProfileBusiness.class).findByBusinessIdentifier("up01",new Properties().setFields(Profile.FIELD_PRIVILEGES));
+		assertThat(profile.getPrivileges()).isNotNull();
+		assertThat(profile.getPrivileges().get().stream().map(Privilege::getCode).collect(Collectors.toList())).containsOnly("m01");
 	}
 	
 	@Test
 	public void create_profileFunction() throws Exception{
 		Function function = new Function().setCode(__getRandomCode__()).setName(__getRandomName__());
-		function.setCategory(new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__()));
+		function.setType(new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__()));
 		Profile profile = new Profile();
 		profile.setCode(__getRandomCode__()).setName(__getRandomName__());
 		ProfileFunction profileFunction = new ProfileFunction();
 		profileFunction.setProfile(profile);
 		profileFunction.setFunction(function);
-		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(function.getCategory(),function,profile).addObjects(profileFunction).execute();
+		__inject__(TestBusinessCreate.class).addObjectsToBeCreatedArray(function.getType(),function,profile).addObjects(profileFunction).execute();
 	}
 	
 	@Test
 	public void read_profileByFunctions() throws Exception{
-		FunctionCategory category = new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
-		__inject__(FunctionCategoryBusiness.class).create(category);
-		__inject__(FunctionBusiness.class).create(new Function().setCode("f01").setName(__getRandomName__()).setCategory(category));
-		__inject__(FunctionBusiness.class).create(new Function().setCode("f02").setName(__getRandomName__()).setCategory(category));
-		__inject__(FunctionBusiness.class).create(new Function().setCode("f03").setName(__getRandomName__()).setCategory(category));
+		FunctionType functionType = new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(FunctionTypeBusiness.class).create(functionType);
+		__inject__(FunctionBusiness.class).create(new Function().setCode("f01").setName(__getRandomName__()).setType(functionType));
+		__inject__(FunctionBusiness.class).create(new Function().setCode("f02").setName(__getRandomName__()).setType(functionType));
+		__inject__(FunctionBusiness.class).create(new Function().setCode("f03").setName(__getRandomName__()).setType(functionType));
 		
 		__inject__(ProfileBusiness.class).create(new Profile().setCode("p01").setName(__getRandomName__()));
 		__inject__(ProfileBusiness.class).create(new Profile().setCode("p02").setName(__getRandomName__()));
@@ -246,9 +285,9 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		__inject__(ScopeTypeBusiness.class).create(scopeType);
 		Scope scope = new Scope().setIdentifier("21").setType(scopeType);
 		__inject__(ScopeBusiness.class).create(scope);
-		FunctionCategory functionCategory = new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
-		__inject__(FunctionCategoryBusiness.class).create(functionCategory);
-		Function function = new Function().setCode("CONTROLEUR_FINANCIER").setName(__getRandomName__()).setCategory(functionCategory);
+		FunctionType functionType = new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(FunctionTypeBusiness.class).create(functionType);
+		Function function = new Function().setCode("CONTROLEUR_FINANCIER").setName(__getRandomName__()).setType(functionType);
 		__inject__(FunctionBusiness.class).create(function);
 		FunctionScope functionScope = new FunctionScope().setFunction(function).setScope(scope);
 		__inject__(FunctionScopeBusiness.class).create(functionScope);
@@ -322,13 +361,13 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		__inject__(ScopeTypeBusiness.class).create(scopeType);
 		Scope scope = new Scope().setIdentifier("21").setType(scopeType);
 		__inject__(ScopeBusiness.class).create(scope);
-		FunctionCategory functionCategory = new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
-		__inject__(FunctionCategoryBusiness.class).create(functionCategory);
-		Function function = new Function().setCode("CONTROLEUR_FINANCIER").setName(__getRandomName__()).setCategory(functionCategory);
+		FunctionType functionType = new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(FunctionTypeBusiness.class).create(functionType);
+		Function function = new Function().setCode("CONTROLEUR_FINANCIER").setName(__getRandomName__()).setType(functionType);
 		__inject__(FunctionBusiness.class).create(function);
 		FunctionScope functionScope = new FunctionScope().setFunction(function).setScope(scope);
 		__inject__(FunctionScopeBusiness.class).create(functionScope);
-		function = new Function().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setCategory(functionCategory);
+		function = new Function().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setType(functionType);
 		__inject__(FunctionBusiness.class).create(function);
 		functionScope = new FunctionScope().setFunction(function).setScope(scope);
 		__inject__(FunctionScopeBusiness.class).create(functionScope);
@@ -411,7 +450,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		__inject__(ProfileBusiness.class).deleteAll();
 		__inject__(FunctionScopeBusiness.class).deleteAll();
 		__inject__(FunctionBusiness.class).deleteAll();
-		__inject__(FunctionCategoryBusiness.class).deleteAll();
+		__inject__(FunctionTypeBusiness.class).deleteAll();
 		__inject__(ScopeBusiness.class).deleteAll();
 		__inject__(ScopeTypeBusiness.class).deleteAll();
 	}

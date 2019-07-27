@@ -19,21 +19,23 @@ import org.junit.Test;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.UserRepresentation;
 
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionCategoryPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionTypePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileServiceResourcePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileTypePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterim;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileServiceResource;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Resource;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
@@ -66,15 +68,15 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	}
 	
 	@Test
-	public void create_functionCategory() throws Exception{
-		__inject__(TestPersistenceCreate.class).addObjects(new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__())).execute();
+	public void create_functionType() throws Exception{
+		__inject__(TestPersistenceCreate.class).addObjects(new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__())).execute();
 	}
 	
 	@Test
 	public void create_function() throws Exception{
 		Function function = new Function().setCode(__getRandomCode__()).setName(__getRandomName__());
-		function.setCategory(new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__()));
-		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(function.getCategory()).addObjects(function).execute();
+		function.setType(new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__()));
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(function.getType()).addObjects(function).execute();
 	}
 	
 	@Test
@@ -83,27 +85,29 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		Scope scope = new Scope().setType(scopeType);
 		FunctionScope functionScope = new FunctionScope().setScope(scope).setCode(__getRandomCode__()).setName(__getRandomName__());
 		functionScope.setFunction(new Function().setCode(__getRandomCode__()).setName(__getRandomName__())
-				.setCategory(new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__())));
-		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(scopeType,scope,functionScope.getFunction().getCategory(),functionScope.getFunction()).addObjects(functionScope).execute();
+				.setType(new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__())));
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(scopeType,scope,functionScope.getFunction().getType(),functionScope.getFunction()).addObjects(functionScope).execute();
 	}
 	
 	@Test
 	public void create_profile() throws Exception{
+		ProfileType profileType = new ProfileType().setCode(__getRandomCode__()).setName(__getRandomName__());
 		Profile profile = new Profile();
-		profile.setCode(__getRandomCode__()).setName(__getRandomName__());
-		__inject__(TestPersistenceCreate.class).addObjects(profile).execute();
+		profile.setCode(__getRandomCode__()).setName(__getRandomName__()).setType(profileType);
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(profileType).addObjects(profile).execute();
 	}
 	
 	@Test
 	public void create_profileFunction() throws Exception{
 		Function function = new Function().setCode(__getRandomCode__()).setName(__getRandomName__());
-		function.setCategory(new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__()));
+		function.setType(new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__()));
+		ProfileType profileType = new ProfileType().setCode(__getRandomCode__()).setName(__getRandomName__());
 		Profile profile = new Profile();
-		profile.setCode(__getRandomCode__()).setName(__getRandomName__());
+		profile.setCode(__getRandomCode__()).setName(__getRandomName__()).setType(profileType);
 		ProfileFunction profileFunction = new ProfileFunction();
 		profileFunction.setProfile(profile);
 		profileFunction.setFunction(function);
-		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(function.getCategory(),function,profile).addObjects(profileFunction).execute();
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(function.getType(),function,profileType,profile).addObjects(profileFunction).execute();
 	}
 	
 	@Test
@@ -128,27 +132,29 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	public void create_profileServiceResource() throws Exception{
 		assertThat(__inject__(ProfileServiceResourcePersistence.class).count()).isEqualTo(0l);
 		ProfileServiceResource profileServiceResource = new ProfileServiceResource();
-		profileServiceResource.setProfile(new Profile().setCode(__getRandomCode__()).setName(__getRandomName__()));
+		profileServiceResource.setProfile(new Profile().setCode(__getRandomCode__()).setName(__getRandomName__()).setType(new ProfileType().setCode(__getRandomCode__()).setName(__getRandomName__())));
 		profileServiceResource.setService(new Service().setUrl("url"));
 		profileServiceResource.setResource(new Resource().setCode(__getRandomCode__()).setName(__getRandomName__()).setUrl("url"));
-		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(profileServiceResource.getProfile(),profileServiceResource.getService()
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(profileServiceResource.getProfile().getType(),profileServiceResource.getProfile(),profileServiceResource.getService()
 				,profileServiceResource.getResource()).addObjects(profileServiceResource).execute();
 		assertThat(__inject__(ProfileServiceResourcePersistence.class).count()).isEqualTo(0l);
 	}
 	
 	@Test
 	public void read_profileByFunctions() throws Exception{
-		FunctionCategory category = new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
+		FunctionType functionType = new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		ProfileType profileType = new ProfileType().setCode(__getRandomCode__()).setName(__getRandomName__());
 		userTransaction.begin();
-		__inject__(FunctionCategoryPersistence.class).create(category);
-		__inject__(FunctionPersistence.class).create(new Function().setCode("f01").setName(__getRandomName__()).setCategory(category));
-		__inject__(FunctionPersistence.class).create(new Function().setCode("f02").setName(__getRandomName__()).setCategory(category));
-		__inject__(FunctionPersistence.class).create(new Function().setCode("f03").setName(__getRandomName__()).setCategory(category));
+		__inject__(FunctionTypePersistence.class).create(functionType);
+		__inject__(FunctionPersistence.class).create(new Function().setCode("f01").setName(__getRandomName__()).setType(functionType));
+		__inject__(FunctionPersistence.class).create(new Function().setCode("f02").setName(__getRandomName__()).setType(functionType));
+		__inject__(FunctionPersistence.class).create(new Function().setCode("f03").setName(__getRandomName__()).setType(functionType));
 		
-		__inject__(ProfilePersistence.class).create(new Profile().setCode("p01").setName(__getRandomName__()));
-		__inject__(ProfilePersistence.class).create(new Profile().setCode("p02").setName(__getRandomName__()));
-		__inject__(ProfilePersistence.class).create(new Profile().setCode("p03").setName(__getRandomName__()));
-		__inject__(ProfilePersistence.class).create(new Profile().setCode("p04").setName(__getRandomName__()));
+		__inject__(ProfileTypePersistence.class).create(profileType);
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p01").setName(__getRandomName__()).setType(profileType));
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p02").setName(__getRandomName__()).setType(profileType));
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p03").setName(__getRandomName__()).setType(profileType));
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p04").setName(__getRandomName__()).setType(profileType));
 		userTransaction.commit();
 		
 		Collection<ProfileFunction> profileFunctions = __inject__(ProfileFunctionPersistence.class).readByProfileCodes("p01");
@@ -192,17 +198,19 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Test
 	public void read_profileFunction_filter_by_profiles() throws Exception{
-		FunctionCategory category = new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__());
+		FunctionType functionType = new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		ProfileType profileType = new ProfileType().setCode(__getRandomCode__()).setName(__getRandomName__());
 		userTransaction.begin();
-		__inject__(FunctionCategoryPersistence.class).create(category);
-		__inject__(FunctionPersistence.class).create(new Function().setCode("f01").setName(__getRandomName__()).setCategory(category));
-		__inject__(FunctionPersistence.class).create(new Function().setCode("f02").setName(__getRandomName__()).setCategory(category));
-		__inject__(FunctionPersistence.class).create(new Function().setCode("f03").setName(__getRandomName__()).setCategory(category));
+		__inject__(FunctionTypePersistence.class).create(functionType);
+		__inject__(FunctionPersistence.class).create(new Function().setCode("f01").setName(__getRandomName__()).setType(functionType));
+		__inject__(FunctionPersistence.class).create(new Function().setCode("f02").setName(__getRandomName__()).setType(functionType));
+		__inject__(FunctionPersistence.class).create(new Function().setCode("f03").setName(__getRandomName__()).setType(functionType));
 		
-		__inject__(ProfilePersistence.class).create(new Profile().setCode("p01").setName(__getRandomName__()));
-		__inject__(ProfilePersistence.class).create(new Profile().setCode("p02").setName(__getRandomName__()));
-		__inject__(ProfilePersistence.class).create(new Profile().setCode("p03").setName(__getRandomName__()));
-		__inject__(ProfilePersistence.class).create(new Profile().setCode("p04").setName(__getRandomName__()));
+		__inject__(ProfileTypePersistence.class).create(profileType);
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p01").setName(__getRandomName__()).setType(profileType));
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p02").setName(__getRandomName__()).setType(profileType));
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p03").setName(__getRandomName__()).setType(profileType));
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p04").setName(__getRandomName__()).setType(profileType));
 		userTransaction.commit();
 		
 		Collection<ProfileFunction> profileFunctions = __inject__(ProfileFunctionPersistence.class).read(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p01")));
@@ -274,9 +282,9 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
 		Profile profile = new Profile();
-		profile.setCode(__getRandomCode__()).setName(__getRandomName__());
+		profile.setCode(__getRandomCode__()).setName(__getRandomName__()).setType(new ProfileType().setCode(__getRandomCode__()).setName(__getRandomName__()));
 		UserAccountProfile userAccountProfile = new UserAccountProfile().setUserAccount(userAccount).setProfile(profile);
-		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(userAccount.getUser(),userAccount.getAccount(),userAccount,profile).addObjects(userAccountProfile).execute();
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(userAccount.getUser(),userAccount.getAccount(),userAccount,profile.getType(),profile).addObjects(userAccountProfile).execute();
 	}
 	
 	@Test
@@ -284,7 +292,7 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		ScopeType scopeType = new ScopeType().setCode("MINISTERE").setName("Ministère");
 		Scope scope = new Scope().setIdentifier("21").setType(scopeType);
 		FunctionScope functionScope = new FunctionScope().setCode(__getRandomCode__()).setName(__getRandomName__()).setFunction(new Function().setCode(__getRandomCode__()).setName(__getRandomName__())
-				.setCategory(new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__()))).setScope(scope);
+				.setType(new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__()))).setScope(scope);
 		
 		UserAccount userAccount = new UserAccount();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
@@ -293,7 +301,7 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		userAccountFunctionScope.setUserAccount(userAccount);
 		userAccountFunctionScope.setFunctionScope(functionScope);
 		
-		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(scopeType,scope,functionScope.getFunction().getCategory(),functionScope.getFunction()
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(scopeType,scope,functionScope.getFunction().getType(),functionScope.getFunction()
 				,functionScope,userAccount.getUser(),userAccount.getAccount(),userAccount).addObjects(userAccountFunctionScope)
 			.setIsCatchThrowable(Boolean.FALSE).addTryEndRunnables(new Runnable() {
 				@Override
@@ -313,7 +321,7 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		Scope scope = new Scope().setIdentifier("100").setType(scopeType);
 		FunctionScope functionScope = new FunctionScope().setCode(__getRandomCode__()).setName(__getRandomName__());
 		functionScope.setFunction(new Function().setCode(__getRandomCode__()).setName(__getRandomName__())
-				.setCategory(new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__()))).setScope(scope);
+				.setType(new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__()))).setScope(scope);
 		
 		UserAccount userAccount = new UserAccount();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
@@ -322,7 +330,7 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		userAccountFunctionScope.setUserAccount(userAccount);
 		userAccountFunctionScope.setFunctionScope(functionScope);
 		
-		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(scopeType,scope,functionScope.getFunction().getCategory(),functionScope.getFunction()
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(scopeType,scope,functionScope.getFunction().getType(),functionScope.getFunction()
 				,functionScope,userAccount.getUser(),userAccount.getAccount(),userAccount).addObjects(userAccountFunctionScope)
 			.setIsCatchThrowable(Boolean.FALSE).addTryEndRunnables(new Runnable() {
 				@Override
@@ -342,7 +350,7 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		Scope scope = new Scope().setIdentifier("200").setType(scopeType);
 		FunctionScope functionScope = new FunctionScope().setCode(__getRandomCode__()).setName(__getRandomName__());
 		functionScope.setFunction(new Function().setCode(__getRandomCode__()).setName(__getRandomName__())
-				.setCategory(new FunctionCategory().setCode(__getRandomCode__()).setName(__getRandomName__()))).setScope(scope);
+				.setType(new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__()))).setScope(scope);
 		
 		UserAccount userAccount = new UserAccount();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
@@ -351,7 +359,7 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		userAccountFunctionScope.setUserAccount(userAccount);
 		userAccountFunctionScope.setFunctionScope(functionScope);
 		
-		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(scopeType,scope,functionScope.getFunction().getCategory(),functionScope.getFunction()
+		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(scopeType,scope,functionScope.getFunction().getType(),functionScope.getFunction()
 				,functionScope,userAccount.getUser(),userAccount.getAccount(),userAccount).addObjects(userAccountFunctionScope)
 			.setIsCatchThrowable(Boolean.FALSE).addTryEndRunnables(new Runnable() {
 				@Override

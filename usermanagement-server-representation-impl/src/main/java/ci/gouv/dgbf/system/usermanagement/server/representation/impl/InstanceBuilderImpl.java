@@ -16,13 +16,13 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Ac
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.User;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionCategory;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionCategoryDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionTypeDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionScopeDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDto;
@@ -42,9 +42,9 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			representation.setIdentifier(persistence.getIdentifier());
 			representation.setName(persistence.getName()); 
 			//representation.setType(__inject__(InstanceHelper.class).buildOne(ScopeTypeDto.class, persistence.getType())); 
-		}else if(source instanceof FunctionCategory && destination instanceof FunctionCategoryDto) {
-			FunctionCategory persistence = (FunctionCategory) source;
-			FunctionCategoryDto representation = (FunctionCategoryDto) destination;
+		}else if(source instanceof FunctionType && destination instanceof FunctionTypeDto) {
+			FunctionType persistence = (FunctionType) source;
+			FunctionTypeDto representation = (FunctionTypeDto) destination;
 			representation.setIdentifier(persistence.getIdentifier());
 			representation.setCode(persistence.getCode());
 			representation.setName(persistence.getName()); 
@@ -54,7 +54,7 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			representation.setIdentifier(persistence.getIdentifier());
 			representation.setCode(persistence.getCode());
 			representation.setName(persistence.getName()); 
-			//representation.setCategory(__inject__(InstanceHelper.class).buildOne(FunctionCategoryDto.class, persistence.getCategory())); 
+			//representation.setType(__inject__(InstanceHelper.class).buildOne(FunctionTypeDto.class, persistence.getType())); 
 		}else if(source instanceof FunctionScope && destination instanceof FunctionScopeDto) {
 			FunctionScope persistence = (FunctionScope) source;
 			FunctionScopeDto representation = (FunctionScopeDto) destination;
