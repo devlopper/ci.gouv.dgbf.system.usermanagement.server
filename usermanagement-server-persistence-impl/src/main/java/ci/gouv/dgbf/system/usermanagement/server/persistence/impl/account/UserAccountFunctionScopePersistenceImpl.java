@@ -60,8 +60,4 @@ public class UserAccountFunctionScopePersistenceImpl extends AbstractPersistence
 		return super.__getQueryParameters__(query, properties, objects);
 	}
 	
-	@Override
-	public Class<UserAccountFunctionScope> getEntityClass() {
-		return UserAccountFunctionScope.class;
-	}
 }

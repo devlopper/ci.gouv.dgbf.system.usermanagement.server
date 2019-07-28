@@ -13,8 +13,4 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 public class ProfileTypePersistenceImpl extends AbstractPersistenceEntityImpl<ProfileType> implements ProfileTypePersistence,Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Override
-	public Class<ProfileType> getEntityClass() {
-		return ProfileType.class;
-	}
 }

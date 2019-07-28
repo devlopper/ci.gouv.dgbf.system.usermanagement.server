@@ -13,8 +13,4 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 public class FunctionPersistenceImpl extends AbstractPersistenceEntityImpl<Function> implements FunctionPersistence,Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Override
-	public Class<Function> getEntityClass() {
-		return Function.class;
-	}
 }

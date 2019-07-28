@@ -21,6 +21,8 @@ import org.keycloak.representations.idm.UserRepresentation;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionTypePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.PrivilegeTypeHierarchyPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.PrivilegeTypePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileServiceResourcePersistence;
@@ -32,6 +34,8 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Us
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionType;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PrivilegeType;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PrivilegeTypeHierarchy;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileServiceResource;
@@ -87,6 +91,78 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		functionScope.setFunction(new Function().setCode(__getRandomCode__()).setName(__getRandomName__())
 				.setType(new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__())));
 		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(scopeType,scope,functionScope.getFunction().getType(),functionScope.getFunction()).addObjects(functionScope).execute();
+	}
+	
+	@Test
+	public void create_privilegeType() throws Exception{
+		userTransaction.begin();
+		PrivilegeType privilegeTypeModule = new PrivilegeType().setCode("module").setName(__getRandomName__());
+		PrivilegeType privilegeTypeService = new PrivilegeType().setCode("service").setName(__getRandomName__()).addParents(privilegeTypeModule);
+		PrivilegeType privilegeTypeMenu = new PrivilegeType().setCode("menu").setName(__getRandomName__()).addParents(privilegeTypeService);
+		PrivilegeType privilegeTypeAction = new PrivilegeType().setCode("action").setName(__getRandomName__()).addParents(privilegeTypeMenu);
+		__inject__(PrivilegeTypePersistence.class).createMany(__inject__(CollectionHelper.class).instanciate(privilegeTypeModule,privilegeTypeService,privilegeTypeMenu
+				,privilegeTypeAction));
+		__inject__(PrivilegeTypeHierarchyPersistence.class).createMany(__inject__(CollectionHelper.class).instanciate(
+				new PrivilegeTypeHierarchy().setParent(privilegeTypeModule).setChild(privilegeTypeService)
+				,new PrivilegeTypeHierarchy().setParent(privilegeTypeService).setChild(privilegeTypeMenu)
+				,new PrivilegeTypeHierarchy().setParent(privilegeTypeMenu).setChild(privilegeTypeAction)
+				));
+		userTransaction.commit();
+		PrivilegeType privilegeType;
+		privilegeType = __inject__(PrivilegeTypePersistence.class).readByBusinessIdentifier("module");
+		assertThat(privilegeType.getParents()).isNull();
+		assertThat(privilegeType.getChildren()).isNull();
+		privilegeType = __inject__(PrivilegeTypePersistence.class).readByBusinessIdentifier("module",new Properties().setFields(PrivilegeType.FIELD_PARENTS));
+		assertThat(privilegeType.getParents()).isNull();
+		assertThat(privilegeType.getChildren()).isNull();
+		privilegeType = __inject__(PrivilegeTypePersistence.class).readByBusinessIdentifier("module",new Properties().setFields(PrivilegeType.FIELD_CHILDREN));
+		assertThat(privilegeType.getParents()).isNull();
+		assertThat(privilegeType.getChildren()).isNotNull();
+		assertThat(privilegeType.getChildren().get()).isNotEmpty();
+		assertThat(privilegeType.getChildren().get().stream().map(PrivilegeType::getCode).collect(Collectors.toList())).containsOnly("service");
+		privilegeType = __inject__(PrivilegeTypePersistence.class).readByBusinessIdentifier("module",new Properties().setFields(PrivilegeType.FIELD_PARENTS+","+PrivilegeType.FIELD_CHILDREN));
+		assertThat(privilegeType.getParents()).isNull();
+		assertThat(privilegeType.getChildren()).isNotNull();
+		assertThat(privilegeType.getChildren().get()).isNotEmpty();
+		assertThat(privilegeType.getChildren().get().stream().map(PrivilegeType::getCode).collect(Collectors.toList())).containsOnly("service");
+		
+		privilegeType = __inject__(PrivilegeTypePersistence.class).readByBusinessIdentifier("service");
+		assertThat(privilegeType.getParents()).isNull();
+		assertThat(privilegeType.getChildren()).isNull();
+		privilegeType = __inject__(PrivilegeTypePersistence.class).readByBusinessIdentifier("service",new Properties().setFields(PrivilegeType.FIELD_PARENTS));
+		assertThat(privilegeType.getParents()).isNotNull();
+		assertThat(privilegeType.getParents().get()).isNotEmpty();
+		assertThat(privilegeType.getParents().get().stream().map(PrivilegeType::getCode).collect(Collectors.toList())).containsOnly("module");
+		assertThat(privilegeType.getChildren()).isNull();
+		privilegeType = __inject__(PrivilegeTypePersistence.class).readByBusinessIdentifier("service",new Properties().setFields(PrivilegeType.FIELD_CHILDREN));
+		assertThat(privilegeType.getParents()).isNull();
+		assertThat(privilegeType.getChildren()).isNotNull();
+		assertThat(privilegeType.getChildren().get()).isNotEmpty();
+		assertThat(privilegeType.getChildren().get().stream().map(PrivilegeType::getCode).collect(Collectors.toList())).containsOnly("menu");
+		privilegeType = __inject__(PrivilegeTypePersistence.class).readByBusinessIdentifier("service",new Properties().setFields(PrivilegeType.FIELD_PARENTS+","+PrivilegeType.FIELD_CHILDREN));
+		assertThat(privilegeType.getParents()).isNotNull();
+		assertThat(privilegeType.getParents().get()).isNotEmpty();
+		assertThat(privilegeType.getParents().get().stream().map(PrivilegeType::getCode).collect(Collectors.toList())).containsOnly("module");
+		assertThat(privilegeType.getChildren()).isNotNull();
+		assertThat(privilegeType.getChildren().get()).isNotEmpty();
+		assertThat(privilegeType.getChildren().get().stream().map(PrivilegeType::getCode).collect(Collectors.toList())).containsOnly("menu");
+		
+		privilegeType = __inject__(PrivilegeTypePersistence.class).readByBusinessIdentifier("action");
+		assertThat(privilegeType.getParents()).isNull();
+		assertThat(privilegeType.getChildren()).isNull();
+		privilegeType = __inject__(PrivilegeTypePersistence.class).readByBusinessIdentifier("action",new Properties().setFields(PrivilegeType.FIELD_PARENTS));
+		assertThat(privilegeType.getParents()).isNotNull();
+		assertThat(privilegeType.getParents().get()).isNotEmpty();
+		assertThat(privilegeType.getParents().get().stream().map(PrivilegeType::getCode).collect(Collectors.toList())).containsOnly("menu");
+		assertThat(privilegeType.getChildren()).isNull();
+		privilegeType = __inject__(PrivilegeTypePersistence.class).readByBusinessIdentifier("action",new Properties().setFields(PrivilegeType.FIELD_CHILDREN));
+		assertThat(privilegeType.getParents()).isNull();
+		assertThat(privilegeType.getChildren()).isNull();
+		privilegeType = __inject__(PrivilegeTypePersistence.class).readByBusinessIdentifier("action",new Properties().setFields(PrivilegeType.FIELD_PARENTS+","+PrivilegeType.FIELD_CHILDREN));
+		assertThat(privilegeType.getParents()).isNotNull();
+		assertThat(privilegeType.getParents().get()).isNotEmpty();
+		assertThat(privilegeType.getParents().get().stream().map(PrivilegeType::getCode).collect(Collectors.toList())).containsOnly("menu");
+		assertThat(privilegeType.getChildren()).isNull();
 	}
 	
 	@Test

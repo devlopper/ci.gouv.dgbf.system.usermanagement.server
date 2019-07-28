@@ -44,9 +44,4 @@ private String readWhereIdentifierContains;
 		return super.__getQueryIdentifier__(functionClass, properties, parameters);
 	}
 	
-	@Override
-	public Class<Scope> getEntityClass() {
-		return Scope.class;
-	}
-	
 }

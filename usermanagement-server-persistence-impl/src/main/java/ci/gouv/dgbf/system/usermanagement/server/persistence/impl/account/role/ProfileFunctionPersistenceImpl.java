@@ -92,10 +92,5 @@ public class ProfileFunctionPersistenceImpl extends AbstractPersistenceEntityImp
 		}
 		return super.__getQueryIdentifier__(functionClass, properties, parameters);
 	}
-	
-	@Override
-	public Class<ProfileFunction> getEntityClass() {
-		return ProfileFunction.class;
-	}
 
 }

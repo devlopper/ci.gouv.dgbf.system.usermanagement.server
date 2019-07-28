@@ -4,10 +4,12 @@
     	<jta-data-source>${data.source.jndi.name}</jta-data-source>
     	<!-- What we can do -->
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PrivilegeType</class>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PrivilegeTypeHierarchy</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Privilege</class>
     	
     	<!-- Where we can do it -->
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType</class>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeTypeHierarchy</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope</class>
     	
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionType</class>

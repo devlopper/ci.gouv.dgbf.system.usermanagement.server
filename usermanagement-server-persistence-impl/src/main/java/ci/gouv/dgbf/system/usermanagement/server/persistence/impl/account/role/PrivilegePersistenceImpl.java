@@ -13,8 +13,4 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 public class PrivilegePersistenceImpl extends AbstractPersistenceEntityImpl<Privilege> implements PrivilegePersistence,Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Override
-	public Class<Privilege> getEntityClass() {
-		return Privilege.class;
-	}
 }

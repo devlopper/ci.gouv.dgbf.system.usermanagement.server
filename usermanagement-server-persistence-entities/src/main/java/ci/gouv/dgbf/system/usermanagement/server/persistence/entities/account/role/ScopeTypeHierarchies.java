@@ -1,0 +1,11 @@
+package ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role;
+
+import java.util.Collection;
+
+import org.cyk.utility.server.persistence.hierarchy.HierarchyCollectionInstance;
+
+public interface ScopeTypeHierarchies extends HierarchyCollectionInstance<ScopeType,ScopeTypeHierarchy> {
+
+	@Override ScopeTypeHierarchies add(Collection<ScopeTypeHierarchy> scopeTypeHierarchies);
+
+}

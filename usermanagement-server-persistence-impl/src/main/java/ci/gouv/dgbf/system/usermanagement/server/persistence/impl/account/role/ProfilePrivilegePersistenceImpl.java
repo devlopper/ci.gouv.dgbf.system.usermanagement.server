@@ -64,9 +64,5 @@ private String readByProfileCodes;
 		}
 		return super.__getQueryIdentifier__(functionClass, properties, parameters);
 	}
-	
-	@Override
-	public Class<ProfilePrivilege> getEntityClass() {
-		return ProfilePrivilege.class;
-	}
+
 }

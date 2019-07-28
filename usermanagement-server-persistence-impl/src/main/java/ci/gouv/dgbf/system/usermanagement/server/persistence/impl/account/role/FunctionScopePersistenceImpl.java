@@ -42,8 +42,4 @@ public class FunctionScopePersistenceImpl extends AbstractPersistenceEntityImpl<
 		return super.__getQueryIdentifier__(functionClass, properties, parameters);
 	}
 	
-	@Override
-	public Class<FunctionScope> getEntityClass() {
-		return FunctionScope.class;
-	}
 }

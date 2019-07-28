@@ -21,6 +21,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Privilege;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PrivilegeType;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PrivilegeTypeHierarchy;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfilePrivilege;
@@ -28,6 +29,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Resource;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeTypeHierarchy;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Service;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ServiceResource;
 
@@ -57,9 +59,11 @@ public class PersistableClassesGetterImpl extends AbstractFunctionWithProperties
 		classes.add(FunctionType.class);
 		
 		classes.add(Scope.class);
+		classes.add(ScopeTypeHierarchy.class);
 		classes.add(ScopeType.class);
 		
 		classes.add(Privilege.class);
+		classes.add(PrivilegeTypeHierarchy.class);
 		classes.add(PrivilegeType.class);
 		
 		classes.add(ServiceResource.class);
