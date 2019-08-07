@@ -14,9 +14,4 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 public class ServiceResourceBusinessImpl extends AbstractBusinessEntityImpl<ServiceResource, ServiceResourcePersistence> implements ServiceResourceBusiness,Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Override
-	protected Class<ServiceResource> __getPersistenceEntityClass__() {
-		return ServiceResource.class;
-	}
-	
 }

@@ -14,13 +14,17 @@ import org.cyk.utility.server.business.AbstractApplicationScopeLifeCycleListener
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionTypeBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.PrivilegeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.PrivilegeTypeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileTypeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeTypeBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.PrivilegeTypePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ScopeTypePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionType;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Privilege;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PrivilegeType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
@@ -54,31 +58,76 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 	/**/
 	
 	public void saveDataFromResources() {
-		PrivilegeType privilegeTypeModule = new PrivilegeType().setCode(PrivilegeType.CODE_MODULE).setName("Module");
-		PrivilegeType privilegeTypeService = new PrivilegeType().setCode(PrivilegeType.CODE_SERVICE).setName("Service").setParent(privilegeTypeModule);
-		PrivilegeType privilegeTypeMenu = new PrivilegeType().setCode(PrivilegeType.CODE_MENU).setName("Menu").setParent(privilegeTypeService);
-		PrivilegeType privilegeTypeAction = new PrivilegeType().setCode(PrivilegeType.CODE_ACTION).setName("Action").setParent(privilegeTypeMenu);
-				
-		__inject__(PrivilegeTypeBusiness.class).saveMany(__inject__(CollectionHelper.class).instanciate(privilegeTypeModule,privilegeTypeService,privilegeTypeMenu
-				,privilegeTypeAction));
-		
-		__inject__(ProfileTypeBusiness.class).saveMany(__inject__(CollectionHelper.class).instanciate(new ProfileType().setCode(ProfileType.CODE_SYSTEM).setName("Système")
-				,new ProfileType().setCode(ProfileType.CODE_UTILISATEUR).setName("Utilisateur")));
-		
-		ScopeType scopeTypeSection = new ScopeType().setCode("SECTION").setName("Section");
-		ScopeType scopeTypeUgp = new ScopeType().setCode("UGP").setName("Unité de gestion de la performance");
-		ScopeType scopeTypeUa = new ScopeType().setCode("UA").setName("Unité administrative");
-		ScopeType scopeTypeAb = new ScopeType().setCode("AB").setName("Acte budgétaire");
-		__inject__(ScopeTypeBusiness.class).saveMany(__inject__(CollectionHelper.class).instanciate(scopeTypeSection,scopeTypeUgp,scopeTypeUa,scopeTypeAb));
-		
 		FileExcelSheetDataArrayReader reader;
 		ArrayInstanceTwoDimensionString arrayInstance;
+		
+		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
+		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("TypeScope");
+		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
+		arrayInstance = reader.execute().getOutput();
+		Collection<ScopeType> scopeTypes = new ArrayList<>();
+		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount(); index = index + 1) {
+			ScopeType scopeType = new ScopeType().setCode(arrayInstance.get(index, 0)).setName(arrayInstance.get(index, 1));
+			for(ScopeType parent : scopeTypes)
+				if(parent.getCode().equals(arrayInstance.get(index, 2))) {
+					scopeType.addParents(parent);
+					break;
+				}
+			scopeTypes.add(scopeType);
+		}
+		__logInfo__("Creating "+scopeTypes.size()+" type de domaine");
+		__inject__(ScopeTypeBusiness.class).saveByBatch(scopeTypes,100);
+		
+		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
+		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("TypeProfile");
+		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
+		arrayInstance = reader.execute().getOutput();
+		Collection<ProfileType> profileTypes = new ArrayList<>();
+		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount(); index = index + 1)
+			profileTypes.add(new ProfileType().setCode(arrayInstance.get(index, 0)).setName(arrayInstance.get(index, 1)));
+		__logInfo__("Creating "+profileTypes.size()+" type de profile");
+		__inject__(ProfileTypeBusiness.class).saveByBatch(profileTypes,100);
+		
+		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
+		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("TypePrivilege");
+		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
+		arrayInstance = reader.execute().getOutput();
+		Collection<PrivilegeType> privilegeTypes = new ArrayList<>();
+		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount(); index = index + 1) {
+			PrivilegeType privilegeType = new PrivilegeType().setCode(arrayInstance.get(index, 0)).setName(arrayInstance.get(index, 1));
+			for(PrivilegeType parent : privilegeTypes)
+				if(parent.getCode().equals(arrayInstance.get(index, 2))) {
+					privilegeType.addParents(parent);
+					break;
+				}
+			privilegeTypes.add(privilegeType);
+		}
+		__logInfo__("Creating "+privilegeTypes.size()+" type de privileges");
+		__inject__(PrivilegeTypeBusiness.class).saveByBatch(privilegeTypes,100);
+		
+		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
+		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("Privilege");
+		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
+		arrayInstance = reader.execute().getOutput();
+		Collection<Privilege> privileges = new ArrayList<>();
+		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount(); index = index + 1) {
+			Privilege privilege = new Privilege().setCode(arrayInstance.get(index, 0)).setName(arrayInstance.get(index, 1)).setType(__inject__(PrivilegeTypePersistence.class).readByBusinessIdentifier(arrayInstance.get(index, 2)));
+			for(Privilege parent : privileges)
+				if(parent.getCode().equals(arrayInstance.get(index, 3))) {
+					privilege.addParents(parent);
+					break;
+				}
+			privileges.add(privilege);
+		}
+		__logInfo__("Creating "+privileges.size()+" privileges");
+		__inject__(PrivilegeBusiness.class).saveByBatch(privileges,100);
 		
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("ministère");
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		arrayInstance = reader.execute().getOutput();
 		Collection<Scope> sections = new ArrayList<>();
+		ScopeType scopeTypeSection = __inject__(ScopeTypePersistence.class).readByBusinessIdentifier("UA");
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount(); index = index + 1)
 			sections.add(new Scope().setIdentifier(arrayInstance.get(index, 0)).setType(scopeTypeSection));
 		__logInfo__("Creating "+sections.size()+" section");
@@ -89,6 +138,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		arrayInstance = reader.execute().getOutput();
 		Collection<Scope> ugps = new ArrayList<>();
+		ScopeType scopeTypeUgp = __inject__(ScopeTypePersistence.class).readByBusinessIdentifier("UGP");
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount(); index = index + 1)
 			ugps.add(new Scope().setIdentifier(arrayInstance.get(index, 0)).setType(scopeTypeUgp));
 		__logInfo__("Creating "+ugps.size()+" ugp");
@@ -99,6 +149,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		arrayInstance = reader.execute().getOutput();
 		Collection<Scope> uas = new ArrayList<>();
+		ScopeType scopeTypeUa = __inject__(ScopeTypePersistence.class).readByBusinessIdentifier("UA");
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 1000; index = index + 1)
 			uas.add(new Scope().setIdentifier(arrayInstance.get(index, 0)).setType(scopeTypeUa));
 		__logInfo__("Creating "+uas.size()+" ua");
@@ -108,11 +159,11 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("catégorie");
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		arrayInstance = reader.execute().getOutput();
-		Collection<FunctionType> roleCategories = new ArrayList<>();
+		Collection<FunctionType> functionTypes = new ArrayList<>();
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount(); index = index + 1)
-			roleCategories.add(new FunctionType().setCode(arrayInstance.get(index, 0)).setName(arrayInstance.get(index, 1)));
-		__logInfo__("Creating "+roleCategories.size()+" categories de fonction");
-		__inject__(FunctionTypeBusiness.class).saveByBatch(roleCategories,100);
+			functionTypes.add(new FunctionType().setCode(arrayInstance.get(index, 0)).setName(arrayInstance.get(index, 1)));
+		__logInfo__("Creating "+functionTypes.size()+" type de fonction");
+		__inject__(FunctionTypeBusiness.class).saveByBatch(functionTypes,100);
 		
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("fonction");
@@ -122,7 +173,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		Collection<FunctionScope> functionScopes = new ArrayList<>();
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount(); index = index + 1) {
 			Function function = new Function().setCode(arrayInstance.get(index, 0)).setName(arrayInstance.get(index, 1))
-					.setType(__inject__(CollectionHelper.class).getElementAt(roleCategories, arrayInstance.get(index, 2).startsWith("ADMIN") ? 0 : 1));
+					.setType(__inject__(CollectionHelper.class).getElementAt(functionTypes, arrayInstance.get(index, 2).startsWith("ADMIN") ? 0 : 1));
 			function.setIsProfileCreatableOnCreate(Boolean.TRUE);
 			functions.add(function);
 			if(arrayInstance.get(index, 3).startsWith("oui")) {

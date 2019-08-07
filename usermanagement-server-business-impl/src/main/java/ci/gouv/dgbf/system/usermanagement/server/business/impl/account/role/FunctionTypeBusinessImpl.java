@@ -13,10 +13,5 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 @ApplicationScoped
 public class FunctionTypeBusinessImpl extends AbstractBusinessEntityImpl<FunctionType, FunctionTypePersistence> implements FunctionTypeBusiness,Serializable {
 	private static final long serialVersionUID = 1L;
-
-	@Override
-	protected Class<FunctionType> __getPersistenceEntityClass__() {
-		return FunctionType.class;
-	}
 	
 }

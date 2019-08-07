@@ -21,9 +21,5 @@ public class UserAccountProfileBusinessImpl extends AbstractBusinessEntityImpl<U
 		return getPersistence().readByUserAccount(userAccount);
 	}
 	
-	@Override
-	protected Class<UserAccountProfile> __getPersistenceEntityClass__() {
-		return UserAccountProfile.class;
-	}
-	
+
 }

@@ -19,6 +19,7 @@ public class FunctionDto extends AbstractEntityFromPersistenceEntityCodedAndName
 	private static final long serialVersionUID = 1L;
 	
 	private FunctionTypeDto type;
+	private Boolean isProfileCreatableOnCreate;
 	
 	@Override
 	public FunctionDto setCode(String code) {

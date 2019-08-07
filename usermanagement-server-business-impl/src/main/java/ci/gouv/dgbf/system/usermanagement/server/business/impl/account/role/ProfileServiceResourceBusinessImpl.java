@@ -53,9 +53,5 @@ public class ProfileServiceResourceBusinessImpl extends AbstractBusinessEntityIm
 		return Boolean.TRUE;
 	}
 	
-	@Override
-	protected Class<ProfileServiceResource> __getPersistenceEntityClass__() {
-		return ProfileServiceResource.class;
-	}
 	
 }

@@ -13,10 +13,5 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 @ApplicationScoped
 public class ResourceBusinessImpl extends AbstractBusinessEntityImpl<Resource, ResourcePersistence> implements ResourceBusiness,Serializable {
 	private static final long serialVersionUID = 1L;
-
-	@Override
-	protected Class<Resource> __getPersistenceEntityClass__() {
-		return Resource.class;
-	}
 	
 }

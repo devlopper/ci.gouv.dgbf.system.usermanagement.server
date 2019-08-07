@@ -21,9 +21,5 @@ public class UserAccountFunctionScopeBusinessImpl extends AbstractBusinessEntity
 		return getPersistence().readByUserAccount(userAccount);
 	}
 	
-	@Override
-	protected Class<UserAccountFunctionScope> __getPersistenceEntityClass__() {
-		return UserAccountFunctionScope.class;
-	}
-	
+
 }

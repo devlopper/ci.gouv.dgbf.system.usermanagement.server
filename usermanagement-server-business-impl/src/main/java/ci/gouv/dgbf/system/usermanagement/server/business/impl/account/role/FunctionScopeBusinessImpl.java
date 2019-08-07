@@ -48,9 +48,4 @@ public class FunctionScopeBusinessImpl extends AbstractBusinessEntityImpl<Functi
 		}
 	}
 	
-	@Override
-	protected Class<FunctionScope> __getPersistenceEntityClass__() {
-		return FunctionScope.class;
-	}
-	
 }

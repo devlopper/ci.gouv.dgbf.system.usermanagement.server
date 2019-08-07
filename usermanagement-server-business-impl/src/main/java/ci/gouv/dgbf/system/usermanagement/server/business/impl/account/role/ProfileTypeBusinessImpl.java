@@ -14,9 +14,4 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 public class ProfileTypeBusinessImpl extends AbstractBusinessEntityImpl<ProfileType, ProfileTypePersistence> implements ProfileTypeBusiness,Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Override
-	protected Class<ProfileType> __getPersistenceEntityClass__() {
-		return ProfileType.class;
-	}
-	
 }

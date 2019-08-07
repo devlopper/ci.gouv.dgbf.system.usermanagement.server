@@ -14,11 +14,5 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Us
 public class UserAccountInterimBusinessImpl extends AbstractBusinessEntityImpl<UserAccountInterim, UserAccountInterimPersistence> implements UserAccountInterimBusiness,Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Override
-	protected Class<UserAccountInterim> __getPersistenceEntityClass__() {
-		return UserAccountInterim.class;
-	}
-	
-	
 
 }

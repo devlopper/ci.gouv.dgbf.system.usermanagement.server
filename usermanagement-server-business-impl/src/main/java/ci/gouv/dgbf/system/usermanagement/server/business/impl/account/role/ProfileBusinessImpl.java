@@ -117,10 +117,5 @@ public class ProfileBusinessImpl extends AbstractBusinessEntityImpl<Profile, Pro
 	protected Boolean __isCallDeleteByInstanceOnDeleteByIdentifier__() {
 		return Boolean.TRUE;
 	}
-	
-	@Override
-	protected Class<Profile> __getPersistenceEntityClass__() {
-		return Profile.class;
-	}
-	
+		
 }

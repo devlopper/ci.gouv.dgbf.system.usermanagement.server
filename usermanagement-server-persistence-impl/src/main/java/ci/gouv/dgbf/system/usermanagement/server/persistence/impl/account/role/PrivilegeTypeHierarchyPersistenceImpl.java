@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.enterprise.context.ApplicationScoped;
 
-import org.cyk.utility.server.persistence.hierarchy.AbstractHierarchyPersistenceImpl;
+import org.cyk.utility.server.persistence.jpa.hierarchy.AbstractHierarchyPersistenceImpl;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.PrivilegeTypeHierarchyPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PrivilegeType;

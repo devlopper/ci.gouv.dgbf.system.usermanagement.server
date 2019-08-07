@@ -28,7 +28,14 @@ public class Profile extends AbstractIdentifiedByStringAndCodedAndNamed implemen
 
 	@ManyToOne @JoinColumn(name=COLUMN_TYPE) @NotNull private ProfileType type;
 	
+	/*
+	 * The functions covered by this profile
+	 */
 	@Transient private Functions functions;
+	
+	/*
+	 * The privileges associated to this profile
+	 */
 	@Transient private Privileges privileges;
 	
 	/**/

@@ -12,6 +12,7 @@ import org.cyk.utility.server.business.BusinessFunctionCreator;
 import org.cyk.utility.server.business.BusinessFunctionRemover;
 
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileTypePersistence;
@@ -23,11 +24,6 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 @ApplicationScoped
 public class FunctionBusinessImpl extends AbstractBusinessEntityImpl<Function, FunctionPersistence> implements FunctionBusiness,Serializable {
 	private static final long serialVersionUID = 1L;
-
-	@Override
-	protected Class<Function> __getPersistenceEntityClass__() {
-		return Function.class;
-	}
 
 	@Override
 	protected void __listenExecuteCreateAfter__(Function function, Properties properties,BusinessFunctionCreator functionCreator) {
@@ -52,9 +48,15 @@ public class FunctionBusinessImpl extends AbstractBusinessEntityImpl<Function, F
 			@Override
 			public void run() {
 				Collection<Function> functions = Arrays.asList(function);
+				__deleteMany__(__inject__(UserFunctionPersistence.class).readByFunctions(functions));
 				__deleteMany__(__inject__(ProfileFunctionPersistence.class).readByFunctions(functions));
 			}
 		});
+	}
+	
+	@Override
+	protected Boolean __isCallDeleteByInstanceOnDeleteByIdentifier__() {
+		return Boolean.TRUE;
 	}
 	
 }

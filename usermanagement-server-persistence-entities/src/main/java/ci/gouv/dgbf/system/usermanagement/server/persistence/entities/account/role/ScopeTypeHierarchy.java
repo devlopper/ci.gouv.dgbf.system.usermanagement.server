@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.cyk.utility.server.persistence.hierarchy.AbstractHierarchy;
+import org.cyk.utility.server.persistence.jpa.hierarchy.AbstractHierarchy;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -34,4 +34,5 @@ public class ScopeTypeHierarchy extends AbstractHierarchy<ScopeType> implements 
 	
 	public static final String TABLE_NAME = ScopeType.TABLE_NAME+"hierarchy";
 	
+	public static final String UNIQUE_CONSTRAINT_PARENT_CHILD_NAME = TABLE_NAME+"_"+AbstractHierarchy.UNIQUE_CONSTRAINT_PARENT_CHILD_NAME;
 }

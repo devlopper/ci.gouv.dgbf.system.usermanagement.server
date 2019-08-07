@@ -34,11 +34,6 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected Class<UserAccount> __getPersistenceEntityClass__() {
-		return UserAccount.class;
-	}
-	
-	@Override
 	protected void __listenExecuteCreateBefore__(UserAccount userAccount, Properties properties,BusinessFunctionCreator function) {
 		super.__listenExecuteCreateBefore__(userAccount, properties, function);
 		function.addTryBeginRunnables(new Runnable() {
@@ -71,6 +66,8 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 			Profile profile = new Profile();
 			profile.setCode(userAccount.getIdentifier());
 			profile.setName(userAccount.getUser().getNames());
+			if(__injectStringHelper__().isBlank(profile.getName()))
+				profile.setName(profile.getCode());
 			profile.setType(__inject__(ProfileTypePersistence.class).readByBusinessIdentifier(ProfileType.CODE_UTILISATEUR));
 			__create__(profile);
 			UserAccountProfile userAccountProfile = new UserAccountProfile();

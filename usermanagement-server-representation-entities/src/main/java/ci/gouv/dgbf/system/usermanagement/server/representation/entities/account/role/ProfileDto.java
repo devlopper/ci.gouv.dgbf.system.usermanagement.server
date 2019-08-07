@@ -26,6 +26,11 @@ public class ProfileDto extends AbstractEntityFromPersistenceEntityCodedAndNamed
 		return (ProfileDto) super.setCode(code);
 	}
 	
+	@Override
+	public ProfileDto setName(String name) {
+		return (ProfileDto) super.setName(name);
+	}
+	
 	public ProfileDto addFunctionsByCodes(Collection<String> functionsCodes) {
 		if(__inject__(CollectionHelper.class).isNotEmpty(functionsCodes)) {
 			for(String index : functionsCodes)

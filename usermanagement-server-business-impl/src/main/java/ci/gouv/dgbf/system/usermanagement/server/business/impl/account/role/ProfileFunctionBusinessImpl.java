@@ -47,9 +47,5 @@ public class ProfileFunctionBusinessImpl extends AbstractBusinessEntityImpl<Prof
 		return getPersistence().readByProfiles(profiles);
 	}
 	
-	@Override
-	protected Class<ProfileFunction> __getPersistenceEntityClass__() {
-		return ProfileFunction.class;
-	}
 
 }

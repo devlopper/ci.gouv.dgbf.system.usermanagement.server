@@ -7,7 +7,7 @@ import javax.persistence.AccessType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.cyk.utility.server.persistence.hierarchy.AbstractIdentifiedByStringAndCodedAndNamedAndHierarchical;
+import org.cyk.utility.server.persistence.jpa.hierarchy.AbstractIdentifiedByStringAndCodedAndNamed;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
 
 @Entity @Getter @Setter @Accessors(chain=true) @Access(AccessType.FIELD)
 @Table(name=ScopeType.TABLE_NAME)
-public class ScopeType extends AbstractIdentifiedByStringAndCodedAndNamedAndHierarchical<ScopeType,ScopeTypes> implements Serializable {
+public class ScopeType extends AbstractIdentifiedByStringAndCodedAndNamed<ScopeType,ScopeTypes> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Override

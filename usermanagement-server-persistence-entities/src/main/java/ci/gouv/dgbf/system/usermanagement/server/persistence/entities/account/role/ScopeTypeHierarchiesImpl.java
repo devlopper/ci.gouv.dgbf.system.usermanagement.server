@@ -3,9 +3,9 @@ package ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.r
 import java.io.Serializable;
 import java.util.Collection;
 
-import org.cyk.utility.server.persistence.hierarchy.AbstractHierarchyCollectionInstanceImpl;
+import org.cyk.utility.server.persistence.jpa.hierarchy.AbstractHierarchiesImpl;
 
-public class ScopeTypeHierarchiesImpl extends AbstractHierarchyCollectionInstanceImpl<ScopeType,ScopeTypeHierarchy> implements ScopeTypeHierarchies,Serializable {
+public class ScopeTypeHierarchiesImpl extends AbstractHierarchiesImpl<ScopeTypeHierarchy,ScopeType> implements ScopeTypeHierarchies,Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Override

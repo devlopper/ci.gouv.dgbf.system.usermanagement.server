@@ -11,9 +11,9 @@ import java.util.stream.Collectors;
 
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.collection.CollectionHelper;
-import org.cyk.utility.map.MapHelper;
 import org.cyk.utility.server.business.test.TestBusinessCreate;
 import org.cyk.utility.server.business.test.arquillian.AbstractBusinessArquillianIntegrationTestWithDefaultDeployment;
+import org.cyk.utility.server.persistence.query.filter.Filter;
 import org.cyk.utility.stream.distributed.Topic;
 import org.cyk.utility.system.node.SystemNodeServer;
 import org.cyk.utility.time.TimeHelper;
@@ -22,6 +22,7 @@ import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.UserRepresentation;
 
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionTypeBusiness;
@@ -36,6 +37,7 @@ import ci.gouv.dgbf.system.usermanagement.server.business.impl.ApplicationScopeL
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePrivilegePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.User;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
@@ -182,14 +184,14 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	public void crud_profile_user_with_privileges() throws Exception{
 		PrivilegeType privilegeType = new PrivilegeType().setCode("type").setName(__getRandomName__());
 		Privilege privilegeModule01 = new Privilege().setCode("m01").setName(__getRandomName__()).setType(privilegeType);
-		Privilege privilegeService01 = new Privilege().setCode("s01").setName(__getRandomName__()).setType(privilegeType).setParent(privilegeModule01);
-		Privilege privilegeService02 = new Privilege().setCode("s02").setName(__getRandomName__()).setType(privilegeType).setParent(privilegeModule01);
-		Privilege privilegeAction01 = new Privilege().setCode("a01").setName(__getRandomName__()).setType(privilegeType).setParent(privilegeService02);
-		Privilege privilegeAction02 = new Privilege().setCode("a02").setName(__getRandomName__()).setType(privilegeType).setParent(privilegeService02);
+		Privilege privilegeService01 = new Privilege().setCode("s01").setName(__getRandomName__()).setType(privilegeType).addParents(privilegeModule01);
+		Privilege privilegeService02 = new Privilege().setCode("s02").setName(__getRandomName__()).setType(privilegeType).addParents(privilegeModule01);
+		Privilege privilegeAction01 = new Privilege().setCode("a01").setName(__getRandomName__()).setType(privilegeType).addParents(privilegeService02);
+		Privilege privilegeAction02 = new Privilege().setCode("a02").setName(__getRandomName__()).setType(privilegeType).addParents(privilegeService02);
 		Privilege privilegeModule02 = new Privilege().setCode("m02").setName(__getRandomName__()).setType(privilegeType);
 		Privilege privilegeModule03 = new Privilege().setCode("m03").setName(__getRandomName__()).setType(privilegeType);
-		Privilege privilegeService03 = new Privilege().setCode("s03").setName(__getRandomName__()).setType(privilegeType).setParent(privilegeModule03);
-		Privilege privilegeAction03 = new Privilege().setCode("a03").setName(__getRandomName__()).setType(privilegeType).setParent(privilegeService03);
+		Privilege privilegeService03 = new Privilege().setCode("s03").setName(__getRandomName__()).setType(privilegeType).addParents(privilegeModule03);
+		Privilege privilegeAction03 = new Privilege().setCode("a03").setName(__getRandomName__()).setType(privilegeType).addParents(privilegeService03);
 		__inject__(PrivilegeTypeBusiness.class).createMany(__inject__(CollectionHelper.class).instanciate(privilegeType));
 		__inject__(PrivilegeBusiness.class).createMany(__inject__(CollectionHelper.class).instanciate(privilegeModule01,privilegeService01,privilegeService02
 				,privilegeAction01,privilegeAction02,privilegeModule02,privilegeModule03,privilegeService03,privilegeAction03));
@@ -234,21 +236,25 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		__inject__(ProfileBusiness.class).create(new Profile().setCode("p03").setName(__getRandomName__()));
 		__inject__(ProfileBusiness.class).create(new Profile().setCode("p04").setName(__getRandomName__()));
 		
-		Collection<ProfileFunction> profileFunctions = __inject__(ProfileFunctionBusiness.class).find(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p01")));
+		Collection<ProfileFunction> profileFunctions = __inject__(ProfileFunctionBusiness.class).find(new Properties()
+				.setQueryFilters(__inject__(Filter.class).setKlass(ProfileFunction.class).addField(ProfileFunction.FIELD_PROFILE,Arrays.asList("p01"))));
 		assertThat(profileFunctions).isEmpty();
 		
 		__inject__(ProfileFunctionBusiness.class).create(new ProfileFunction().setProfileFromCode("p01").setFunctionFromCode("f01"));
-		profileFunctions = __inject__(ProfileFunctionBusiness.class).find(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p01")));
+		profileFunctions = __inject__(ProfileFunctionBusiness.class).find(new Properties()
+				.setQueryFilters(__inject__(Filter.class).setKlass(ProfileFunction.class).addField(ProfileFunction.FIELD_PROFILE,Arrays.asList("p01"))));
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01");
 		
 		__inject__(ProfileFunctionBusiness.class).create(new ProfileFunction().setProfileFromCode("p02").setFunctionFromCode("f02"));
 		__inject__(ProfileFunctionBusiness.class).create(new ProfileFunction().setProfileFromCode("p02").setFunctionFromCode("f03"));
 		
-		profileFunctions = __inject__(ProfileFunctionBusiness.class).find(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p01")));
+		profileFunctions = __inject__(ProfileFunctionBusiness.class).find(new Properties()
+				.setQueryFilters(__inject__(Filter.class).setKlass(ProfileFunction.class).addField(ProfileFunction.FIELD_PROFILE,Arrays.asList("p01"))));
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01");
-		profileFunctions = __inject__(ProfileFunctionBusiness.class).find(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p02")));
+		profileFunctions = __inject__(ProfileFunctionBusiness.class).find(new Properties()
+				.setQueryFilters(__inject__(Filter.class).setKlass(ProfileFunction.class).addField(ProfileFunction.FIELD_PROFILE,Arrays.asList("p02"))));
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f02","f03");
 		
@@ -256,18 +262,88 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		__inject__(ProfileFunctionBusiness.class).create(new ProfileFunction().setProfileFromCode("p03").setFunctionFromCode("f02"));
 		__inject__(ProfileFunctionBusiness.class).create(new ProfileFunction().setProfileFromCode("p03").setFunctionFromCode("f03"));
 		
-		profileFunctions = __inject__(ProfileFunctionBusiness.class).find(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p01")));
+		profileFunctions = __inject__(ProfileFunctionBusiness.class).find(new Properties()
+				.setQueryFilters(__inject__(Filter.class).setKlass(ProfileFunction.class).addField(ProfileFunction.FIELD_PROFILE,Arrays.asList("p01"))));
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01");
-		profileFunctions = __inject__(ProfileFunctionBusiness.class).find(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p02")));
+		profileFunctions = __inject__(ProfileFunctionBusiness.class).find(new Properties()
+				.setQueryFilters(__inject__(Filter.class).setKlass(ProfileFunction.class).addField(ProfileFunction.FIELD_PROFILE,Arrays.asList("p02"))));
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f02","f03");
-		profileFunctions = __inject__(ProfileFunctionBusiness.class).find(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p03")));
+		profileFunctions = __inject__(ProfileFunctionBusiness.class).find(new Properties()
+				.setQueryFilters(__inject__(Filter.class).setKlass(ProfileFunction.class).addField(ProfileFunction.FIELD_PROFILE,Arrays.asList("p03"))));
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01","f02","f03");
 		
-		profileFunctions = __inject__(ProfileFunctionBusiness.class).find(new Properties().setQueryFilters(__inject__(MapHelper.class).instanciate(ProfileFunction.FIELD_PROFILE, "p04")));
+		profileFunctions = __inject__(ProfileFunctionBusiness.class).find(new Properties()
+				.setQueryFilters(__inject__(Filter.class).setKlass(ProfileFunction.class).addField(ProfileFunction.FIELD_PROFILE,Arrays.asList("p04"))));
 		assertThat(profileFunctions).isEmpty();
+	}
+	
+	@Test
+	public void create_user() throws Exception{
+		FunctionType functionType = new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(FunctionTypeBusiness.class).create(functionType);
+		__inject__(FunctionBusiness.class).create(new Function().setCode("f01").setName(__getRandomName__()).setType(functionType).setIsProfileCreatableOnCreate(Boolean.FALSE));
+		__inject__(FunctionBusiness.class).create(new Function().setCode("f02").setName(__getRandomName__()).setType(functionType).setIsProfileCreatableOnCreate(Boolean.FALSE));
+		__inject__(FunctionBusiness.class).create(new Function().setCode("f03").setName(__getRandomName__()).setType(functionType).setIsProfileCreatableOnCreate(Boolean.FALSE));
+		
+		User user = new User().setIdentifier("u01").setFirstName("Komenan").setLastNames("Yao Christian").setElectronicMailAddress("a@b.c");
+		__inject__(UserBusiness.class).create(user);
+		
+		user = __inject__(UserBusiness.class).findBySystemIdentifier("u01");
+		assertThat(user).isNotNull();
+		assertThat(user.getNames()).isNull();
+		assertThat(user.getFunctions()).isNull();
+		user = __inject__(UserBusiness.class).findBySystemIdentifier("u01",new Properties().setFields("names,functions"));
+		assertThat(user).isNotNull();
+		assertThat(user.getNames()).isEqualTo("Komenan Yao Christian");
+		assertThat(user.getFunctions()).isNull();
+		
+		assertThat(user.getFunctions()).isNull();
+		user.addFunctionsByCodes("f01");
+		assertThat(user.getFunctions()).isNotNull();
+		assertThat(user.getFunctions().get()).hasSize(1);
+		__inject__(UserBusiness.class).update(user,new Properties().setFields("functions"));
+		
+		user = __inject__(UserBusiness.class).findBySystemIdentifier("u01");
+		assertThat(user).isNotNull();
+		assertThat(user.getNames()).isNull();
+		assertThat(user.getFunctions()).isNull();
+		user = __inject__(UserBusiness.class).findBySystemIdentifier("u01",new Properties().setFields("names,functions"));
+		assertThat(user).isNotNull();
+		assertThat(user.getNames()).isEqualTo("Komenan Yao Christian");
+		assertThat(user.getFunctions()).isNotNull();
+		assertThat(user.getFunctions().get().stream().map(Function::getCode).collect(Collectors.toList())).containsOnly("f01");
+		
+		user.addFunctionsByCodes("f03");
+		__inject__(UserBusiness.class).update(user,new Properties().setFields("functions"));
+		
+		user = __inject__(UserBusiness.class).findBySystemIdentifier("u01");
+		assertThat(user).isNotNull();
+		assertThat(user.getNames()).isNull();
+		assertThat(user.getFunctions()).isNull();
+		user = __inject__(UserBusiness.class).findBySystemIdentifier("u01",new Properties().setFields("names,functions"));
+		assertThat(user).isNotNull();
+		assertThat(user.getNames()).isEqualTo("Komenan Yao Christian");
+		assertThat(user.getFunctions()).isNotNull();
+		assertThat(user.getFunctions().get().stream().map(Function::getCode).collect(Collectors.toList())).containsOnly("f01","f03");
+		
+		user.getFunctions().removeAll();
+		user.addFunctionsByCodes("f03");
+		__inject__(UserBusiness.class).update(user,new Properties().setFields("functions"));
+		user = __inject__(UserBusiness.class).findBySystemIdentifier("u01",new Properties().setFields("names,functions"));
+		assertThat(user).isNotNull();
+		assertThat(user.getNames()).isEqualTo("Komenan Yao Christian");
+		assertThat(user.getFunctions()).isNotNull();
+		assertThat(user.getFunctions().get().stream().map(Function::getCode).collect(Collectors.toList())).containsOnly("f03");
+		
+		user.getFunctions().removeAll();
+		__inject__(UserBusiness.class).update(user,new Properties().setFields("functions"));
+		user = __inject__(UserBusiness.class).findBySystemIdentifier("u01",new Properties().setFields("names,functions"));
+		assertThat(user).isNotNull();
+		assertThat(user.getNames()).isEqualTo("Komenan Yao Christian");
+		assertThat(user.getFunctions()).isNull();
 	}
 	
 	@Test
@@ -287,7 +363,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		__inject__(ScopeBusiness.class).create(scope);
 		FunctionType functionType = new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__());
 		__inject__(FunctionTypeBusiness.class).create(functionType);
-		Function function = new Function().setCode("CONTROLEUR_FINANCIER").setName(__getRandomName__()).setType(functionType);
+		Function function = new Function().setCode("CONTROLEUR_FINANCIER").setName(__getRandomName__()).setType(functionType).setIsProfileCreatableOnCreate(Boolean.FALSE);
 		__inject__(FunctionBusiness.class).create(function);
 		FunctionScope functionScope = new FunctionScope().setFunction(function).setScope(scope);
 		__inject__(FunctionScopeBusiness.class).create(functionScope);

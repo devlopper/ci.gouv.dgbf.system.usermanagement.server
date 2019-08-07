@@ -14,9 +14,4 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Ac
 public class AccountBusinessImpl extends AbstractBusinessEntityImpl<Account, AccountPersistence> implements AccountBusiness,Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	@Override
-	protected Class<Account> __getPersistenceEntityClass__() {
-		return Account.class;
-	}
-	
 }

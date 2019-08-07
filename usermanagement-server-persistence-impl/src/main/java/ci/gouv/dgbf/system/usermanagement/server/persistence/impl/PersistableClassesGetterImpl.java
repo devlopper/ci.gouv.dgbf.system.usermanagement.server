@@ -16,10 +16,12 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Us
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterim;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterimModel;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Privilege;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PrivilegeHierarchy;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PrivilegeType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PrivilegeTypeHierarchy;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
@@ -28,6 +30,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Resource;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeHierarchy;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeTypeHierarchy;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Service;
@@ -46,6 +49,7 @@ public class PersistableClassesGetterImpl extends AbstractFunctionWithProperties
 		classes.add(UserAccountProfile.class);
 		
 		classes.add(UserAccount.class);
+		classes.add(UserFunction.class);
 		classes.add(User.class);
 		classes.add(Account.class);
 		
@@ -58,10 +62,12 @@ public class PersistableClassesGetterImpl extends AbstractFunctionWithProperties
 		classes.add(Function.class);
 		classes.add(FunctionType.class);
 		
+		classes.add(ScopeHierarchy.class);
 		classes.add(Scope.class);
 		classes.add(ScopeTypeHierarchy.class);
 		classes.add(ScopeType.class);
 		
+		classes.add(PrivilegeHierarchy.class);
 		classes.add(Privilege.class);
 		classes.add(PrivilegeTypeHierarchy.class);
 		classes.add(PrivilegeType.class);

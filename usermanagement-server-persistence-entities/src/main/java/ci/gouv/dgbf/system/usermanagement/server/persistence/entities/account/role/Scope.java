@@ -10,7 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByStringAndLinkedByStringAndNamed;
+import org.cyk.utility.server.persistence.jpa.hierarchy.AbstractIdentifiedByStringAndLinkedByStringAndNamed;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,7 +23,7 @@ import lombok.experimental.Accessors;
 @Getter @Setter @Accessors(chain=true)
 @Table(name=Scope.TABLE_NAME)
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class Scope extends AbstractIdentifiedByStringAndLinkedByStringAndNamed implements Serializable {
+public class Scope extends AbstractIdentifiedByStringAndLinkedByStringAndNamed<Scope,Scopes> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne @JoinColumn(name=COLUMN_TYPE) @NotNull private ScopeType type;

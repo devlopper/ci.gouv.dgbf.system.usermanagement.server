@@ -7,7 +7,7 @@ import javax.persistence.AccessType;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.cyk.utility.server.persistence.hierarchy.AbstractIdentifiedByStringAndCodedAndNamedAndHierarchical;
+import org.cyk.utility.server.persistence.jpa.hierarchy.AbstractIdentifiedByStringAndCodedAndNamed;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -16,13 +16,14 @@ import lombok.experimental.Accessors;
 
 @Entity @Getter @Setter @Accessors(chain=true) @Access(AccessType.FIELD) @ToString
 @Table(name=PrivilegeType.TABLE_NAME)
-public class PrivilegeType extends AbstractIdentifiedByStringAndCodedAndNamedAndHierarchical<PrivilegeType,PrivilegeTypes> implements Serializable {
+public class PrivilegeType extends AbstractIdentifiedByStringAndCodedAndNamed<PrivilegeType,PrivilegeTypes> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Override
 	public PrivilegeType addParents(PrivilegeType... children) {
 		return (PrivilegeType) super.addParents(children);
 	}
+	
 	@Override
 	public PrivilegeType setIdentifier(String identifier) {
 		return (PrivilegeType) super.setIdentifier(identifier);
