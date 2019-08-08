@@ -47,6 +47,11 @@ private String readByProfileCodes;
 	}
 	
 	@Override
+	public Collection<ProfilePrivilege> readByProfiles(Profile... profiles) {
+		return readByProfiles(__injectCollectionHelper__().instanciate(profiles));
+	}
+	
+	@Override
 	protected Object[] __getQueryParameters__(PersistenceQueryContext queryContext, Properties properties,Object... objects) {
 		if(queryContext.getQuery().isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readByProfileCodes)) {
 			if(__inject__(ArrayHelper.class).isEmpty(objects))

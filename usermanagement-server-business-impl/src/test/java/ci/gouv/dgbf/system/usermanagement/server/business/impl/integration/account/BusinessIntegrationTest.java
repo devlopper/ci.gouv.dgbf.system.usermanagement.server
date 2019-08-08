@@ -34,6 +34,7 @@ import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.Profi
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeTypeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.impl.ApplicationScopeLifeCycleListener;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePrivilegePersistence;
@@ -365,22 +366,32 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		__inject__(FunctionTypeBusiness.class).create(functionType);
 		Function function = new Function().setCode("CONTROLEUR_FINANCIER").setName(__getRandomName__()).setType(functionType).setIsProfileCreatableOnCreate(Boolean.FALSE);
 		__inject__(FunctionBusiness.class).create(function);
+		__inject__(FunctionBusiness.class).create(new Function().setCode("CE").setName(__getRandomName__()).setType(functionType).setIsProfileCreatableOnCreate(Boolean.FALSE));
 		FunctionScope functionScope = new FunctionScope().setFunction(function).setScope(scope);
 		__inject__(FunctionScopeBusiness.class).create(functionScope);
 		Profile profile = new Profile().setCode("p001").setName(__getRandomName__());
 		__inject__(ProfileBusiness.class).create(profile);
 		
 		UserAccount userAccount = new UserAccount().setIsPersistToKeycloakOnCreate(Boolean.TRUE);
-		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__());
+		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__())
+		.addFunctionsByCodes("CONTROLEUR_FINANCIER");
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__());
 		userAccount.addFunctionScopes(functionScope);
 		userAccount.addProfiles(profile);
 		
+		assertThat(__inject__(UserFunctionPersistence.class).count()).isEqualTo(0l);
 		__inject__(UserAccountBusiness.class).create(userAccount);
+		assertThat(__inject__(UserFunctionPersistence.class).count()).isEqualTo(1l);
 		
 		UserAccount userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier());
 		assertThat(userAccount01).isNotNull();
 		assertThat(userAccount01.getFunctionScopes()).isNull();
+		
+		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_USER+"."+User.FIELD_FUNCTIONS));
+		assertThat(userAccount01).isNotNull();
+		assertThat(userAccount01.getUser().getFunctions()).isNotNull();
+		assertThat(userAccount01.getUser().getFunctions().get()).isNotEmpty();
+		assertThat(userAccount01.getUser().getFunctions().get().stream().map(Function::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER");
 		
 		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_FUNCTION_SCOPES));
 		assertThat(userAccount01).isNotNull();
@@ -404,6 +415,22 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		assertThat(userAccount01.getProfiles()).isNotNull();
 		assertThat(userAccount01.getProfiles().get()).isNotEmpty();
 		assertThat(userAccount01.getProfiles().get().stream().map(Profile::getCode).collect(Collectors.toList())).contains("p001");
+		
+		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_USER+"."+User.FIELD_FUNCTIONS));
+		userAccount01.getUser().addFunctionsByCodes("CE");
+		__inject__(UserAccountBusiness.class).update(userAccount01,new Properties().setFields("functions"));
+		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_USER+"."+User.FIELD_FUNCTIONS));
+		assertThat(userAccount01).isNotNull();
+		assertThat(userAccount01.getUser().getFunctions()).isNotNull();
+		assertThat(userAccount01.getUser().getFunctions().get()).isNotEmpty();
+		assertThat(userAccount01.getUser().getFunctions().get().stream().map(Function::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER","CE");
+		
+		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_USER+"."+User.FIELD_FUNCTIONS));
+		userAccount01.getUser().getFunctions().removeAll();
+		__inject__(UserAccountBusiness.class).update(userAccount01,new Properties().setFields("functions"));
+		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_USER+"."+User.FIELD_FUNCTIONS));
+		assertThat(userAccount01).isNotNull();
+		assertThat(userAccount01.getUser().getFunctions()).isNull();
 		
 		UserResource userResource = __inject__(KeycloakHelper.class).getUsersResource().get(userAccount.getIdentifier());
 		UserRepresentation userRepresentation = userResource.toRepresentation();

@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.cyk.utility.server.persistence.PersistenceEntity;
 
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.User;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
 
@@ -12,5 +13,11 @@ public interface UserFunctionPersistence extends PersistenceEntity<UserFunction>
 	Collection<UserFunction> readByFunctionsCodes(Collection<String> functionsCodes);
 	Collection<UserFunction> readByFunctionsCodes(String...functionsCodes);
 	Collection<UserFunction> readByFunctions(Collection<Function> functions);
+	Collection<UserFunction> readByFunctions(Function...functions);
+	
+	Collection<UserFunction> readByUsersIdentifiers(Collection<String> usersIdentifiers);
+	Collection<UserFunction> readByUsersIdentifiers(String...usersIdentifiers);
+	Collection<UserFunction> readByUsers(Collection<User> users);
+	Collection<UserFunction> readByUsers(User...users);
 	
 }

@@ -15,12 +15,15 @@ import javax.validation.constraints.NotNull;
 
 import org.cyk.utility.array.ArrayHelper;
 import org.cyk.utility.collection.CollectionHelper;
+import org.cyk.utility.instance.InstanceHelper;
 import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByString;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profiles;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScopes;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Functions;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -37,6 +40,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	@ManyToOne @JoinColumn(name=COLUMN_USER) @NotNull private User user;
 	@ManyToOne @JoinColumn(name=COLUMN_ACCOUNT) @NotNull private Account account;
 	
+	@Transient private Functions functions;
 	@Transient private Profiles profiles;
 	@Transient private FunctionScopes functionScopes;
 	@Transient private Boolean isProfileCreatableOnCreate;
@@ -57,6 +61,32 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	
 	public Account getAccount(Boolean injectIfNull) {
 		return (Account) __getInjectIfNull__(FIELD_ACCOUNT, injectIfNull);
+	}
+	
+	public Functions getFunctions(Boolean injectIfNull) {
+		return (Functions) __getInjectIfNull__(FIELD_FUNCTIONS, injectIfNull);
+	}
+	
+	public UserAccount addFunctions(Collection<Function> functions) {
+		getFunctions(Boolean.TRUE).add(functions);
+		return this;
+	}
+	
+	public UserAccount addFunctions(Function...functions) {
+		getFunctions(Boolean.TRUE).add(functions);
+		return this;
+	}
+	
+	public UserAccount addFunctionsByCodes(Collection<String> functionsCodes) {
+		if(__inject__(CollectionHelper.class).isNotEmpty(functionsCodes)) {
+			for(String index : functionsCodes)
+				addFunctions(__inject__(InstanceHelper.class).getByIdentifierBusiness(Function.class, index));
+		}
+		return this;
+	}
+	
+	public UserAccount addFunctionsByCodes(String...functionsCodes) {
+		return addFunctionsByCodes(__inject__(CollectionHelper.class).instanciate(functionsCodes));
 	}
 	
 	public Profiles getProfiles(Boolean injectIfNull) {
@@ -95,6 +125,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	
 	public static final String FIELD_USER = "user";
 	public static final String FIELD_ACCOUNT = "account";
+	public static final String FIELD_FUNCTIONS = "functions";
 	public static final String FIELD_PROFILES = "profiles";
 	public static final String FIELD_FUNCTION_SCOPES = "functionScopes";
 	

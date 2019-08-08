@@ -22,6 +22,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileType;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.UserAccountRepresentation;
+import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.UserFunctionRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.FunctionRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.FunctionScopeRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.FunctionTypeRepresentation;
@@ -234,6 +235,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		__inject__(FunctionTypeRepresentation.class).createOne(functionType);
 		FunctionDto function = new FunctionDto().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setType(functionType);
 		__inject__(FunctionRepresentation.class).createOne(function);
+		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("CE").setName(__getRandomName__()).setType(functionType));
 		FunctionScopeDto functionScope = new FunctionScopeDto().setFunction(function).setScope(scope);
 		__inject__(FunctionScopeRepresentation.class).createOne(functionScope);
 		ProfileDto profile = new ProfileDto().setCode("p001").setName(__getRandomName__());
@@ -241,6 +243,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		
 		UserAccountDto userAccount = new UserAccountDto();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__());
+		userAccount.addFunctionsByCodes("ASSISTANT_SAISIE");
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
 		userAccount.addFunctionScopes(functionScope).addProfiles(profile);
 		__inject__(UserAccountRepresentation.class).createOne(userAccount);
@@ -257,7 +260,35 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		assertThat(userAccount.getProfiles()).as("user account profiles collection is null").isNotNull();
 		assertThat(userAccount.getProfiles().getCollection()).as("user account profiles collection is empty").isNotEmpty();
 		assertThat(userAccount.getProfiles().getCollection().stream().map(ProfileDto::getCode).collect(Collectors.toList())).contains("p001");
-	
+		assertThat(userAccount.getUser()).isNotNull();
+		assertThat(userAccount.getUser().getFunctions()).isNull();
+		
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES+",user.functions").getEntity();
+		assertThat(userAccount).as("user account is null").isNotNull();
+		assertThat(userAccount.getFunctionScopes()).as("user account roles collection is null").isNotNull();
+		assertThat(userAccount.getFunctionScopes().getCollection()).as("user account roles collection is empty").isNotEmpty();
+		assertThat(userAccount.getFunctionScopes().getCollection().stream().map(FunctionScopeDto::getCode).collect(Collectors.toList())).contains("ASSISTANT_SAISIE_MINISTERE_21");
+		assertThat(userAccount.getProfiles()).as("user account profiles collection is null").isNotNull();
+		assertThat(userAccount.getProfiles().getCollection()).as("user account profiles collection is empty").isNotEmpty();
+		assertThat(userAccount.getProfiles().getCollection().stream().map(ProfileDto::getCode).collect(Collectors.toList())).contains("p001");
+		assertThat(userAccount.getUser()).isNotNull();
+		assertThat(userAccount.getUser().getFunctions()).isNotNull();
+		assertThat(userAccount.getUser().getFunctions().getCollection()).isNotNull();
+		assertThat(userAccount.getUser().getFunctions().getCollection()).isNotEmpty();
+		assertThat(userAccount.getUser().getFunctions().getCollection().stream().map(FunctionDto::getCode).collect(Collectors.toList())).containsOnly("ASSISTANT_SAISIE");
+		
+		userAccount.addFunctionsByCodes("CE");
+		assertThat(userAccount.getUser().getFunctions().getCollection().stream().map(FunctionDto::getCode).collect(Collectors.toList())).containsOnly("ASSISTANT_SAISIE","CE");
+		assertThat(__inject__(UserFunctionRepresentation.class).count(null).getEntity()).isEqualTo(1l);
+		__inject__(UserAccountRepresentation.class).updateOne(userAccount, "functions");
+		assertThat(__inject__(UserFunctionRepresentation.class).count(null).getEntity()).isEqualTo(2l);
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES+",user.functions").getEntity();
+		assertThat(userAccount.getUser()).isNotNull();
+		assertThat(userAccount.getUser().getFunctions()).isNotNull();
+		assertThat(userAccount.getUser().getFunctions().getCollection()).isNotNull();
+		assertThat(userAccount.getUser().getFunctions().getCollection()).isNotEmpty();
+		assertThat(userAccount.getUser().getFunctions().getCollection().stream().map(FunctionDto::getCode).collect(Collectors.toList())).containsOnly("ASSISTANT_SAISIE","CE");
+		
 		if(Boolean.TRUE.equals(Topic.MAIL.getIsConsumerStarted())) {
 			__inject__(TimeHelper.class).pause(1000l * 25);
 			stopServersKafkaAndZookeeper();	

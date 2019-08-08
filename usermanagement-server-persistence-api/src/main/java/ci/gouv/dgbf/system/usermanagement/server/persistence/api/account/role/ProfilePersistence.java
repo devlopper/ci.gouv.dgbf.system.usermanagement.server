@@ -7,5 +7,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 public interface ProfilePersistence extends PersistenceEntity<Profile> {
 
 	ProfilePersistence exportToKeycloak();
+
+	ProfilePersistence setPrivileges(Profile profile);
 	
 }

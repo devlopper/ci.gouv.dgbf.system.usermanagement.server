@@ -127,7 +127,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		arrayInstance = reader.execute().getOutput();
 		Collection<Scope> sections = new ArrayList<>();
-		ScopeType scopeTypeSection = __inject__(ScopeTypePersistence.class).readByBusinessIdentifier("UA");
+		ScopeType scopeTypeSection = __inject__(ScopeTypePersistence.class).readByBusinessIdentifier("SECTION");
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount(); index = index + 1)
 			sections.add(new Scope().setIdentifier(arrayInstance.get(index, 0)).setType(scopeTypeSection));
 		__logInfo__("Creating "+sections.size()+" section");
@@ -150,7 +150,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		arrayInstance = reader.execute().getOutput();
 		Collection<Scope> uas = new ArrayList<>();
 		ScopeType scopeTypeUa = __inject__(ScopeTypePersistence.class).readByBusinessIdentifier("UA");
-		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 1000; index = index + 1)
+		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 100; index = index + 1)
 			uas.add(new Scope().setIdentifier(arrayInstance.get(index, 0)).setType(scopeTypeUa));
 		__logInfo__("Creating "+uas.size()+" ua");
 		__inject__(ScopeBusiness.class).saveByBatch(uas,100);

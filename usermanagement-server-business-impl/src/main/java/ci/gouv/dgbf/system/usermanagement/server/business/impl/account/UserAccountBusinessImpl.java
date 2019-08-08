@@ -18,9 +18,12 @@ import org.cyk.utility.string.Strings;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountFunctionScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountProfileBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountFunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountProfilePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileTypePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope;
@@ -39,6 +42,8 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 		function.addTryBeginRunnables(new Runnable() {
 			@Override
 			public void run() {
+				if(userAccount.getUser().getFunctions() == null)
+					userAccount.getUser().setFunctions(userAccount.getFunctions());
 				__create__(userAccount.getUser());
 				__create__(userAccount.getAccount());
 			}
@@ -87,7 +92,7 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 	protected void __processAfterRead__(UserAccount userAccount,Properties properties) {
 		super.__processAfterRead__(userAccount,properties);
 		Strings fields = __getFieldsFromProperties__(properties);
-		if(__injectCollectionHelper__().isNotEmpty(fields))
+		if(__injectCollectionHelper__().isNotEmpty(fields)) {
 			fields.get().forEach(new Consumer<String>() {
 				@Override
 				public void accept(String field) {
@@ -99,16 +104,30 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 						Collection<UserAccountFunctionScope> userAccountRolePostes = __inject__(UserAccountFunctionScopePersistence.class).readByUserAccount(userAccount);
 						if(__injectCollectionHelper__().isNotEmpty(userAccountRolePostes))
 							userAccount.getFunctionScopes(Boolean.TRUE).add(userAccountRolePostes.stream().map(UserAccountFunctionScope::getFunctionScope).collect(Collectors.toList()));
+					}else if((UserAccount.FIELD_FUNCTIONS).equals(field)) {
+						__inject__(UserPersistence.class).setFunctions(userAccount.getUser());
+						userAccount.setFunctions(userAccount.getUser().getFunctions());
 					}
 				}
 			});
+			
+			for(String index : fields.get()) {
+				if((Profile.FIELD_PRIVILEGES).equals(index)) {
+					if(__injectCollectionHelper__().isNotEmpty(userAccount.getProfiles()))
+						for(Profile profile : userAccount.getProfiles().get())
+							__inject__(ProfilePersistence.class).setPrivileges(profile);
+				}
+			}
+		}
 	}
 	
 	@Override
 	protected void __listenExecuteUpdateBefore__(UserAccount userAccount, Properties properties,BusinessFunctionModifier function) {
 		super.__listenExecuteUpdateBefore__(userAccount, properties, function);
 		Strings fields = __getFieldsFromProperties__(properties);
-		__save__(userAccount.getUser());
+		if(userAccount.getUser().getFunctions() == null)
+			userAccount.getUser().setFunctions(userAccount.getFunctions());
+		__inject__(UserBusiness.class).update(userAccount.getUser(),properties);
 		__save__(userAccount.getAccount());
 		if(__injectCollectionHelper__().isNotEmpty(fields)) {
 			for(String index : fields.get()) {
@@ -137,7 +156,9 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 			@Override
 			public void run() {
 				__deleteMany__(__inject__(UserAccountFunctionScopePersistence.class).readByUserAccount(userAccount));
-				__deleteMany__(__inject__(UserAccountProfilePersistence.class).readByUserAccount(userAccount));
+				Collection<UserAccountProfile> userAccountProfiles = __inject__(UserAccountProfilePersistence.class).readByUserAccount(userAccount);
+				if(__injectCollectionHelper__().isNotEmpty(userAccountProfiles))
+					__deleteMany__(userAccountProfiles.stream().map(UserAccountProfile::getProfile).collect(Collectors.toList()));
 			}
 		});
 		

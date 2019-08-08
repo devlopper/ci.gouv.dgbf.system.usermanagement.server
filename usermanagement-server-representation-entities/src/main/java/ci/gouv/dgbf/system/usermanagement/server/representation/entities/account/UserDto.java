@@ -1,11 +1,17 @@
 package ci.gouv.dgbf.system.usermanagement.server.representation.entities.account;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.cyk.utility.array.ArrayHelper;
+import org.cyk.utility.collection.CollectionHelper;
 import org.cyk.utility.server.representation.AbstractEntityFromPersistenceEntity;
+import org.cyk.utility.string.StringHelper;
 
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionDtoCollection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,5 +26,39 @@ public class UserDto extends AbstractEntityFromPersistenceEntity implements Seri
 	private String lastNames;
 	private String names;
 	private String electronicMailAddress;
+	private FunctionDtoCollection functions;
+	
+	public UserDto addFunctionsByCodes(Collection<String> functionsCodes) {
+		if(__inject__(CollectionHelper.class).isNotEmpty(functionsCodes)) {
+			for(String index : functionsCodes)
+				if(__inject__(StringHelper.class).isNotBlank(index))
+					addFunctions(new FunctionDto().setCode(index));
+		}
+		return this;
+	}
+	
+	public UserDto addFunctionsByCodes(String...functionsCodes) {
+		if(__inject__(ArrayHelper.class).isNotEmpty(functionsCodes))
+			addFunctionsByCodes(__inject__(CollectionHelper.class).instanciate(functionsCodes));
+		return this;
+	}
+	
+	public UserDto addFunctions(Collection<FunctionDto> functions) {
+		if(__inject__(CollectionHelper.class).isNotEmpty(functions))
+			getFunctions(Boolean.TRUE).add(functions);	
+		return this;
+	}
+	
+	public UserDto addFunctions(FunctionDto...functions) {
+		if(__inject__(ArrayHelper.class).isNotEmpty(functions))
+			addFunctions(__inject__(CollectionHelper.class).instanciate(functions));
+		return this;
+	}
+	
+	public FunctionDtoCollection getFunctions(Boolean instanciateIfNull) {
+		return (FunctionDtoCollection) __getInstanciateIfNull__(FIELD_FUNCTIONS, instanciateIfNull);
+	}
+	
+	public static final String FIELD_FUNCTIONS = "functions";
 	
 }

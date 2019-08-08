@@ -12,5 +12,6 @@ public interface ProfilePrivilegePersistence extends PersistenceEntity<ProfilePr
 	Collection<ProfilePrivilege> readByProfileCodes(Collection<String> profileCodes);
 	Collection<ProfilePrivilege> readByProfileCodes(String...profileCodes);
 	Collection<ProfilePrivilege> readByProfiles(Collection<Profile> profiles);
+	Collection<ProfilePrivilege> readByProfiles(Profile...profiles);
 	
 }

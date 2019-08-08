@@ -8,7 +8,7 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionScopeDtoCollectionMapper;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDtoCollectionMapper;
 
-@Mapper(uses= {FunctionDtoCollectionMapper.class,ProfileDtoCollectionMapper.class,FunctionScopeDtoCollectionMapper.class})
+@Mapper(uses= {FunctionDtoCollectionMapper.class,ProfileDtoCollectionMapper.class,FunctionScopeDtoCollectionMapper.class,FunctionDtoCollectionMapper.class})
 public abstract class UserFunctionDtoMapper extends AbstractMapperSourceDestinationImpl<UserFunctionDto, UserFunction> {
 	private static final long serialVersionUID = 1L;
  

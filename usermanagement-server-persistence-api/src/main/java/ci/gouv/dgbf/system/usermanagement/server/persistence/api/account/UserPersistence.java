@@ -6,4 +6,6 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Us
 
 public interface UserPersistence extends PersistenceEntity<User> {
 
+	UserPersistence setFunctions(User user);
+	
 }

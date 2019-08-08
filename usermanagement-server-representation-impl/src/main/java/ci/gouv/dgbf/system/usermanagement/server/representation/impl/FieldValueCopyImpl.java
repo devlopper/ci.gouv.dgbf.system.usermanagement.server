@@ -49,6 +49,17 @@ public class FieldValueCopyImpl extends AbstractFieldValueCopyImpl implements Se
 				}
 			}
 			return profiles;
+		}else if(__injectFieldHelper__().getField(UserAccountDto.class, UserAccountDto.FIELD_FUNCTIONS).equals(source) 
+				&& __injectFieldHelper__().getField(UserAccount.class, UserAccount.FIELD_FUNCTIONS).equals(destination)) {
+			Functions functions = null;
+			FunctionDtoCollection functionDtoCollection = ((FunctionDtoCollection) value);
+			if(functionDtoCollection != null && Boolean.TRUE.equals(__injectCollectionHelper__().isNotEmpty(functionDtoCollection.getCollection()))) {
+				functions = __inject__(Functions.class);
+				for(FunctionDto index : functionDtoCollection.getCollection()) {
+					functions.add(__inject__(FunctionPersistence.class).readByBusinessIdentifier(index.getCode()));
+				}
+			}
+			return functions;
 		}else if(__injectFieldHelper__().getField(ProfileDto.class, ProfileDto.FIELD_FUNCTIONS).equals(source) 
 				&& __injectFieldHelper__().getField(Profile.class, Profile.FIELD_FUNCTIONS).equals(destination)) {
 			Functions functions = null;

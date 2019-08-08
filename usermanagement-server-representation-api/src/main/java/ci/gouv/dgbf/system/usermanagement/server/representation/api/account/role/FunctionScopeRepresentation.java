@@ -11,6 +11,6 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 @Path(FunctionScopeRepresentation.PATH)
 public interface FunctionScopeRepresentation extends RepresentationEntity<FunctionScope,FunctionScopeDto,FunctionScopeDtoCollection> {
 	
-	String PATH = "/fonctionchampaction";
+	String PATH = "fonctionchampaction";
 	
 }

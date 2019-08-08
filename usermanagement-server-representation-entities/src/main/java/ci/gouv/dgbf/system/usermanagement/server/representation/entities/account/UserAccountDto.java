@@ -10,11 +10,12 @@ import org.cyk.utility.collection.CollectionHelper;
 import org.cyk.utility.server.representation.AbstractEntityFromPersistenceEntity;
 import org.cyk.utility.string.StringHelper;
 
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDtoCollection;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionDtoCollection;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionScopeDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionScopeDtoCollection;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDtoCollection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,6 +38,37 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 	
 	public AccountDto getAccount(Boolean injectIfNull) {
 		return (AccountDto) __getInjectIfNull__(FIELD_ACCOUNT, injectIfNull);
+	}
+	
+	public UserAccountDto addFunctionsByCodes(Collection<String> functionsCodes) {
+		if(__inject__(CollectionHelper.class).isNotEmpty(functionsCodes)) {
+			for(String index : functionsCodes)
+				if(__inject__(StringHelper.class).isNotBlank(index))
+					addFunctions(new FunctionDto().setCode(index));
+		}
+		return this;
+	}
+	
+	public UserAccountDto addFunctionsByCodes(String...functionsCodes) {
+		if(__inject__(ArrayHelper.class).isNotEmpty(functionsCodes))
+			addFunctionsByCodes(__inject__(CollectionHelper.class).instanciate(functionsCodes));
+		return this;
+	}
+	
+	public UserAccountDto addFunctions(Collection<FunctionDto> functions) {
+		if(__inject__(CollectionHelper.class).isNotEmpty(functions))
+			getFunctions(Boolean.TRUE).add(functions);	
+		return this;
+	}
+	
+	public UserAccountDto addFunctions(FunctionDto...functions) {
+		if(__inject__(ArrayHelper.class).isNotEmpty(functions))
+			addFunctions(__inject__(CollectionHelper.class).instanciate(functions));
+		return this;
+	}
+	
+	public FunctionDtoCollection getFunctions(Boolean instanciateIfNull) {
+		return (FunctionDtoCollection) __getInstanciateIfNull__(FIELD_FUNCTIONS, instanciateIfNull);
 	}
 	
 	public UserAccountDto addFunctionScopesByCodes(Collection<String> functionScopesCodes) {

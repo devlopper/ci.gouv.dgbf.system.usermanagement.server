@@ -13,6 +13,7 @@ import org.cyk.utility.server.persistence.PersistenceFunctionReader;
 import org.cyk.utility.server.persistence.query.PersistenceQueryContext;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserFunctionPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.User;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
 
@@ -31,6 +32,27 @@ public class UserFunctionPersistenceImpl extends AbstractPersistenceEntityImpl<U
 	}
 	
 	@Override
+	public Collection<UserFunction> readByUsersIdentifiers(Collection<String> usersIdentifieurs) {
+		Properties properties = new Properties().setQueryIdentifier(readByUsersIdentifiers);
+		return __readMany__(properties,____getQueryParameters____(properties,usersIdentifieurs));	
+	}
+	
+	@Override
+	public Collection<UserFunction> readByUsersIdentifiers(String... usersIdentifiers) {
+		return readByUsersIdentifiers(__injectCollectionHelper__().instanciate(usersIdentifiers));
+	}
+	
+	@Override
+	public Collection<UserFunction> readByUsers(Collection<User> users) {
+		return __injectCollectionHelper__().isEmpty(users) ? null : readByUsersIdentifiers(users.stream().map(User::getIdentifier).collect(Collectors.toList()));
+	}
+	
+	@Override
+	public Collection<UserFunction> readByUsers(User... users) {
+		return readByUsers(__injectCollectionHelper__().instanciate(users));
+	}
+	
+	@Override
 	public Collection<UserFunction> readByFunctionsCodes(Collection<String> functionsCodes) {
 		Properties properties = new Properties().setQueryIdentifier(readByFunctionsCodes);
 		return __readMany__(properties,____getQueryParameters____(properties,functionsCodes));	
@@ -44,6 +66,11 @@ public class UserFunctionPersistenceImpl extends AbstractPersistenceEntityImpl<U
 	@Override
 	public Collection<UserFunction> readByFunctions(Collection<Function> functions) {
 		return __injectCollectionHelper__().isEmpty(functions) ? null : readByFunctionsCodes(functions.stream().map(Function::getCode).collect(Collectors.toList()));
+	}
+	
+	@Override
+	public Collection<UserFunction> readByFunctions(Function... functions) {
+		return readByFunctions(__injectCollectionHelper__().instanciate(functions));
 	}
 	
 	@Override

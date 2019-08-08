@@ -19,7 +19,9 @@ import lombok.experimental.Accessors;
 public class ProfileDto extends AbstractEntityFromPersistenceEntityCodedAndNamed implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	private ProfileTypeDto type;
 	private FunctionDtoCollection functions;
+	private PrivilegeDtoCollection privileges;
 	
 	@Override
 	public ProfileDto setCode(String code) {
@@ -64,5 +66,39 @@ public class ProfileDto extends AbstractEntityFromPersistenceEntityCodedAndNamed
 	
 	/**/
 	
+	public ProfileDto addPrivilegesByCodes(Collection<String> privilegesCodes) {
+		if(__inject__(CollectionHelper.class).isNotEmpty(privilegesCodes)) {
+			for(String index : privilegesCodes)
+				if(__inject__(StringHelper.class).isNotBlank(index))
+					addPrivileges(new PrivilegeDto().setCode(index));
+		}
+		return this;
+	}
+	
+	public ProfileDto addPrivilegesByCodes(String...privilegesCodes) {
+		if(__inject__(ArrayHelper.class).isNotEmpty(privilegesCodes))
+			addPrivilegesByCodes(__inject__(CollectionHelper.class).instanciate(privilegesCodes));
+		return this;
+	}
+	
+	public ProfileDto addPrivileges(Collection<PrivilegeDto> privileges) {
+		if(__inject__(CollectionHelper.class).isNotEmpty(privileges))
+			getPrivileges(Boolean.TRUE).add(privileges);	
+		return this;
+	}
+	
+	public ProfileDto addPrivileges(PrivilegeDto...privileges) {
+		if(__inject__(ArrayHelper.class).isNotEmpty(privileges))
+			addPrivileges(__inject__(CollectionHelper.class).instanciate(privileges));
+		return this;
+	}
+	
+	public PrivilegeDtoCollection getPrivileges(Boolean instanciateIfNull) {
+		return (PrivilegeDtoCollection) __getInstanciateIfNull__(FIELD_PRIVILEGES, instanciateIfNull);
+	}
+	
+	/**/
+	
 	public static final String FIELD_FUNCTIONS = "functions";
+	public static final String FIELD_PRIVILEGES = "privileges";
 }
