@@ -19,6 +19,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.Pr
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Privileges;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfilePrivilege;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
 @ApplicationScoped
@@ -63,7 +64,8 @@ public class ProfilePersistenceImpl extends AbstractPersistenceEntityImpl<Profil
 	}
 	
 	private void __createIntoKeycloak__(Profile profile) {
-		__inject__(KeycloakHelper.class).createRole(profile.getCode(), profile.getName(),"PROFILE");
+		if(profile.getType().getCode().equals(ProfileType.CODE_SYSTEM))
+			__inject__(KeycloakHelper.class).createRole(profile.getCode(), profile.getName(),"PROFILE");
 	}
 	
 	@Override
