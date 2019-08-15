@@ -1,6 +1,9 @@
 package ci.gouv.dgbf.system.usermanagement.server.persistence.impl.account;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -10,9 +13,17 @@ import org.cyk.utility.server.persistence.PersistenceFunctionCreator;
 import org.cyk.utility.server.persistence.PersistenceFunctionModifier;
 import org.cyk.utility.server.persistence.PersistenceFunctionRemover;
 import org.cyk.utility.server.persistence.query.PersistenceQuery;
+import org.cyk.utility.string.Strings;
 
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountFunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountProfilePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
 @ApplicationScoped
@@ -42,6 +53,37 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 		//Properties properties = new Properties();
 		//properties.setQueryIdentifier(readByAccountIdentifier);
 		return __readOne__(null,____getQueryParameters____(null,accountIdentifier));
+	}
+	
+	@Override
+	protected void __listenExecuteReadAfterSetFieldValue__(UserAccount userAccount, Field field, Properties properties) {
+		if(UserAccount.FIELD_PROFILES.equals(field.getName())) {
+			Collection<UserAccountProfile> userAccountProfiles = __inject__(UserAccountProfilePersistence.class).readByUserAccount(userAccount);
+			if(__injectCollectionHelper__().isNotEmpty(userAccountProfiles))
+				userAccount.getProfiles(Boolean.TRUE).add(userAccountProfiles.stream().map(UserAccountProfile::getProfile).collect(Collectors.toList()));
+		}else if(UserAccount.FIELD_FUNCTION_SCOPES.equals(field.getName())) {
+			Collection<UserAccountFunctionScope> userAccountRolePostes = __inject__(UserAccountFunctionScopePersistence.class).readByUserAccount(userAccount);
+			if(__injectCollectionHelper__().isNotEmpty(userAccountRolePostes))
+				userAccount.getFunctionScopes(Boolean.TRUE).add(userAccountRolePostes.stream().map(UserAccountFunctionScope::getFunctionScope).collect(Collectors.toList()));
+		}else if((UserAccount.FIELD_FUNCTIONS).equals(field.getName())) {
+			__inject__(UserPersistence.class).setFunctions(userAccount.getUser());
+			userAccount.setFunctions(userAccount.getUser().getFunctions());
+		}
+	}
+	
+	@Override
+	protected void __listenExecuteReadAfter__(UserAccount userAccount, Properties properties) {
+		super.__listenExecuteReadAfter__(userAccount, properties);
+		Strings fields = __getFieldsFromProperties__(properties);
+		if(__injectCollectionHelper__().isNotEmpty(fields)) {
+			for(String index : fields.get()) {
+				if((Profile.FIELD_PRIVILEGES).equals(index)) {
+					if(__injectCollectionHelper__().isNotEmpty(userAccount.getProfiles()))
+						for(Profile profile : userAccount.getProfiles().get())
+							__inject__(ProfilePersistence.class).setPrivileges(profile);
+				}
+			}	
+		}
 	}
 	
 	@Override

@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -51,27 +50,6 @@ public class ProfileBusinessImpl extends AbstractBusinessEntityImpl<Profile, Pro
 				profileFunctions.add(new ProfileFunction().setProfile(profile).setFunction(index));
 			__inject__(ProfileFunctionBusiness.class).createMany(profileFunctions);
 		}
-	}
-	
-	@Override
-	protected void __processAfterRead__(Profile profile,Properties properties) {
-		super.__processAfterRead__(profile,properties);
-		Strings fields = __getFieldsFromProperties__(properties);
-		if(__injectCollectionHelper__().isNotEmpty(fields))
-			fields.get().forEach(new Consumer<String>() {
-				@Override
-				public void accept(String field) {
-					if(Profile.FIELD_FUNCTIONS.equals(field)) {
-						Collection<ProfileFunction> profileFunctions = __inject__(ProfileFunctionPersistence.class).readByProfiles(Arrays.asList(profile));
-						if(__injectCollectionHelper__().isNotEmpty(profileFunctions))
-							profile.getFunctions(Boolean.TRUE).add(profileFunctions.stream().map(ProfileFunction::getFunction).collect(Collectors.toList()));
-					}else if(Profile.FIELD_PRIVILEGES.equals(field)) {
-						Collection<ProfilePrivilege> profilePrivileges = __inject__(ProfilePrivilegePersistence.class).readByProfiles(Arrays.asList(profile));
-						if(__injectCollectionHelper__().isNotEmpty(profilePrivileges))
-							profile.getPrivileges(Boolean.TRUE).add(profilePrivileges.stream().map(ProfilePrivilege::getPrivilege).collect(Collectors.toList()));
-					}
-				}
-			});
 	}
 	
 	@Override

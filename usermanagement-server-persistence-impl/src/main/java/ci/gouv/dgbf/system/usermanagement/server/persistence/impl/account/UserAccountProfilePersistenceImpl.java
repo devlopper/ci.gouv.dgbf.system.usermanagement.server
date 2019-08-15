@@ -26,7 +26,7 @@ public class UserAccountProfilePersistenceImpl extends AbstractPersistenceEntity
 	protected void __listenPostConstructPersistenceQueries__() {
 		super.__listenPostConstructPersistenceQueries__();
 		addQueryCollectInstances(readByUserAccount, __instanciateQueryReadBy__(UserAccountProfile.FIELD_USER_ACCOUNT));
-		addQueryCollectInstances(readByProfilesCodes, "SELECT tuple FROM UserAccountProfile tuple WHERE tuple.profile.code IN :codes");
+		addQueryCollectInstances(readByProfilesCodes, "SELECT tuple FROM UserAccountProfile tuple WHERE tuple.profile.code IN :profilesCodes");
 	}
 	
 	@Override
@@ -65,7 +65,7 @@ public class UserAccountProfilePersistenceImpl extends AbstractPersistenceEntity
 		if(queryContext.getQuery().isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readByProfilesCodes)) {
 			if(__inject__(ArrayHelper.class).isEmpty(objects))
 				objects = new Object[] {queryContext.getFilterByKeysValue(UserAccountProfile.FIELD_PROFILE)};
-			return new Object[]{"profileCodes",objects[0]};
+			return new Object[]{"profilesCodes",objects[0]};
 		}
 		return super.__getQueryParameters__(queryContext, properties, objects);
 	}

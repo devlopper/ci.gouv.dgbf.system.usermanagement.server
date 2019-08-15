@@ -23,10 +23,12 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserFun
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionTypePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.PrivilegePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.PrivilegeTypeHierarchyPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.PrivilegeTypePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePrivilegePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileServiceResourcePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileTypePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.User;
@@ -38,10 +40,12 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Us
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionType;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Privilege;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PrivilegeType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PrivilegeTypeHierarchy;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfilePrivilege;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileServiceResource;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Resource;
@@ -176,7 +180,7 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		profile.setCode(__getRandomCode__()).setName(__getRandomName__()).setType(profileType);
 		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(profileType).addObjects(profile).execute();
 	}
-	
+		
 	@Test
 	public void create_profileFunction() throws Exception{
 		Function function = new Function().setCode(__getRandomCode__()).setName(__getRandomName__());
@@ -218,6 +222,70 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(profileServiceResource.getProfile().getType(),profileServiceResource.getProfile(),profileServiceResource.getService()
 				,profileServiceResource.getResource()).addObjects(profileServiceResource).execute();
 		assertThat(__inject__(ProfileServiceResourcePersistence.class).count()).isEqualTo(0l);
+	}
+	
+	@Test
+	public void read_profile() throws Exception{
+		FunctionType functionType = new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		PrivilegeType privilegeType = new PrivilegeType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		ProfileType profileType = new ProfileType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		userTransaction.begin();
+		__inject__(FunctionTypePersistence.class).create(functionType);
+		__inject__(FunctionPersistence.class).create(new Function().setCode("f01").setName(__getRandomName__()).setType(functionType));
+		__inject__(FunctionPersistence.class).create(new Function().setCode("f02").setName(__getRandomName__()).setType(functionType));
+		__inject__(FunctionPersistence.class).create(new Function().setCode("f03").setName(__getRandomName__()).setType(functionType));
+		
+		__inject__(PrivilegeTypePersistence.class).create(privilegeType);
+		__inject__(PrivilegePersistence.class).create(new Privilege().setCode("pvlg01").setName(__getRandomName__()).setType(privilegeType));
+		__inject__(PrivilegePersistence.class).create(new Privilege().setCode("pvlg02").setName(__getRandomName__()).setType(privilegeType));
+		__inject__(PrivilegePersistence.class).create(new Privilege().setCode("pvlg03").setName(__getRandomName__()).setType(privilegeType));
+		__inject__(PrivilegePersistence.class).create(new Privilege().setCode("pvlg04").setName(__getRandomName__()).setType(privilegeType));
+		
+		__inject__(ProfileTypePersistence.class).create(profileType);
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p01").setName(__getRandomName__()).setType(profileType));
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p02").setName(__getRandomName__()).setType(profileType));
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p03").setName(__getRandomName__()).setType(profileType));
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p04").setName(__getRandomName__()).setType(profileType));
+		userTransaction.commit();
+		
+		Profile profile = __inject__(ProfilePersistence.class).readByBusinessIdentifier("p01",new Properties().setFields("code,name,type,functions,privileges"));
+		assertThat(profile).isNotNull();
+		assertThat(profile.getFunctions()).isNull();
+		assertThat(profile.getPrivileges()).isNull();
+		
+		userTransaction.begin();
+		__inject__(ProfileFunctionPersistence.class).create(new ProfileFunction().setProfileFromCode("p01").setFunctionFromCode("f02"));
+		userTransaction.commit();
+		
+		profile = __inject__(ProfilePersistence.class).readByBusinessIdentifier("p01",new Properties().setFields("code,name,type,functions,privileges"));
+		assertThat(profile).isNotNull();
+		assertThat(profile.getFunctions()).isNotNull();
+		assertThat(profile.getFunctions().get()).isNotEmpty();
+		assertThat(profile.getFunctions().get().stream().map(Function::getCode).collect(Collectors.toList())).containsOnly("f02");
+		assertThat(profile.getPrivileges()).isNull();
+		
+		userTransaction.begin();
+		__inject__(ProfilePrivilegePersistence.class).create(new ProfilePrivilege().setProfileFromCode("p01").setPrivilegeFromCode("pvlg03"));
+		__inject__(ProfilePrivilegePersistence.class).create(new ProfilePrivilege().setProfileFromCode("p01").setPrivilegeFromCode("pvlg01"));
+		userTransaction.commit();
+		
+		profile = __inject__(ProfilePersistence.class).readByBusinessIdentifier("p01",new Properties().setFields("code,name,type,functions,privileges"));
+		assertThat(profile).isNotNull();
+		assertThat(profile.getFunctions()).isNotNull();
+		assertThat(profile.getFunctions().get()).isNotEmpty();
+		assertThat(profile.getFunctions().get().stream().map(Function::getCode).collect(Collectors.toList())).containsOnly("f02");
+		assertThat(profile.getPrivileges()).isNotNull();
+		assertThat(profile.getPrivileges().get()).isNotEmpty();
+		assertThat(profile.getPrivileges().get().stream().map(Privilege::getCode).collect(Collectors.toList())).containsOnly("pvlg03","pvlg01");
+		
+		userTransaction.begin();
+		__inject__(ProfilePrivilegePersistence.class).deleteAll();
+		__inject__(ProfileFunctionPersistence.class).deleteAll();
+		userTransaction.commit();
+		
+		profile = __inject__(ProfilePersistence.class).readByBusinessIdentifier("p01",new Properties().setFields("functions,privileges"));
+		assertThat(profile.getFunctions()).isNull();
+		assertThat(profile.getPrivileges()).isNull();
 	}
 	
 	@Test

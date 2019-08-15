@@ -1,6 +1,8 @@
 package ci.gouv.dgbf.system.usermanagement.server.persistence.impl.account.role;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -14,10 +16,12 @@ import org.cyk.utility.server.persistence.PersistenceFunctionReader;
 import org.cyk.utility.server.persistence.PersistenceFunctionRemover;
 import org.cyk.utility.server.persistence.query.PersistenceQueryContext;
 
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePrivilegePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Privileges;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfilePrivilege;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
@@ -38,6 +42,19 @@ public class ProfilePersistenceImpl extends AbstractPersistenceEntityImpl<Profil
 	protected void __listenExecuteCreateAfter__(Profile profile, Properties properties,PersistenceFunctionCreator function) {
 		super.__listenExecuteCreateAfter__(profile, properties, function);
 		__createIntoKeycloak__(profile);
+	}
+	
+	@Override
+	protected void __listenExecuteReadAfterSetFieldValue__(Profile profile, Field field, Properties properties) {
+		if(Profile.FIELD_FUNCTIONS.equals(field.getName())) {
+			Collection<ProfileFunction> profileFunctions = __inject__(ProfileFunctionPersistence.class).readByProfiles(Arrays.asList(profile));
+			if(__injectCollectionHelper__().isNotEmpty(profileFunctions))
+				profile.getFunctions(Boolean.TRUE).add(profileFunctions.stream().map(ProfileFunction::getFunction).collect(Collectors.toList()));
+		}else if(Profile.FIELD_PRIVILEGES.equals(field.getName())) {
+			Collection<ProfilePrivilege> profilePrivileges = __inject__(ProfilePrivilegePersistence.class).readByProfiles(Arrays.asList(profile));
+			if(__injectCollectionHelper__().isNotEmpty(profilePrivileges))
+				profile.getPrivileges(Boolean.TRUE).add(profilePrivileges.stream().map(ProfilePrivilege::getPrivilege).collect(Collectors.toList()));
+		}
 	}
 	
 	@Override

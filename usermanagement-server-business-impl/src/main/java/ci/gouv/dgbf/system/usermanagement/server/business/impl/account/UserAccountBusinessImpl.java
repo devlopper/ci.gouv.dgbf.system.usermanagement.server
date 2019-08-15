@@ -3,7 +3,6 @@ package ci.gouv.dgbf.system.usermanagement.server.business.impl.account;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -22,8 +21,6 @@ import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserBusine
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountFunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountProfilePersistence;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserPersistence;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileTypePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope;
@@ -86,39 +83,6 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 				+" , un compte utilisateur a été créé avec succès. Le nom utilisateur est : "+userAccount.getAccount().getIdentifier()
 				+" et le mot de passe est : "+userAccount.getAccount().getPass(), Arrays.asList(userAccount.getUser().getElectronicMailAddress()));
 		*/
-	}
-	
-	@Override
-	protected void __processAfterRead__(UserAccount userAccount,Properties properties) {
-		super.__processAfterRead__(userAccount,properties);
-		Strings fields = __getFieldsFromProperties__(properties);
-		if(__injectCollectionHelper__().isNotEmpty(fields)) {
-			fields.get().forEach(new Consumer<String>() {
-				@Override
-				public void accept(String field) {
-					if(UserAccount.FIELD_PROFILES.equals(field)) {
-						Collection<UserAccountProfile> userAccountProfiles = __inject__(UserAccountProfilePersistence.class).readByUserAccount(userAccount);
-						if(__injectCollectionHelper__().isNotEmpty(userAccountProfiles))
-							userAccount.getProfiles(Boolean.TRUE).add(userAccountProfiles.stream().map(UserAccountProfile::getProfile).collect(Collectors.toList()));
-					}else if(UserAccount.FIELD_FUNCTION_SCOPES.equals(field)) {
-						Collection<UserAccountFunctionScope> userAccountRolePostes = __inject__(UserAccountFunctionScopePersistence.class).readByUserAccount(userAccount);
-						if(__injectCollectionHelper__().isNotEmpty(userAccountRolePostes))
-							userAccount.getFunctionScopes(Boolean.TRUE).add(userAccountRolePostes.stream().map(UserAccountFunctionScope::getFunctionScope).collect(Collectors.toList()));
-					}else if((UserAccount.FIELD_FUNCTIONS).equals(field)) {
-						__inject__(UserPersistence.class).setFunctions(userAccount.getUser());
-						userAccount.setFunctions(userAccount.getUser().getFunctions());
-					}
-				}
-			});
-			
-			for(String index : fields.get()) {
-				if((Profile.FIELD_PRIVILEGES).equals(index)) {
-					if(__injectCollectionHelper__().isNotEmpty(userAccount.getProfiles()))
-						for(Profile profile : userAccount.getProfiles().get())
-							__inject__(ProfilePersistence.class).setPrivileges(profile);
-				}
-			}
-		}
 	}
 	
 	@Override

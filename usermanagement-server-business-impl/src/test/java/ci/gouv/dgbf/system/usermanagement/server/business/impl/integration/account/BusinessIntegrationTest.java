@@ -311,8 +311,10 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		assertThat(user).isNotNull();
 		assertThat(user.getNames()).isNull();
 		assertThat(user.getFunctions()).isNull();
-		user = __inject__(UserBusiness.class).findBySystemIdentifier("u01",new Properties().setFields("names,functions"));
+		user = __inject__(UserBusiness.class).findBySystemIdentifier("u01",new Properties().setFields(User.FIELD_FIRST_NAME+",lastNames,names,functions"));
 		assertThat(user).isNotNull();
+		assertThat(user.getFirstName()).isEqualTo("Komenan");
+		assertThat(user.getLastNames()).isEqualTo("Yao Christian");
 		assertThat(user.getNames()).isEqualTo("Komenan Yao Christian");
 		assertThat(user.getFunctions()).isNotNull();
 		assertThat(user.getFunctions().get().stream().map(Function::getCode).collect(Collectors.toList())).containsOnly("f01");
@@ -387,7 +389,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		assertThat(userAccount01).isNotNull();
 		assertThat(userAccount01.getFunctionScopes()).isNull();
 		
-		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_USER+"."+User.FIELD_FUNCTIONS));
+		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields("user,"+User.FIELD_FUNCTIONS));
 		assertThat(userAccount01).isNotNull();
 		assertThat(userAccount01.getUser().getFunctions()).isNotNull();
 		assertThat(userAccount01.getUser().getFunctions().get()).isNotEmpty();
@@ -416,19 +418,19 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		assertThat(userAccount01.getProfiles().get()).isNotEmpty();
 		assertThat(userAccount01.getProfiles().get().stream().map(Profile::getCode).collect(Collectors.toList())).contains("p001");
 		
-		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_USER+"."+User.FIELD_FUNCTIONS));
+		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields("user,account,"+User.FIELD_FUNCTIONS));
 		userAccount01.getUser().addFunctionsByCodes("CE");
 		__inject__(UserAccountBusiness.class).update(userAccount01,new Properties().setFields("functions"));
-		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_USER+"."+User.FIELD_FUNCTIONS));
+		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_USER+","+User.FIELD_FUNCTIONS));
 		assertThat(userAccount01).isNotNull();
 		assertThat(userAccount01.getUser().getFunctions()).isNotNull();
 		assertThat(userAccount01.getUser().getFunctions().get()).isNotEmpty();
 		assertThat(userAccount01.getUser().getFunctions().get().stream().map(Function::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER","CE");
 		
-		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_USER+"."+User.FIELD_FUNCTIONS));
+		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_USER+","+User.FIELD_FUNCTIONS));
 		userAccount01.getUser().getFunctions().removeAll();
 		__inject__(UserAccountBusiness.class).update(userAccount01,new Properties().setFields("functions"));
-		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_USER+"."+User.FIELD_FUNCTIONS));
+		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_USER+","+User.FIELD_FUNCTIONS));
 		assertThat(userAccount01).isNotNull();
 		assertThat(userAccount01.getUser().getFunctions()).isNull();
 		

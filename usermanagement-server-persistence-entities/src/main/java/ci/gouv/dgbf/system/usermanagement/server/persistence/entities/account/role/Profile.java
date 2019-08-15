@@ -71,6 +71,18 @@ public class Profile extends AbstractIdentifiedByStringAndCodedAndNamed implemen
 		return this;
 	}
 	
+	public Profile addFunctionsByCodes(Collection<String> codes) {
+		if(Boolean.TRUE.equals(__inject__(CollectionHelper.class).isNotEmpty(codes)))
+			for(String index : codes)
+				getFunctions(Boolean.TRUE).add(__inject__(InstanceHelper.class).getByIdentifierBusiness(Function.class, index));
+		return this;
+	}
+	
+	public Profile addFunctionsByCodes(String... codes) {
+		addFunctionsByCodes(__inject__(CollectionHelper.class).instanciate(codes));
+		return this;
+	}
+	
 	public Privileges getPrivileges(Boolean injectIfNull) {
 		return (Privileges) __getInjectIfNull__(FIELD_PRIVILEGES, injectIfNull);
 	}
