@@ -22,9 +22,4 @@ public class AccountRepresentationImpl extends AbstractRepresentationEntityImpl<
 		return null;
 	}
 	
-	@Override
-	public Class<Account> getPersistenceEntityClass() {
-		return Account.class;
-	}
-
 }

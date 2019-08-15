@@ -16,9 +16,4 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 public class UserAccountProfileRepresentationImpl extends AbstractRepresentationEntityImpl<UserAccountProfile,UserAccountProfileBusiness,UserAccountProfileDto,UserAccountProfileDtoCollection> implements UserAccountProfileRepresentation,Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Override
-	public Class<UserAccountProfile> getPersistenceEntityClass() {
-		return UserAccountProfile.class;
-	}
-	
 }

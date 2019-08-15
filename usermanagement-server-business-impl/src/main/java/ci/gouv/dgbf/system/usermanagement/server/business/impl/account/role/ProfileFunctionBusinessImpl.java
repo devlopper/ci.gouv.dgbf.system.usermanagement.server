@@ -19,32 +19,32 @@ public class ProfileFunctionBusinessImpl extends AbstractBusinessEntityImpl<Prof
 
 	@Override
 	public Collection<ProfileFunction> findByFunctionCodes(Collection<String> functionCodes) {
-		return getPersistence().readByFunctionCodes(functionCodes);
+		return __persistence__.readByFunctionCodes(functionCodes);
 	}
 
 	@Override
 	public Collection<ProfileFunction> findByFunctionCodes(String... functionCodes) {
-		return getPersistence().readByFunctionCodes(functionCodes);
+		return __persistence__.readByFunctionCodes(functionCodes);
 	}
 
 	@Override
 	public Collection<ProfileFunction> findByFunctions(Collection<Function> functions) {
-		return getPersistence().readByFunctions(functions);
+		return __persistence__.readByFunctions(functions);
 	}
 
 	@Override
 	public Collection<ProfileFunction> findByProfileCodes(Collection<String> profileCodes) {
-		return getPersistence().readByProfileCodes(profileCodes);
+		return __persistence__.readByProfileCodes(profileCodes);
 	}
 
 	@Override
 	public Collection<ProfileFunction> findByProfileCodes(String... profileCodes) {
-		return getPersistence().readByProfileCodes(profileCodes);
+		return __persistence__.readByProfileCodes(profileCodes);
 	}
 
 	@Override
 	public Collection<ProfileFunction> findByProfiles(Collection<Profile> profiles) {
-		return getPersistence().readByProfiles(profiles);
+		return __persistence__.readByProfiles(profiles);
 	}
 	
 

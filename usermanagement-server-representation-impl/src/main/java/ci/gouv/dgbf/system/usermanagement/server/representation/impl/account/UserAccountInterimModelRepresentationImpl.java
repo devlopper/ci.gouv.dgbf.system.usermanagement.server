@@ -16,9 +16,4 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 public class UserAccountInterimModelRepresentationImpl extends AbstractRepresentationEntityImpl<UserAccountInterimModel,UserAccountInterimModelBusiness,UserAccountInterimModelDto,UserAccountInterimModelDtoCollection> implements UserAccountInterimModelRepresentation,Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Override
-	public Class<UserAccountInterimModel> getPersistenceEntityClass() {
-		return UserAccountInterimModel.class;
-	}
-	
 }

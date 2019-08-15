@@ -16,9 +16,4 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 public class ServiceRepresentationImpl extends AbstractRepresentationEntityImpl<Service,ServiceBusiness,ServiceDto,ServiceDtoCollection> implements ServiceRepresentation,Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Override
-	public Class<Service> getPersistenceEntityClass() {
-		return Service.class;
-	}
-	
 }

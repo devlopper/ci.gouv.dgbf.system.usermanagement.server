@@ -18,7 +18,7 @@ public class UserAccountProfileBusinessImpl extends AbstractBusinessEntityImpl<U
 
 	@Override
 	public Collection<UserAccountProfile> findByUserAccount(UserAccount userAccount) {
-		return getPersistence().readByUserAccount(userAccount);
+		return __persistence__.readByUserAccount(userAccount);
 	}
 	
 

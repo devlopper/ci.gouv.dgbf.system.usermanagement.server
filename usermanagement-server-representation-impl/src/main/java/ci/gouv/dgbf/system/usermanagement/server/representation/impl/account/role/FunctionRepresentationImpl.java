@@ -16,9 +16,4 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 public class FunctionRepresentationImpl extends AbstractRepresentationEntityImpl<Function,FunctionBusiness,FunctionDto,FunctionDtoCollection> implements FunctionRepresentation,Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Override
-	public Class<Function> getPersistenceEntityClass() {
-		return Function.class;
-	}
-	
 }

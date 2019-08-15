@@ -16,9 +16,4 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 public class ScopeTypeRepresentationImpl extends AbstractRepresentationEntityImpl<ScopeType,ScopeTypeBusiness,ScopeTypeDto,ScopeTypeDtoCollection> implements ScopeTypeRepresentation,Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Override
-	public Class<ScopeType> getPersistenceEntityClass() {
-		return ScopeType.class;
-	}
-	
 }

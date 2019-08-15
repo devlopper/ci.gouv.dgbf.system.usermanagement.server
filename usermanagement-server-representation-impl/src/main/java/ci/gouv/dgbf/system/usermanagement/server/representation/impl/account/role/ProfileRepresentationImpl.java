@@ -24,9 +24,4 @@ public class ProfileRepresentationImpl extends AbstractRepresentationEntityImpl<
 		return Response.ok().build();
 	}
 	
-	@Override
-	public Class<Profile> getPersistenceEntityClass() {
-		return Profile.class;
-	}
-
 }

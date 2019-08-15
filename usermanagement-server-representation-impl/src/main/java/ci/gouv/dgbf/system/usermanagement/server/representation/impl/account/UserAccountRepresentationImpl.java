@@ -47,9 +47,4 @@ public class UserAccountRepresentationImpl extends AbstractRepresentationEntityI
 		return Response.ok().build();
 	}
 	
-	@Override
-	public Class<UserAccount> getPersistenceEntityClass() {
-		return UserAccount.class;
-	}
-
 }

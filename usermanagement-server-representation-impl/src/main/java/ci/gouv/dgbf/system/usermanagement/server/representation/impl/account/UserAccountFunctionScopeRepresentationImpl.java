@@ -16,9 +16,4 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 public class UserAccountFunctionScopeRepresentationImpl extends AbstractRepresentationEntityImpl<UserAccountFunctionScope,UserAccountFunctionScopeBusiness,UserAccountFunctionScopeDto,UserAccountFunctionScopeDtoCollection> implements UserAccountFunctionScopeRepresentation,Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Override
-	public Class<UserAccountFunctionScope> getPersistenceEntityClass() {
-		return UserAccountFunctionScope.class;
-	}
-	
 }

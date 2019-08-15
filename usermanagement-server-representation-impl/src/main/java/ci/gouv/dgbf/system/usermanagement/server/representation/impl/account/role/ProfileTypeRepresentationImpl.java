@@ -15,10 +15,5 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 @ApplicationScoped
 public class ProfileTypeRepresentationImpl extends AbstractRepresentationEntityImpl<ProfileType,ProfileTypeBusiness,ProfileTypeDto,ProfileTypeDtoCollection> implements ProfileTypeRepresentation,Serializable {
 	private static final long serialVersionUID = 1L;
-
-	@Override
-	public Class<ProfileType> getPersistenceEntityClass() {
-		return ProfileType.class;
-	}
 	
 }

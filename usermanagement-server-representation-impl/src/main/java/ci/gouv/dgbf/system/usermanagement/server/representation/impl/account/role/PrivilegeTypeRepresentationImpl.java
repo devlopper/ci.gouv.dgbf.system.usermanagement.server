@@ -15,10 +15,5 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 @ApplicationScoped
 public class PrivilegeTypeRepresentationImpl extends AbstractRepresentationEntityImpl<PrivilegeType,PrivilegeTypeBusiness,PrivilegeTypeDto,PrivilegeTypeDtoCollection> implements PrivilegeTypeRepresentation,Serializable {
 	private static final long serialVersionUID = 1L;
-
-	@Override
-	public Class<PrivilegeType> getPersistenceEntityClass() {
-		return PrivilegeType.class;
-	}
 	
 }

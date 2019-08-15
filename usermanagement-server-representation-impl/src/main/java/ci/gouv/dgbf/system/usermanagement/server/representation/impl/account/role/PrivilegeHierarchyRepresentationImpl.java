@@ -16,9 +16,5 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 public class PrivilegeHierarchyRepresentationImpl extends AbstractRepresentationEntityImpl<PrivilegeHierarchy,PrivilegeHierarchyBusiness,PrivilegeHierarchyDto,PrivilegeHierarchyDtoCollection> implements PrivilegeHierarchyRepresentation,Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Override
-	public Class<PrivilegeHierarchy> getPersistenceEntityClass() {
-		return PrivilegeHierarchy.class;
-	}
-	
+
 }

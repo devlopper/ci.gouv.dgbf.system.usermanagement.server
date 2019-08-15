@@ -10,7 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @XmlRootElement @Getter @Setter @Accessors(chain=true) @NoArgsConstructor
-public class PrivilegeDto extends org.cyk.utility.server.representation.hierarchy.AbstractEntityFromPersistenceEntityCodedAndNamed<PrivilegeDto, PrivilegeDtoCollection> implements Serializable {
+public class PrivilegeDto extends org.cyk.utility.server.representation.hierarchy.AbstractNodeCodedAndNamed<PrivilegeDto, PrivilegeDtoCollection> implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private PrivilegeTypeDto type;
