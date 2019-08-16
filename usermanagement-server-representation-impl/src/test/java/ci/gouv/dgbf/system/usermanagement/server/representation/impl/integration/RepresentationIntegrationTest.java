@@ -263,7 +263,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		assertThat(userAccount.getUser()).isNotNull();
 		assertThat(userAccount.getUser().getFunctions()).isNull();
 		
-		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES+",user.functions").getEntity();
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES+",functions").getEntity();
 		assertThat(userAccount).as("user account is null").isNotNull();
 		assertThat(userAccount.getFunctionScopes()).as("user account roles collection is null").isNotNull();
 		assertThat(userAccount.getFunctionScopes().getCollection()).as("user account roles collection is empty").isNotEmpty();
@@ -282,7 +282,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		assertThat(__inject__(UserFunctionRepresentation.class).count(null).getEntity()).isEqualTo(1l);
 		__inject__(UserAccountRepresentation.class).updateOne(userAccount, "functions");
 		assertThat(__inject__(UserFunctionRepresentation.class).count(null).getEntity()).isEqualTo(2l);
-		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES+",user.functions").getEntity();
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES+",functions").getEntity();
 		assertThat(userAccount.getUser()).isNotNull();
 		assertThat(userAccount.getUser().getFunctions()).isNotNull();
 		assertThat(userAccount.getUser().getFunctions().getCollection()).isNotNull();

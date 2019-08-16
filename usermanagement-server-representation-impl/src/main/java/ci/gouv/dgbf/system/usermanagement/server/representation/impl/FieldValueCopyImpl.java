@@ -8,10 +8,12 @@ import org.cyk.utility.field.AbstractFieldValueCopyImpl;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionScopePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.PrivilegePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profiles;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScopes;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Functions;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Privileges;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDto;
@@ -20,6 +22,8 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionDtoCollection;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionScopeDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionScopeDtoCollection;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.PrivilegeDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.PrivilegeDtoCollection;
 
 @ci.gouv.dgbf.system.usermanagement.server.annotation.System
 public class FieldValueCopyImpl extends AbstractFieldValueCopyImpl implements Serializable {
@@ -71,6 +75,17 @@ public class FieldValueCopyImpl extends AbstractFieldValueCopyImpl implements Se
 				}
 			}
 			return functions;
+		}else if(__injectFieldHelper__().getField(ProfileDto.class, ProfileDto.FIELD_PRIVILEGES).equals(source) 
+				&& __injectFieldHelper__().getField(Profile.class, Profile.FIELD_PRIVILEGES).equals(destination)) {
+			Privileges privileges = null;
+			PrivilegeDtoCollection privilegeDtoCollection = ((PrivilegeDtoCollection) value);
+			if(privilegeDtoCollection != null && Boolean.TRUE.equals(__injectCollectionHelper__().isNotEmpty(privilegeDtoCollection.getCollection()))) {
+				privileges = __inject__(Privileges.class);
+				for(PrivilegeDto index : privilegeDtoCollection.getCollection()) {
+					privileges.add(__inject__(PrivilegePersistence.class).readByBusinessIdentifier(index.getCode()));
+				}
+			}
+			return privileges;
 		}else
 			return super.__processValue__(source, destination, value);
 	}
