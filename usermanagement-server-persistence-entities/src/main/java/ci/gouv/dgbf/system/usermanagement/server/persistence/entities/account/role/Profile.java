@@ -55,6 +55,11 @@ public class Profile extends AbstractIdentifiedByStringAndCodedAndNamed implemen
 		return (Profile) super.setName(name);
 	}
 	
+	public Profile setTypeFromCode(String code) {
+		setFromBusinessIdentifier(FIELD_TYPE, code);
+		return this;
+	}
+	
 	public Functions getFunctions(Boolean injectIfNull) {
 		return (Functions) __getInjectIfNull__(FIELD_FUNCTIONS, injectIfNull);
 	}

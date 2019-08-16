@@ -17,7 +17,6 @@ import org.cyk.utility.string.Strings;
 
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileFunctionBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePrivilegePersistence;
@@ -85,7 +84,7 @@ public class ProfileBusinessImpl extends AbstractBusinessEntityImpl<Profile, Pro
 			@Override
 			public void run() {
 				Collection<Profile> profiles = Arrays.asList(profile);
-				__deleteMany__(__inject__(UserAccountProfilePersistence.class).readByProfiles(profiles));
+				//__deleteMany__(__inject__(UserAccountProfilePersistence.class).readByProfiles(profiles)); //Delete user account first
 				__deleteMany__(__inject__(ProfileFunctionPersistence.class).readByProfiles(profiles));
 				__deleteMany__(__inject__(ProfilePrivilegePersistence.class).readByProfiles(profiles));
 				__deleteMany__(__inject__(ProfileServiceResourcePersistence.class).readByProfiles(profiles));

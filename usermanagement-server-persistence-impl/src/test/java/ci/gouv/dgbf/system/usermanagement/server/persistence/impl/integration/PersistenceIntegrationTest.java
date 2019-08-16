@@ -61,7 +61,6 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Override
 	protected void __listenBeforeCallCountIsZero__() throws Exception {
-		//AbstractPersistenceFunctionImpl.LOG_LEVEL = LogLevel.INFO;
 		super.__listenBeforeCallCountIsZero__();	
 		__inject__(ApplicationScopeLifeCycleListener.class).initialize(null);
 		
@@ -342,6 +341,33 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		
 		profileFunctions = __inject__(ProfileFunctionPersistence.class).readByProfileCodes("p04");
 		assertThat(profileFunctions).isEmpty();
+	}
+	
+	@Test
+	public void read_profile_filter_byTypes() throws Exception{
+		userTransaction.begin();
+		__inject__(ProfileTypePersistence.class).createMany(Arrays.asList(new ProfileType().setCode("T01").setName(__getRandomName__()),
+				new ProfileType().setCode("T02").setName(__getRandomName__())));
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p01").setName(__getRandomName__()).setTypeFromCode("T01"));
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p02").setName(__getRandomName__()).setTypeFromCode("T01"));
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p03").setName(__getRandomName__()).setTypeFromCode("T01"));
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p04").setName(__getRandomName__()).setTypeFromCode("T02"));
+		__inject__(ProfilePersistence.class).create(new Profile().setCode("p05").setName(__getRandomName__()).setTypeFromCode("T02"));
+		userTransaction.commit();
+		
+		Collection<Profile> profiles = __inject__(ProfilePersistence.class).read();
+		assertThat(profiles).isNotNull();
+		assertThat(profiles.stream().map(Profile::getCode).collect(Collectors.toList())).containsOnly("p01","p02","p03","p04","p05");
+		
+		Filter filter = __inject__(Filter.class).setKlass(Profile.class).addField(Profile.FIELD_TYPE, Arrays.asList("T01"));
+		profiles = __inject__(ProfilePersistence.class).read(new Properties().setQueryFilters(filter));
+		assertThat(profiles).isNotNull();
+		assertThat(profiles.stream().map(Profile::getCode).collect(Collectors.toList())).containsOnly("p01","p02","p03");
+		
+		filter = __inject__(Filter.class).setKlass(Profile.class).addField(Profile.FIELD_TYPE, Arrays.asList("T02"));
+		profiles = __inject__(ProfilePersistence.class).read(new Properties().setQueryFilters(filter));
+		assertThat(profiles).isNotNull();
+		assertThat(profiles.stream().map(Profile::getCode).collect(Collectors.toList())).containsOnly("p04","p05");
 	}
 	
 	@Test
