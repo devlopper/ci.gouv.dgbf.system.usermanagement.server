@@ -15,5 +15,35 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 @ApplicationScoped
 public class PrivilegePersistenceImpl extends AbstractPersistenceIdentifiedByStringAndCodedImpl<Privilege,PrivilegeHierarchy,PrivilegeHierarchies,PrivilegeHierarchyPersistence> implements PrivilegePersistence,Serializable {
 	private static final long serialVersionUID = 1L;
+	/*
+	private String readByProfilesIdentifiers;
 
+	@Override
+	protected void __listenPostConstructPersistenceQueries__() {
+		super.__listenPostConstructPersistenceQueries__();
+		addQueryCollectInstances(readByProfilesIdentifiers, "SELECT tuple FROM Privilege tuple WHERE"
+				+ " EXISTS(SELECT subTuple FROM ProfilePrivilege subTuple.profile.identifier IN :profilesIdentifiers)");
+	}
+	
+	@Override
+	protected String __getQueryIdentifier__(Class<?> functionClass, Properties properties, Object... parameters) {
+		if(PersistenceFunctionReader.class.equals(functionClass)) {
+			if(Boolean.TRUE.equals(__isFilterByKeys__(properties, Privilege.FIELD_TYPE)))
+				return readByProfilesIdentifiers;
+		}
+		return super.__getQueryIdentifier__(functionClass, properties, parameters);
+	}
+	
+	@Override
+	protected Object[] __getQueryParameters__(PersistenceQueryContext queryContext, Properties properties,Object... objects) {
+		if(queryContext.getQuery().isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readByProfilesIdentifiers)) {
+			if(__inject__(ArrayHelper.class).isEmpty(objects)) {
+				objects = new Object[] {queryContext.getFilterByKeysValue(Profile.FIELD_TYPE)};
+			}
+			return new Object[]{"codes",objects[0]};
+		}
+		return super.__getQueryParameters__(queryContext, properties, objects);
+	}
+	*/
+	
 }

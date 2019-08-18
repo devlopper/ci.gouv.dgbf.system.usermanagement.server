@@ -6,4 +6,8 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 
 public interface PrivilegePersistence extends PersistenceIdentifiedByStringAndCoded<Privilege> {
 
+	/**/
+	
+	String READ_BY_PROFILES_IDENTIFIERS = "READ_BY_PROFILES_IDENTIFIERS";
+	
 }

@@ -24,6 +24,8 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScopes;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Functions;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Privilege;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Privileges;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -42,6 +44,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	
 	@Transient private Functions functions;
 	@Transient private Profiles profiles;
+	@Transient private Privileges privileges;
 	@Transient private FunctionScopes functionScopes;
 	@Transient private Boolean isProfileCreatableOnCreate;
 	@Transient private Boolean isNotifiableByMail,isPersistToKeycloakOnCreate;
@@ -105,6 +108,34 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 		return this;
 	}
 	
+	public Privileges getPrivileges(Boolean injectIfNull) {
+		return (Privileges) __getInjectIfNull__(FIELD_PRIVILEGES, injectIfNull);
+	}
+	
+	public UserAccount addPrivileges(Collection<Privilege> privileges) {
+		getPrivileges(Boolean.TRUE).add(privileges);
+		return this;
+	}
+	
+	public UserAccount addPrivileges(Privilege...privileges) {
+		if(__inject__(ArrayHelper.class).isNotEmpty(privileges)) {
+			addPrivileges(__inject__(CollectionHelper.class).instanciate(privileges));
+		}
+		return this;
+	}
+	
+	public UserAccount addPrivilegesByCodes(Collection<String> privilegesCodes) {
+		if(__inject__(CollectionHelper.class).isNotEmpty(privilegesCodes)) {
+			for(String index : privilegesCodes)
+				addPrivileges(__inject__(InstanceHelper.class).getByIdentifierBusiness(Privilege.class, index));
+		}
+		return this;
+	}
+	
+	public UserAccount addPrivilegesByCodes(String...privilegesCodes) {
+		return addFunctionsByCodes(__inject__(CollectionHelper.class).instanciate(privilegesCodes));
+	}
+	
 	public FunctionScopes getFunctionScopes(Boolean injectIfNull) {
 		return (FunctionScopes) __getInjectIfNull__(FIELD_FUNCTION_SCOPES, injectIfNull);
 	}
@@ -127,6 +158,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	public static final String FIELD_ACCOUNT = "account";
 	public static final String FIELD_FUNCTIONS = "functions";
 	public static final String FIELD_PROFILES = "profiles";
+	public static final String FIELD_PRIVILEGES = "privileges";
 	public static final String FIELD_FUNCTION_SCOPES = "functionScopes";
 	
 	public static final String TABLE_NAME = Account.TABLE_NAME+User.TABLE_NAME;
