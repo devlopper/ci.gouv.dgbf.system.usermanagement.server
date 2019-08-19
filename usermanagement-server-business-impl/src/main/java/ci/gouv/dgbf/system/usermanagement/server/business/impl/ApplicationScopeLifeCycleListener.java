@@ -111,7 +111,9 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		arrayInstance = reader.execute().getOutput();
 		Collection<Privilege> privileges = new ArrayList<>();
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount(); index = index + 1) {
-			Privilege privilege = new Privilege().setCode(arrayInstance.get(index, 0)).setName(arrayInstance.get(index, 1)).setType(__inject__(PrivilegeTypePersistence.class).readByBusinessIdentifier(arrayInstance.get(index, 2)));
+			String identifier = arrayInstance.get(index, 0);
+			String code = arrayInstance.get(index, 0);
+			Privilege privilege = new Privilege().setIdentifier(identifier).setCode(code).setName(arrayInstance.get(index, 1)).setType(__inject__(PrivilegeTypePersistence.class).readByBusinessIdentifier(arrayInstance.get(index, 2)));
 			for(Privilege parent : privileges)
 				if(parent.getCode().equals(arrayInstance.get(index, 3))) {
 					privilege.addParents(parent);
@@ -120,7 +122,8 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 			privileges.add(privilege);
 		}
 		__logInfo__("Creating "+privileges.size()+" privileges");
-		__inject__(PrivilegeBusiness.class).saveByBatch(privileges,100);
+		//__inject__(PrivilegeBusiness.class).saveByBatch(privileges,100);
+		__inject__(PrivilegeBusiness.class).createMany(privileges);
 		
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("ministère");

@@ -35,7 +35,7 @@ public class PopulateKeycloak extends AbstractObject {
 	    weld.initialize();
 	    
 		String url = "http://localhost:8230/auth/";
-		String realmName = "TestPopulate";
+		String realmName = "Test";
 		String clientIdentifier = "admin-cli";
 		String clientSecret = "99592008-3bd6-4fda-9b57-09fbc6befa86";
 		String username = "admin";
@@ -218,29 +218,36 @@ public class PopulateKeycloak extends AbstractObject {
 	}
 	
 	private void deleteRoles(RolesResource rolesResource) {
-		Integer count = rolesResource.list().size();
-		System.out.println("Deleting all ("+count+") roles... ");
-		Integer deleted = 0;
-		for(RoleRepresentation index : rolesResource.list()) {
-			rolesResource.deleteRole(index.getName());
-			deleted++;
-			if(deleted % 100 == 0) {
-				count -= 100;
-				System.out.println( ((deleted / count) * 100)+"% , remaining="+count );
-				
-			}
+		Integer count;
+		try {
+			count = __inject__(CollectionHelper.class).getSize(rolesResource.list());
+		} catch (Exception e) {
+			e.printStackTrace();
+			count = null;
 		}
-		System.out.println("OK");
+		if(count != null) {
+			System.out.println("Deleting all ("+count+") roles... ");
+			Integer deleted = 0;
+			for(RoleRepresentation index : rolesResource.list()) {
+				rolesResource.deleteRole(index.getName());
+				deleted++;
+				if(deleted % 100 == 0) {
+					count -= 100;
+					System.out.println( ((deleted / count) * 100)+"% , remaining="+count );
+					
+				}
+			}
+			System.out.println("OK");	
+		}
 	}
 
 	private void deleteClients(ClientsResource clientsResource) {
 		List<ClientRepresentation> clientRepresentations = clientsResource.findAll();
 		for(Integer index = 0 ; index <  __inject__(CollectionHelper.class).getSize(clientRepresentations);) {
 			ClientRepresentation clientRepresentation = clientRepresentations.get(index);
-			if(clientRepresentation.getAttributes()!=null && __inject__(StringHelper.class).isNotBlank(clientRepresentation.getAttributes().get("uuid")) && !Arrays.asList("account","admin-cli"
-					,"broker","master-realm","security-admin-console","realm-management").contains(clientRepresentation.getName())) {
+			if(Arrays.asList("account","admin-cli","broker","master-realm","security-admin-console","realm-management").contains(clientRepresentation.getName())) {
+				//clientsResource.get(clientRepresentation.getId()).remove();
 				index = index + 1;
-				clientsResource.get(clientRepresentation.getId()).remove();
 			}else
 				clientRepresentations.remove(index.intValue());
 		}
