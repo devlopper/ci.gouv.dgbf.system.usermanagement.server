@@ -68,7 +68,14 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 		}else if((UserAccount.FIELD_FUNCTIONS).equals(field.getName())) {
 			__inject__(UserPersistence.class).setFunctions(userAccount.getUser());
 			userAccount.setFunctions(userAccount.getUser().getFunctions());
-		}
+		}/*else if((UserAccount.FIELD_SYSTEM_PROFILES).equals(field.getName())) {
+			Collection<UserAccountProfile> userAccountProfiles = __inject__(UserAccountProfilePersistence.class).readByUserAccount(userAccount);
+			if(__injectCollectionHelper__().isNotEmpty(userAccountProfiles)) {
+				//Collection<Profile> userProfiles = userAccountProfiles.stream().map(UserAccountProfile::getProfile).collect(Collectors.toList());
+				
+				//userAccount.getProfiles(Boolean.TRUE).add(userAccountProfiles.stream().map(UserAccountProfile::getProfile).collect(Collectors.toList()));
+			}
+		}*/
 	}
 	
 	@Override

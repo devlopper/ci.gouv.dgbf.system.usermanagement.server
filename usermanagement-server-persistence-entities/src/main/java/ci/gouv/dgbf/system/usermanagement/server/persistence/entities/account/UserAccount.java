@@ -44,6 +44,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	
 	@Transient private Functions functions;
 	@Transient private Profiles profiles;
+	//@Transient private Profiles systemProfiles;
 	@Transient private Privileges privileges;
 	@Transient private FunctionScopes functionScopes;
 	@Transient private Boolean isProfileCreatableOnCreate;
@@ -157,6 +158,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	public static final String FIELD_USER = "user";
 	public static final String FIELD_ACCOUNT = "account";
 	public static final String FIELD_FUNCTIONS = "functions";
+	//public static final String FIELD_SYSTEM_PROFILES = "systemProfiles";
 	public static final String FIELD_PROFILES = "profiles";
 	public static final String FIELD_PRIVILEGES = "privileges";
 	public static final String FIELD_FUNCTION_SCOPES = "functionScopes";
