@@ -45,28 +45,35 @@ import org.keycloak.representations.idm.authorization.ResourcePermissionRepresen
 import org.keycloak.representations.idm.authorization.ResourceRepresentation;
 import org.keycloak.representations.idm.authorization.RolePolicyRepresentation;
 
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionTypePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionScopePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionTypePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Resource;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Service;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 @ApplicationScoped
 public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper,Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String realmName;
-	private Keycloak client;
+	@Getter @Setter @Accessors(chain=true) private Keycloak client;
+	
+	private Boolean __isEnable__;
 	
 	@Override
-	public Keycloak getClient() {
-		if(client == null) {
+	protected void __listenPostConstruct__() {
+		super.__listenPostConstruct__();
+		__isEnable__ = ConstantParameterName.is(ConstantParameterName.SECURITY_DELEGATE_SYSTEM_IS_ENABLE);
+		if(Boolean.TRUE.equals(__isEnable__)) {
 			String url = __inject__(ValueHelper.class).returnOrThrowIfBlank("keycloak server url",ConstantParameterName.get("keycloak.server.url")); 
 			realmName = __inject__(ValueHelper.class).returnOrThrowIfBlank("keycloak realm name",ConstantParameterName.get("keycloak.realm.name")); 
 			String clientIdentifier = __inject__(ValueHelper.class).returnOrThrowIfBlank("keycloak client identifier",ConstantParameterName.get("keycloak.client.identifier")); 
@@ -79,14 +86,9 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 			
 			client = KeycloakBuilder.builder().serverUrl(url).realm(realmName).grantType(OAuth2Constants.PASSWORD).clientId(clientIdentifier) //
 					.clientSecret(clientSecret).username(username).password(password).build();
+		}else {
+			System.out.println("********************************************** KEYCLOAK INTEGRATION HAS NOT BEEN ENABLE ***********************************************");
 		}
-		return client;
-	}
-
-	@Override
-	public KeycloakHelper setClient(Keycloak client) {
-		this.client = client;
-		return this;
 	}
 	
 	@Override
@@ -158,28 +160,30 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	
 	@Override
 	public KeycloakHelper createRole(String code,String name, String type,Collection<String> parentsCodes) {
-		RoleResource roleResource = null;
-		RoleRepresentation roleRepresentation  = null;
-		try {
-			roleResource = getRolesResource().get(code);
-			roleRepresentation = roleResource.toRepresentation();
-		} catch (NotFoundException exception) {
-			//if existing then log
-			//__logSevere__("Role <<"+code+">> not found. "+exception);
-		}/* catch (ProcessingException exception) {
-			__logSevere__("Cannot create role <<"+code+">>. "+exception);
-			return this;
-		}*/
-		if(roleRepresentation == null) {
-			roleRepresentation = new RoleRepresentation();
-			roleRepresentation.setName(code);
-			roleRepresentation.setDescription(name);
-			
-			RolesResource rolesResource = __inject__(KeycloakHelper.class).getRolesResource();
-			rolesResource.create(roleRepresentation);
-			
-			updateAttributes(code,name,type, rolesResource.get(code));
-			saveRoleComposites(code, parentsCodes);	
+		if(Boolean.TRUE.equals(__isEnable__)) {
+			RoleResource roleResource = null;
+			RoleRepresentation roleRepresentation  = null;
+			try {
+				roleResource = getRolesResource().get(code);
+				roleRepresentation = roleResource.toRepresentation();
+			} catch (NotFoundException exception) {
+				//if existing then log
+				//__logSevere__("Role <<"+code+">> not found. "+exception);
+			}/* catch (ProcessingException exception) {
+				__logSevere__("Cannot create role <<"+code+">>. "+exception);
+				return this;
+			}*/
+			if(roleRepresentation == null) {
+				roleRepresentation = new RoleRepresentation();
+				roleRepresentation.setName(code);
+				roleRepresentation.setDescription(name);
+				
+				RolesResource rolesResource = __inject__(KeycloakHelper.class).getRolesResource();
+				rolesResource.create(roleRepresentation);
+				
+				updateAttributes(code,name,type, rolesResource.get(code));
+				saveRoleComposites(code, parentsCodes);	
+			}	
 		}
 		return this;
 	}
@@ -191,143 +195,157 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	
 	@Override
 	public KeycloakHelper deleteRole(String code) {
-		try {
-			getRolesResource().deleteRole(code);
-		} catch (NotFoundException exception) {
-			__logWarning__("Role <<"+code+">> not found. "+exception);
-		}/* catch (ProcessingException exception) {
-			__logSevere__("Cannot delete role <<"+code+">>. "+exception);
-			return this;
-		}*/
+		if(Boolean.TRUE.equals(__isEnable__)) {
+			try {
+				getRolesResource().deleteRole(code);
+			} catch (NotFoundException exception) {
+				__logWarning__("Role <<"+code+">> not found. "+exception);
+			}/* catch (ProcessingException exception) {
+				__logSevere__("Cannot delete role <<"+code+">>. "+exception);
+				return this;
+			}*/
+			}
 		return this;
 	}
 	
 	private void updateAttributes(String code,String name,String type,RoleResource roleResource) {
-		RoleRepresentation roleRepresentation = roleResource.toRepresentation();
-		Map<String,List<String>> attributes = new LinkedHashMap<>();
-		attributes.put(ROLE_ATTRIBUTE_NAME, Arrays.asList(name));
-		if(__inject__(StringHelper.class).isNotBlank(type))
-			attributes.put("type", Arrays.asList(type));
-		roleRepresentation.setAttributes(attributes);
-		roleResource.update(roleRepresentation);
+		if(Boolean.TRUE.equals(__isEnable__)) {
+			RoleRepresentation roleRepresentation = roleResource.toRepresentation();
+			Map<String,List<String>> attributes = new LinkedHashMap<>();
+			attributes.put(ROLE_ATTRIBUTE_NAME, Arrays.asList(name));
+			if(__inject__(StringHelper.class).isNotBlank(type))
+				attributes.put("type", Arrays.asList(type));
+			roleRepresentation.setAttributes(attributes);
+			roleResource.update(roleRepresentation);
+		}
 	}
 	
 	private void saveRoleComposites(String code,Collection<String> parentsCodes) {
-		if(Boolean.TRUE.equals(__inject__(CollectionHelper.class ).isNotEmpty(parentsCodes))) {
-			RolesResource rolesResource = getRolesResource();
-			List<RoleRepresentation> composites = new ArrayList<>();
-			for(String indexParentCode : parentsCodes) {
-				RoleResource roleResource;
-				try {
-					roleResource = rolesResource.get(indexParentCode);
-					if(roleResource!=null)
-						composites.add(roleResource.toRepresentation());
-				} catch (NotFoundException exception) {
-					
+		if(Boolean.TRUE.equals(__isEnable__)) {
+			if(Boolean.TRUE.equals(__inject__(CollectionHelper.class ).isNotEmpty(parentsCodes))) {
+				RolesResource rolesResource = getRolesResource();
+				List<RoleRepresentation> composites = new ArrayList<>();
+				for(String indexParentCode : parentsCodes) {
+					RoleResource roleResource;
+					try {
+						roleResource = rolesResource.get(indexParentCode);
+						if(roleResource!=null)
+							composites.add(roleResource.toRepresentation());
+					} catch (NotFoundException exception) {
+						
+					}
 				}
+				if(__inject__(CollectionHelper.class).isNotEmpty(composites))
+					rolesResource.get(code).addComposites(composites);	
 			}
-			if(__inject__(CollectionHelper.class).isNotEmpty(composites))
-				rolesResource.get(code).addComposites(composites);	
 		}
 	}
 	
 	@Override
 	public String saveUserAccount(String identifier,String firstName, String lastNames, String electronicMailAddress,String userName, String pass,Collection<String> rolesCodes,Map<String,List<String>> attributes) {
-		UsersResource usersRessource = getUsersResource();
-		UserResource userResource = null;
-		if(__inject__(StringHelper.class).isNotBlank(identifier))
-			try {
-				userResource = usersRessource.get(identifier);
-			} catch (NotFoundException exception) {
-				__logSevere__("User account <<"+identifier+">> to save not found. "+exception);
-			}/* catch (ProcessingException exception) {
-				__logSevere__("Cannot save user account <<"+identifier+">>. "+exception);
-				return null;
-			}*/
-		UserRepresentation userRepresentation = null;
-		if(userResource!=null)
-			//try {
-				userRepresentation = userResource.toRepresentation();	
-			/*} catch (ProcessingException exception) {
-				__logSevere__("Cannot save user account <<"+identifier+">>. "+exception);
-				return null;
-			}*/
-			
-		if(userRepresentation == null) {
-			userRepresentation = new UserRepresentation();
-			userRepresentation.setEnabled(true);
-		}else {
-			
-		}
-		
-		userRepresentation.setUsername(userName);
-		userRepresentation.setFirstName(firstName);
-		userRepresentation.setLastName(lastNames);
-		userRepresentation.setEmail(electronicMailAddress);
-		userRepresentation.setAttributes(attributes);
-		
-		if(__inject__(StringHelper.class).isBlank(identifier)) {
-			Response response = usersRessource.create(userRepresentation);
-			identifier = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");	
-			userResource = usersRessource.get(identifier);
-			
-			CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
-			credentialRepresentation.setTemporary(Boolean.TRUE);
-			credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
-			credentialRepresentation.setValue(__inject__(ValueHelper.class).defaultToIfNull(pass, "123"));
-			userResource.resetPassword(credentialRepresentation);
-		}
-				
-		if(__inject__(CollectionHelper.class).isNotEmpty(rolesCodes)) 
-			for(String index : rolesCodes) {
+		if(Boolean.TRUE.equals(__isEnable__)) {
+			UsersResource usersRessource = getUsersResource();
+			UserResource userResource = null;
+			if(__inject__(StringHelper.class).isNotBlank(identifier))
 				try {
-					RoleRepresentation roleRepresentation = getRealmResource().roles().get(index).toRepresentation();
-					userResource.roles().realmLevel().add(Arrays.asList(roleRepresentation));
+					userResource = usersRessource.get(identifier);
 				} catch (NotFoundException exception) {
-					System.out.println("Saving user account. Role "+exception+" : "+index);
-				}
+					__logSevere__("User account <<"+identifier+">> to save not found. "+exception);
+				}/* catch (ProcessingException exception) {
+					__logSevere__("Cannot save user account <<"+identifier+">>. "+exception);
+					return null;
+				}*/
+			UserRepresentation userRepresentation = null;
+			if(userResource!=null)
+				//try {
+					userRepresentation = userResource.toRepresentation();	
+				/*} catch (ProcessingException exception) {
+					__logSevere__("Cannot save user account <<"+identifier+">>. "+exception);
+					return null;
+				}*/
+				
+			if(userRepresentation == null) {
+				userRepresentation = new UserRepresentation();
+				userRepresentation.setEnabled(true);
+			}else {
+				
 			}
 			
+			userRepresentation.setUsername(userName);
+			userRepresentation.setFirstName(firstName);
+			userRepresentation.setLastName(lastNames);
+			userRepresentation.setEmail(electronicMailAddress);
+			userRepresentation.setAttributes(attributes);
+			
+			if(__inject__(StringHelper.class).isBlank(identifier)) {
+				Response response = usersRessource.create(userRepresentation);
+				identifier = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");	
+				userResource = usersRessource.get(identifier);
+				
+				CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
+				credentialRepresentation.setTemporary(Boolean.TRUE);
+				credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
+				credentialRepresentation.setValue(__inject__(ValueHelper.class).defaultToIfNull(pass, "123"));
+				userResource.resetPassword(credentialRepresentation);
+			}
+					
+			if(__inject__(CollectionHelper.class).isNotEmpty(rolesCodes)) 
+				for(String index : rolesCodes) {
+					try {
+						RoleRepresentation roleRepresentation = getRealmResource().roles().get(index).toRepresentation();
+						userResource.roles().realmLevel().add(Arrays.asList(roleRepresentation));
+					} catch (NotFoundException exception) {
+						System.out.println("Saving user account. Role "+exception+" : "+index);
+					}
+				}
+		}	
 		return identifier;
 	}
 	
 	@Override
 	public String saveUserAccount(UserAccount userAccount) {
-		Collection<String> rolesCodes = __inject__(CollectionHelper.class).isEmpty(userAccount.getProfiles()) ? null : userAccount.getProfiles().get()
-				.stream().map(x -> x.getCode()).collect(Collectors.toList());
-		
-		String identifier = saveUserAccount(userAccount.getIdentifier(),userAccount.getUser().getFirstName(), userAccount.getUser().getLastNames(), userAccount.getUser().getElectronicMailAddress()
-				, userAccount.getAccount().getIdentifier(),  userAccount.getAccount().getPass(),  rolesCodes,null);
+		String identifier = null;
+		if(Boolean.TRUE.equals(__isEnable__)) {
+			Collection<String> rolesCodes = __inject__(CollectionHelper.class).isEmpty(userAccount.getProfiles()) ? null : userAccount.getProfiles().get()
+					.stream().map(x -> x.getCode()).collect(Collectors.toList());
+			
+			identifier = saveUserAccount(userAccount.getIdentifier(),userAccount.getUser().getFirstName(), userAccount.getUser().getLastNames(), userAccount.getUser().getElectronicMailAddress()
+					, userAccount.getAccount().getIdentifier(),  userAccount.getAccount().getPass(),  rolesCodes,null);
+		}
 		return identifier;
 	}
 	
 	@Override
 	public KeycloakHelper deleteUserAccount(String identifier) {
-		try{
-			getUsersResource().get(identifier).remove();
-		} catch (NotFoundException exception) {
-			__logSevere__("User account <<"+identifier+">> not found. "+exception);
-		}/* catch (ProcessingException exception) {
-			__logSevere__("Cannot delete user account <<"+identifier+">>. "+exception);
-			return this;
-		}*/
+		if(Boolean.TRUE.equals(__isEnable__)) {
+			try{
+				getUsersResource().get(identifier).remove();
+			} catch (NotFoundException exception) {
+				__logSevere__("User account <<"+identifier+">> not found. "+exception);
+			}/* catch (ProcessingException exception) {
+				__logSevere__("Cannot delete user account <<"+identifier+">>. "+exception);
+				return this;
+			}*/
+		}
 		return this;
 	}
 
 	@Override
 	public KeycloakHelper addUserAccountAttributeValue(String identifier, String attributeName, String attributeValue) {
-		if(Boolean.TRUE.equals(__inject__(StringHelper.class).isNotBlank(attributeName)) && Boolean.TRUE.equals(__inject__(StringHelper.class).isNotBlank(attributeValue))) {
-			UserResource userResource = getUsersResource().get(identifier);
-			UserRepresentation userRepresentation = userResource.toRepresentation();
-			Map<String,List<String>> attributes = userRepresentation.getAttributes();
-			if(attributes == null)
-				userRepresentation.setAttributes(attributes = new LinkedHashMap<>());
-			List<String> values = attributes.get(attributeName);
-			if(values == null)
-				attributes.put(attributeName, values = new ArrayList<>());
-			if(!values.contains(attributeValue))
-				values.add(attributeValue);
-			userResource.update(userRepresentation);	
+		if(Boolean.TRUE.equals(__isEnable__)) {
+			if(Boolean.TRUE.equals(__inject__(StringHelper.class).isNotBlank(attributeName)) && Boolean.TRUE.equals(__inject__(StringHelper.class).isNotBlank(attributeValue))) {
+				UserResource userResource = getUsersResource().get(identifier);
+				UserRepresentation userRepresentation = userResource.toRepresentation();
+				Map<String,List<String>> attributes = userRepresentation.getAttributes();
+				if(attributes == null)
+					userRepresentation.setAttributes(attributes = new LinkedHashMap<>());
+				List<String> values = attributes.get(attributeName);
+				if(values == null)
+					attributes.put(attributeName, values = new ArrayList<>());
+				if(!values.contains(attributeValue))
+					values.add(attributeValue);
+				userResource.update(userRepresentation);	
+			}
 		}
 		return this;
 	}
@@ -345,16 +363,18 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	
 	@Override
 	public KeycloakHelper removeUserAccountAttributeValue(String identifier, String attributeName,String attributeValue) {
-		if(Boolean.TRUE.equals(__inject__(StringHelper.class).isNotBlank(attributeName)) && Boolean.TRUE.equals(__inject__(StringHelper.class).isNotBlank(attributeValue))) {
-			UserResource userResource = getUsersResource().get(identifier);
-			UserRepresentation userRepresentation = userResource.toRepresentation();
-			Map<String,List<String>> attributes = userRepresentation.getAttributes();
-			if(attributes != null) {
-				List<String> values = attributes.get(attributeName);
-				if(values != null) {
-					values.remove(attributeValue);
-					userResource.update(userRepresentation);		
-				}	
+		if(Boolean.TRUE.equals(__isEnable__)) {
+			if(Boolean.TRUE.equals(__inject__(StringHelper.class).isNotBlank(attributeName)) && Boolean.TRUE.equals(__inject__(StringHelper.class).isNotBlank(attributeValue))) {
+				UserResource userResource = getUsersResource().get(identifier);
+				UserRepresentation userRepresentation = userResource.toRepresentation();
+				Map<String,List<String>> attributes = userRepresentation.getAttributes();
+				if(attributes != null) {
+					List<String> values = attributes.get(attributeName);
+					if(values != null) {
+						values.remove(attributeValue);
+						userResource.update(userRepresentation);		
+					}	
+				}
 			}
 		}
 		return this;
@@ -390,10 +410,12 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	
 	@Override
 	public KeycloakHelper createClient(Service service) {
-		ClientRepresentation clientRepresentation = new ClientRepresentation();
-		clientRepresentation.setId(service.getIdentifier());
-		clientRepresentation.setRootUrl(service.getUrl());
-		getClient().realm(realmName).clients().create(clientRepresentation);
+		if(Boolean.TRUE.equals(__isEnable__)) {
+			ClientRepresentation clientRepresentation = new ClientRepresentation();
+			clientRepresentation.setId(service.getIdentifier());
+			clientRepresentation.setRootUrl(service.getUrl());
+			getClient().realm(realmName).clients().create(clientRepresentation);
+		}
 		return this;
 	}
 	
@@ -404,27 +426,31 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	
 	@Override
 	public KeycloakHelper deleteClient(Service service) {
-		ClientResource clientResource = getClient(service);
-		if(clientResource != null)
-			try {
-				clientResource.remove();
-			} catch (NotFoundException exception) {
-				__logWarning__(String.format("Identifier <<%s>> not found. %s", service.getIdentifier(),exception.toString()));
-			}
+		if(Boolean.TRUE.equals(__isEnable__)) {
+			ClientResource clientResource = getClient(service);
+			if(clientResource != null)
+				try {
+					clientResource.remove();
+				} catch (NotFoundException exception) {
+					__logWarning__(String.format("Identifier <<%s>> not found. %s", service.getIdentifier(),exception.toString()));
+				}
+		}
 		return this;
 	}
 	
 	@Override
 	public KeycloakHelper createResource(Service service, Resource resource) {
-		ClientResource clientResource = getClient(service);
-		if(clientResource != null) {
-			ResourceRepresentation resourceRepresentation = new ResourceRepresentation();
-			resourceRepresentation.setId(service.getIdentifier()+resource.getIdentifier());
-			resourceRepresentation.setName(resource.getName());
-			Set<String> uris = new HashSet<>();
-			uris.add(resource.getUrl());
-			resourceRepresentation.setUris(uris);
-			clientResource.authorization().resources().create(resourceRepresentation);	
+		if(Boolean.TRUE.equals(__isEnable__)) {
+			ClientResource clientResource = getClient(service);
+			if(clientResource != null) {
+				ResourceRepresentation resourceRepresentation = new ResourceRepresentation();
+				resourceRepresentation.setId(service.getIdentifier()+resource.getIdentifier());
+				resourceRepresentation.setName(resource.getName());
+				Set<String> uris = new HashSet<>();
+				uris.add(resource.getUrl());
+				resourceRepresentation.setUris(uris);
+				clientResource.authorization().resources().create(resourceRepresentation);	
+			}
 		}
 		return this;
 	}
@@ -449,22 +475,26 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	
 	@Override
 	public KeycloakHelper deleteResource(Service service, Resource resource) {
-		ResourceResource resourceResource = getResource(service, resource);
-		if(resourceResource != null) {
-			resourceResource.remove();	
+		if(Boolean.TRUE.equals(__isEnable__)) {
+			ResourceResource resourceResource = getResource(service, resource);
+			if(resourceResource != null) {
+				resourceResource.remove();	
+			}
 		}
 		return this;
 	}
 	
 	@Override
 	public KeycloakHelper createRolePolicy(Service service,Profile profile) {
-		ClientResource clientResource = getClient().realm(realmName).clients().get(service.getIdentifier());
-		RolePolicyRepresentation rolePolicyRepresentation = new RolePolicyRepresentation();
-		rolePolicyRepresentation.setId(service.getIdentifier()+profile.getIdentifier());
-		rolePolicyRepresentation.setName(profile.getCode());
-		rolePolicyRepresentation.setDescription(profile.getName());
-		rolePolicyRepresentation.addRole(profile.getCode(), Boolean.TRUE);
-		clientResource.authorization().policies().role().create(rolePolicyRepresentation);
+		if(Boolean.TRUE.equals(__isEnable__)) {
+			ClientResource clientResource = getClient().realm(realmName).clients().get(service.getIdentifier());
+			RolePolicyRepresentation rolePolicyRepresentation = new RolePolicyRepresentation();
+			rolePolicyRepresentation.setId(service.getIdentifier()+profile.getIdentifier());
+			rolePolicyRepresentation.setName(profile.getCode());
+			rolePolicyRepresentation.setDescription(profile.getName());
+			rolePolicyRepresentation.addRole(profile.getCode(), Boolean.TRUE);
+			clientResource.authorization().policies().role().create(rolePolicyRepresentation);
+		}
 		return this;
 	}
 	
@@ -484,27 +514,31 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	
 	@Override
 	public KeycloakHelper deleteRolePolicy(Service service, Profile profile) {
-		RolePolicyResource rolePolicyResource = getRolePolicy(service, profile);
-		if(rolePolicyResource != null)
-			rolePolicyResource.remove();
+		if(Boolean.TRUE.equals(__isEnable__)) {
+			RolePolicyResource rolePolicyResource = getRolePolicy(service, profile);
+			if(rolePolicyResource != null)
+				rolePolicyResource.remove();
+		}
 		return this;
 	}
 	
 	@Override
 	public KeycloakHelper createPermission(Profile profile,Service service,Resource resource) {
-		ClientResource clientResource = getClient(service);
-		if(clientResource != null) {
-			ResourcePermissionRepresentation resourcePermissionRepresentation = new ResourcePermissionRepresentation();
-			ResourceResource resourceResource = getResource(service, resource);
-			if(resourceResource != null) {
-				RolePolicyResource rolePolicyResource = getRolePolicy(service, profile);
-				if(rolePolicyResource != null) {
-					resourcePermissionRepresentation.setId(profile.getIdentifier()+service.getIdentifier()+resource.getIdentifier());
-					resourcePermissionRepresentation.addResource(resourceResource.toRepresentation().getId());
-					resourcePermissionRepresentation.addPolicy(rolePolicyResource.toRepresentation().getId());
-					clientResource.authorization().permissions().resource().create(resourcePermissionRepresentation);
-				}
-			}	
+		if(Boolean.TRUE.equals(__isEnable__)) {
+			ClientResource clientResource = getClient(service);
+			if(clientResource != null) {
+				ResourcePermissionRepresentation resourcePermissionRepresentation = new ResourcePermissionRepresentation();
+				ResourceResource resourceResource = getResource(service, resource);
+				if(resourceResource != null) {
+					RolePolicyResource rolePolicyResource = getRolePolicy(service, profile);
+					if(rolePolicyResource != null) {
+						resourcePermissionRepresentation.setId(profile.getIdentifier()+service.getIdentifier()+resource.getIdentifier());
+						resourcePermissionRepresentation.addResource(resourceResource.toRepresentation().getId());
+						resourcePermissionRepresentation.addPolicy(rolePolicyResource.toRepresentation().getId());
+						clientResource.authorization().permissions().resource().create(resourcePermissionRepresentation);
+					}
+				}	
+			}
 		}
 		return this;
 	}
@@ -529,9 +563,11 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	
 	@Override
 	public KeycloakHelper deletePermission(Profile profile, Service service, Resource resource) {
-		ResourcePermissionResource resourcePermissionsResource = getPermission(profile, service, resource);
-		if(resourcePermissionsResource != null)
-			resourcePermissionsResource.remove();
+		if(Boolean.TRUE.equals(__isEnable__)) {
+			ResourcePermissionResource resourcePermissionsResource = getPermission(profile, service, resource);
+			if(resourcePermissionsResource != null)
+				resourcePermissionsResource.remove();
+		}
 		return this;
 	}
 	
@@ -539,84 +575,91 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	
 	@Override
 	public KeycloakHelper load() {
-		loadFunctionType();
-		loadFunction();
-		loadFunctionScope();
-		__logInfo__("Data from keycloak loaded into database");
+		if(Boolean.TRUE.equals(__isEnable__)) {
+			loadFunctionType();
+			loadFunction();
+			loadFunctionScope();
+			__logInfo__("Data from keycloak loaded into database");
+		}
 		return this;
 	}
 	
 	@Override
 	public KeycloakHelper loadFunctionType() {
-		UserTransaction userTransaction = __inject__(UserTransaction.class);
-		try {
-			userTransaction.begin();
-			for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "CATEGORIE")) {
-				FunctionType functionType = __inject__(FunctionTypePersistence.class).readByBusinessIdentifier(index.getName());
-				if(functionType == null) {
-					functionType = __inject__(FunctionType.class).setCode(index.getName()).setName(index.getAttributes().get(ROLE_ATTRIBUTE_NAME).get(0));
-					__inject__(FunctionTypePersistence.class).create(functionType);
+		if(Boolean.TRUE.equals(__isEnable__)) {
+			UserTransaction userTransaction = __inject__(UserTransaction.class);
+			try {
+				userTransaction.begin();
+				for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "CATEGORIE")) {
+					FunctionType functionType = __inject__(FunctionTypePersistence.class).readByBusinessIdentifier(index.getName());
+					if(functionType == null) {
+						functionType = __inject__(FunctionType.class).setCode(index.getName()).setName(index.getAttributes().get(ROLE_ATTRIBUTE_NAME).get(0));
+						__inject__(FunctionTypePersistence.class).create(functionType);
+					}
 				}
+				userTransaction.commit();	
+			}catch(Exception exception) {
+				exception.printStackTrace();
 			}
-			userTransaction.commit();	
-		}catch(Exception exception) {
-			exception.printStackTrace();
 		}
 		return this;
 	}
 	
 	@Override
 	public KeycloakHelper loadFunction() {
-		UserTransaction userTransaction = __inject__(UserTransaction.class);
-		try {
-			userTransaction.begin();
-			for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "FONCTION")) {
-				Function function = __inject__(FunctionPersistence.class).readByBusinessIdentifier(index.getName());
-				if(function == null) {
-					function = __inject__(Function.class).setCode(index.getName()).setName(index.getAttributes().get(ROLE_ATTRIBUTE_NAME).get(0));
-					for(RoleRepresentation indexParent : __inject__(KeycloakHelper.class).getRolesResource().get(index.getName()).getRoleComposites()) {
-						FunctionType functionType = __inject__(FunctionTypePersistence.class).readByBusinessIdentifier(indexParent.getName());
-						if(functionType != null) {
-							function.setType(functionType);
-							break;
+		if(Boolean.TRUE.equals(__isEnable__)) {
+			UserTransaction userTransaction = __inject__(UserTransaction.class);
+			try {
+				userTransaction.begin();
+				for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "FONCTION")) {
+					Function function = __inject__(FunctionPersistence.class).readByBusinessIdentifier(index.getName());
+					if(function == null) {
+						function = __inject__(Function.class).setCode(index.getName()).setName(index.getAttributes().get(ROLE_ATTRIBUTE_NAME).get(0));
+						for(RoleRepresentation indexParent : __inject__(KeycloakHelper.class).getRolesResource().get(index.getName()).getRoleComposites()) {
+							FunctionType functionType = __inject__(FunctionTypePersistence.class).readByBusinessIdentifier(indexParent.getName());
+							if(functionType != null) {
+								function.setType(functionType);
+								break;
+							}
+						}
+						if(function.getType() != null) {
+							__inject__(FunctionPersistence.class).create(function);	
 						}
 					}
-					if(function.getType() != null) {
-						__inject__(FunctionPersistence.class).create(function);	
-					}
 				}
+				userTransaction.commit();	
+			}catch(Exception exception) {
+				exception.printStackTrace();
 			}
-			userTransaction.commit();	
-		}catch(Exception exception) {
-			exception.printStackTrace();
 		}
-		
 		return this;
 	}
 	
 	@Override
 	public KeycloakHelper loadFunctionScope() {
-		UserTransaction userTransaction = __inject__(UserTransaction.class);
-		try {
-			userTransaction.begin();
-			for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "???")) {
-				FunctionScope functionScope = __inject__(FunctionScopePersistence.class).readByBusinessIdentifier(index.getName());
-				if(functionScope == null) {
-					functionScope = __inject__(FunctionScope.class).setCode(index.getName()).setName(index.getAttributes().get(ROLE_ATTRIBUTE_NAME).get(0));
-					for(RoleRepresentation indexParent : __inject__(KeycloakHelper.class).getRolesResource().get(index.getName()).getRoleComposites()) {
-						Function function = __inject__(FunctionPersistence.class).readByBusinessIdentifier(indexParent.getName());
-						if(function != null) {
-							functionScope.setFunction(function);
-							break;
+		if(Boolean.TRUE.equals(__isEnable__)) {
+			UserTransaction userTransaction = __inject__(UserTransaction.class);
+			try {
+				userTransaction.begin();
+				for(RoleRepresentation index : __inject__(KeycloakHelper.class).getRolesByProperty("type", "???")) {
+					FunctionScope functionScope = __inject__(FunctionScopePersistence.class).readByBusinessIdentifier(index.getName());
+					if(functionScope == null) {
+						functionScope = __inject__(FunctionScope.class).setCode(index.getName()).setName(index.getAttributes().get(ROLE_ATTRIBUTE_NAME).get(0));
+						for(RoleRepresentation indexParent : __inject__(KeycloakHelper.class).getRolesResource().get(index.getName()).getRoleComposites()) {
+							Function function = __inject__(FunctionPersistence.class).readByBusinessIdentifier(indexParent.getName());
+							if(function != null) {
+								functionScope.setFunction(function);
+								break;
+							}
 						}
+						if(functionScope.getFunction()!=null)
+							__inject__(FunctionScopePersistence.class).create(functionScope);
 					}
-					if(functionScope.getFunction()!=null)
-						__inject__(FunctionScopePersistence.class).create(functionScope);
 				}
+				userTransaction.commit();
+			}catch(Exception exception) {
+				exception.printStackTrace();
 			}
-			userTransaction.commit();
-		}catch(Exception exception) {
-			exception.printStackTrace();
 		}
 		return this;
 	}

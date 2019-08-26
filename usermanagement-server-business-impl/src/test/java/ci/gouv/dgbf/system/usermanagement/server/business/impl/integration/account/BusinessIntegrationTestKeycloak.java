@@ -2,8 +2,11 @@ package ci.gouv.dgbf.system.usermanagement.server.business.impl.integration.acco
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.cyk.utility.__kernel__.properties.Properties;
@@ -15,6 +18,8 @@ import org.cyk.utility.stream.distributed.Topic;
 import org.cyk.utility.system.node.SystemNodeServer;
 import org.cyk.utility.time.TimeHelper;
 import org.junit.Test;
+import org.keycloak.admin.client.resource.UserResource;
+import org.keycloak.representations.idm.UserRepresentation;
 
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserBusiness;
@@ -49,8 +54,9 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Service;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ServiceResource;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
-public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrationTestWithDefaultDeployment {
+public class BusinessIntegrationTestKeycloak extends AbstractBusinessArquillianIntegrationTestWithDefaultDeployment {
 	private static final long serialVersionUID = 1L;
 	
 	@Override
@@ -427,7 +433,14 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_USER+","+User.FIELD_FUNCTIONS));
 		assertThat(userAccount01).isNotNull();
 		assertThat(userAccount01.getUser().getFunctions()).isNull();
-			
+		
+		UserResource userResource = __inject__(KeycloakHelper.class).getUsersResource().get(userAccount.getIdentifier());
+		UserRepresentation userRepresentation = userResource.toRepresentation();
+		Map<String,List<String>> attributes = userRepresentation.getAttributes();
+		assertThat(attributes).contains(
+				new AbstractMap.SimpleEntry<String, List<String>>("MINISTERE",(List<String>)__inject__(CollectionHelper.class).instanciate("21"))
+				).hasSize(1);
+		
 		if(Boolean.TRUE.equals(Topic.MAIL.getIsConsumerStarted())) {
 			__inject__(TimeHelper.class).pause(1000l * 25);
 			stopServersKafkaAndZookeeper();	

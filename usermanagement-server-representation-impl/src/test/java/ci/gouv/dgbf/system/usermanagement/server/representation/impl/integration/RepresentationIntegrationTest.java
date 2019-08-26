@@ -252,7 +252,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		assertThat(userAccount).as("user account is null").isNotNull();
 		assertThat(userAccount.getFunctionScopes()).as("user account roles collection is not null").isNull();
 		
-		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES).getEntity();
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES+",user,identifier").getEntity();
 		assertThat(userAccount).as("user account is null").isNotNull();
 		assertThat(userAccount.getFunctionScopes()).as("user account roles collection is null").isNotNull();
 		assertThat(userAccount.getFunctionScopes().getCollection()).as("user account roles collection is empty").isNotEmpty();
@@ -263,7 +263,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		assertThat(userAccount.getUser()).isNotNull();
 		assertThat(userAccount.getUser().getFunctions()).isNull();
 		
-		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES+",functions").getEntity();
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),"system",UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES+",functions,identifier,user").getEntity();
 		assertThat(userAccount).as("user account is null").isNotNull();
 		assertThat(userAccount.getFunctionScopes()).as("user account roles collection is null").isNotNull();
 		assertThat(userAccount.getFunctionScopes().getCollection()).as("user account roles collection is empty").isNotEmpty();
@@ -282,7 +282,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		assertThat(__inject__(UserFunctionRepresentation.class).count(null).getEntity()).isEqualTo(1l);
 		__inject__(UserAccountRepresentation.class).updateOne(userAccount, "functions");
 		assertThat(__inject__(UserFunctionRepresentation.class).count(null).getEntity()).isEqualTo(2l);
-		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES+",functions").getEntity();
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES+",functions,user,identifier").getEntity();
 		assertThat(userAccount.getUser()).isNotNull();
 		assertThat(userAccount.getUser().getFunctions()).isNotNull();
 		assertThat(userAccount.getUser().getFunctions().getCollection()).isNotNull();
@@ -332,7 +332,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		
 		__inject__(UserAccountRepresentation.class).createOne(userAccount);
 		
-		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES).getEntity();
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES+",identifier").getEntity();
 		assertThat(userAccount).isNotNull();
 		assertThat(userAccount.getFunctionScopes()).isNotNull();
 		assertThat(userAccount.getFunctionScopes().getCollection()).isNotEmpty();
@@ -362,7 +362,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		assertThat(userAccount.getProfiles().getCollection().stream().map(ProfileDto::getCode).collect(Collectors.toList())).contains("p001","p002");
 	}
 	
-	@Test
+	//@Test
 	public void create_userAccountInterim() throws Exception{
 		UserAccountDto userAccount = new UserAccountDto();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__());

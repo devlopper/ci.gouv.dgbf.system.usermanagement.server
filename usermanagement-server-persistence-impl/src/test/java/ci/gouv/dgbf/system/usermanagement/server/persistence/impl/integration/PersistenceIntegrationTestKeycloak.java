@@ -3,8 +3,11 @@ package ci.gouv.dgbf.system.usermanagement.server.persistence.impl.integration;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
+import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.cyk.utility.__kernel__.properties.Properties;
@@ -13,6 +16,8 @@ import org.cyk.utility.server.persistence.query.filter.Filter;
 import org.cyk.utility.server.persistence.test.TestPersistenceCreate;
 import org.cyk.utility.server.persistence.test.arquillian.AbstractPersistenceArquillianIntegrationTestWithDefaultDeployment;
 import org.junit.Test;
+import org.keycloak.admin.client.resource.UserResource;
+import org.keycloak.representations.idm.UserRepresentation;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserPersistence;
@@ -49,8 +54,9 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Service;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ServiceResource;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.ApplicationScopeLifeCycleListener;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
-public class PersistenceIntegrationTest extends AbstractPersistenceArquillianIntegrationTestWithDefaultDeployment {
+public class PersistenceIntegrationTestKeycloak extends AbstractPersistenceArquillianIntegrationTestWithDefaultDeployment {
 	private static final long serialVersionUID = 1L;
 	
 	@Override
@@ -537,7 +543,16 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		
 		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(scopeType,scope,functionScope.getFunction().getType(),functionScope.getFunction()
 				,functionScope,userAccount.getUser(),userAccount.getAccount(),userAccount).addObjects(userAccountFunctionScope)
-			.setIsCatchThrowable(Boolean.FALSE).execute();
+			.setIsCatchThrowable(Boolean.FALSE).addTryEndRunnables(new Runnable() {
+				@Override
+				public void run() {
+					UserResource userResource = __inject__(KeycloakHelper.class).getUsersResource().get(userAccount.getIdentifier());
+					UserRepresentation userRepresentation = userResource.toRepresentation();
+					Map<String,List<String>> attributes = userRepresentation.getAttributes();
+					assertThat(attributes).containsExactly(new AbstractMap.SimpleEntry<String, List<String>>("MINISTERE"
+							,(List<String>)__inject__(CollectionHelper.class).instanciate("21")));
+				}
+			}).execute();
 	}
 	
 	@Test
@@ -557,7 +572,16 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		
 		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(scopeType,scope,functionScope.getFunction().getType(),functionScope.getFunction()
 				,functionScope,userAccount.getUser(),userAccount.getAccount(),userAccount).addObjects(userAccountFunctionScope)
-			.setIsCatchThrowable(Boolean.FALSE).execute();
+			.setIsCatchThrowable(Boolean.FALSE).addTryEndRunnables(new Runnable() {
+				@Override
+				public void run() {
+					UserResource userResource = __inject__(KeycloakHelper.class).getUsersResource().get(userAccount.getIdentifier());
+					UserRepresentation userRepresentation = userResource.toRepresentation();
+					Map<String,List<String>> attributes = userRepresentation.getAttributes();
+					assertThat(attributes).containsExactly(new AbstractMap.SimpleEntry<String, List<String>>("PROGRAMME"
+							,(List<String>)__inject__(CollectionHelper.class).instanciate("100")));
+				}
+			}).execute();
 	}
 	
 	@Test
@@ -577,7 +601,16 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		
 		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(scopeType,scope,functionScope.getFunction().getType(),functionScope.getFunction()
 				,functionScope,userAccount.getUser(),userAccount.getAccount(),userAccount).addObjects(userAccountFunctionScope)
-			.setIsCatchThrowable(Boolean.FALSE).execute();
+			.setIsCatchThrowable(Boolean.FALSE).addTryEndRunnables(new Runnable() {
+				@Override
+				public void run() {
+					UserResource userResource = __inject__(KeycloakHelper.class).getUsersResource().get(userAccount.getIdentifier());
+					UserRepresentation userRepresentation = userResource.toRepresentation();
+					Map<String,List<String>> attributes = userRepresentation.getAttributes();
+					assertThat(attributes).containsExactly(new AbstractMap.SimpleEntry<String, List<String>>("UNITE_ADMINISTRATIVE"
+							,(List<String>)__inject__(CollectionHelper.class).instanciate("200")));
+				}
+			}).execute();
 	}
 	
 	@Test

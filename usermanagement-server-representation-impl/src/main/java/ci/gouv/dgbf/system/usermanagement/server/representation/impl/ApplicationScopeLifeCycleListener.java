@@ -6,6 +6,7 @@ import javax.enterprise.context.ApplicationScoped;
 import org.cyk.utility.__kernel__.AbstractApplicationScopeLifeCycleListener;
 import org.cyk.utility.field.FieldValueCopy;
 import org.cyk.utility.instance.InstanceBuilder;
+import org.cyk.utility.server.representation.AbstractRepresentationFunctionReaderImpl;
 import org.cyk.utility.server.representation.impl.DataLoader;
 
 @ApplicationScoped
@@ -14,6 +15,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 
 	@Override
 	public void __initialize__(Object object) {
+		AbstractRepresentationFunctionReaderImpl.QUERY_NUMBER_OF_TUPLE = 30;
 		__inject__(ci.gouv.dgbf.system.usermanagement.server.business.impl.ApplicationScopeLifeCycleListener.class).initialize(null);
 		__setQualifierClassTo__(ci.gouv.dgbf.system.usermanagement.server.annotation.System.class, InstanceBuilder.class,FieldValueCopy.class,DataLoader.class);
 	}
