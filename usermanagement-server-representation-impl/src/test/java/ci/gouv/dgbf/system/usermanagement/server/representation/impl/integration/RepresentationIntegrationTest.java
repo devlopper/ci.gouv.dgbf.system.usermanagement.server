@@ -332,7 +332,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		
 		__inject__(UserAccountRepresentation.class).createOne(userAccount);
 		
-		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES+",identifier").getEntity();
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null,"identifier,"+UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES+",identifier").getEntity();
 		assertThat(userAccount).isNotNull();
 		assertThat(userAccount.getFunctionScopes()).isNotNull();
 		assertThat(userAccount.getFunctionScopes().getCollection()).isNotEmpty();
@@ -351,7 +351,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		userAccount.addFunctionScopes(functionScope).addProfiles(profile);
 		__inject__(UserAccountRepresentation.class).updateOne(userAccount,UserAccountDto.FIELD_PROFILES+","+UserAccountDto.FIELD_FUNCTION_SCOPES);
 		
-		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null,UserAccountDto.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES).getEntity();
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null,"identifier,"+UserAccountDto.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES).getEntity();
 		assertThat(userAccount).isNotNull();
 		assertThat(userAccount.getFunctionScopes()).isNotNull();
 		assertThat(userAccount.getFunctionScopes().getCollection()).isNotEmpty();
@@ -360,6 +360,14 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		assertThat(userAccount.getProfiles()).as("user account profiles collection is null").isNotNull();
 		assertThat(userAccount.getProfiles().getCollection()).as("user account profiles collection is empty").isNotEmpty();
 		assertThat(userAccount.getProfiles().getCollection().stream().map(ProfileDto::getCode).collect(Collectors.toList())).contains("p001","p002");
+		
+		assertThat(userAccount.getScopes()).isNull();
+		userAccount.addScopesByIdentifiers("21");
+		__inject__(UserAccountRepresentation.class).updateOne(userAccount, "scopes");
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null,"identifier,scopes").getEntity();
+		assertThat(userAccount.getScopes()).isNotNull();
+		assertThat(userAccount.getScopes().getCollection()).hasSize(1);
+		assertThat(userAccount.getScopes().getCollection().stream().map(ScopeDto::getIdentifier).collect(Collectors.toList())).contains("21");
 	}
 	
 	//@Test

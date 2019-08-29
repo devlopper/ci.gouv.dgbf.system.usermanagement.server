@@ -16,6 +16,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Us
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterim;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterimModel;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
@@ -46,6 +47,7 @@ public class PersistableClassesGetterImpl extends AbstractFunctionWithProperties
 		classes.add(UserAccountInterim.class);
 		classes.add(UserAccountInterimModel.class);
 		classes.add(UserAccountFunctionScope.class);
+		classes.add(UserAccountScope.class);
 		classes.add(UserAccountProfile.class);
 		
 		classes.add(UserAccount.class);

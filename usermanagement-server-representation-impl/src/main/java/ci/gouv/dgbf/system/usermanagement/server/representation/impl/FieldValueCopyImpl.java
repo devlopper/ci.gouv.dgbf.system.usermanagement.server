@@ -6,11 +6,13 @@ import java.lang.reflect.Field;
 import org.cyk.utility.field.AbstractFieldValueCopyImpl;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.PrivilegePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profiles;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scopes;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScopes;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Functions;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Privileges;
@@ -18,6 +20,8 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDtoCollection;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeDtoCollection;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionDtoCollection;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionScopeDto;
@@ -64,6 +68,17 @@ public class FieldValueCopyImpl extends AbstractFieldValueCopyImpl implements Se
 				}
 			}
 			return functions;
+		}else if(__injectFieldHelper__().getField(UserAccountDto.class, UserAccountDto.FIELD_SCOPES).equals(source) 
+				&& __injectFieldHelper__().getField(UserAccount.class, UserAccount.FIELD_SCOPES).equals(destination)) {
+			Scopes scopes = null;
+			ScopeDtoCollection scopeDtoCollection = ((ScopeDtoCollection) value);
+			if(scopeDtoCollection != null && Boolean.TRUE.equals(__injectCollectionHelper__().isNotEmpty(scopeDtoCollection.getCollection()))) {
+				scopes = __inject__(Scopes.class);
+				for(ScopeDto index : scopeDtoCollection.getCollection()) {
+					scopes.add(__inject__(ScopePersistence.class).readBySystemIdentifier(index.getIdentifier()));
+				}
+			}
+			return scopes;
 		}else if(__injectFieldHelper__().getField(ProfileDto.class, ProfileDto.FIELD_FUNCTIONS).equals(source) 
 				&& __injectFieldHelper__().getField(Profile.class, Profile.FIELD_FUNCTIONS).equals(destination)) {
 			Functions functions = null;

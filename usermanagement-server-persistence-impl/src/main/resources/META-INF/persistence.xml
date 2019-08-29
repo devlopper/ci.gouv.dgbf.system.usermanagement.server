@@ -35,6 +35,7 @@
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserFunction</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile</class>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountScope</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterim</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterimModel</class>

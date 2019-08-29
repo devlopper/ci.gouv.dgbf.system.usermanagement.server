@@ -18,13 +18,14 @@ import org.cyk.utility.string.Strings;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountFunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountProfilePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
 @ApplicationScoped
 public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<UserAccount> implements UserAccountPersistence,Serializable {
@@ -68,6 +69,10 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 		}else if((UserAccount.FIELD_FUNCTIONS).equals(field.getName())) {
 			__inject__(UserPersistence.class).setFunctions(userAccount.getUser());
 			userAccount.setFunctions(userAccount.getUser().getFunctions());
+		}else if((UserAccount.FIELD_SCOPES).equals(field.getName())) {
+			Collection<UserAccountScope> userAccountScopes = __inject__(UserAccountScopePersistence.class).readByUserAccounts(userAccount);
+			if(__injectCollectionHelper__().isNotEmpty(userAccountScopes))
+				userAccount.getScopes(Boolean.TRUE).add(userAccountScopes.stream().map(UserAccountScope::getScope).collect(Collectors.toList()));
 		}/*else if((UserAccount.FIELD_SYSTEM_PROFILES).equals(field.getName())) {
 			Collection<UserAccountProfile> userAccountProfiles = __inject__(UserAccountProfilePersistence.class).readByUserAccount(userAccount);
 			if(__injectCollectionHelper__().isNotEmpty(userAccountProfiles)) {

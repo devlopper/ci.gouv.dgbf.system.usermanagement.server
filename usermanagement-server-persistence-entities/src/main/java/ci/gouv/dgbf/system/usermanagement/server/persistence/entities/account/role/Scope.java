@@ -33,6 +33,16 @@ public class Scope extends AbstractIdentifiedByStringAndLinkedByStringAndNamed<S
 		return (Scope) super.setIdentifier(identifier);
 	}
 	
+	@Override
+	public Scope setName(String name) {
+		return (Scope) super.setName(name);
+	}
+	
+	public Scope setTypeFromCode(String code) {
+		setFromBusinessIdentifier(FIELD_TYPE, code);
+		return this;
+	}
+	
 	@Override @JsonProperty(value="uuid")
 	public String getLink() {
 		return super.getLink();

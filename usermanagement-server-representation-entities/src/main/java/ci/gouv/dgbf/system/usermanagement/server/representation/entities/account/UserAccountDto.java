@@ -16,6 +16,8 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionScopeDtoCollection;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDtoCollection;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeDtoCollection;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,6 +32,7 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 	private AccountDto account;
 	private FunctionDtoCollection functions;
 	private ProfileDtoCollection profiles;
+	private ScopeDtoCollection scopes;
 	private FunctionScopeDtoCollection functionScopes;
 	
 	public UserDto getUser(Boolean injectIfNull) {
@@ -135,6 +138,37 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 		return (ProfileDtoCollection) __getInstanciateIfNull__(FIELD_PROFILES, instanciateIfNull);
 	}
 	
+	public UserAccountDto addScopesByIdentifiers(Collection<String> identifiers) {
+		if(__inject__(CollectionHelper.class).isNotEmpty(identifiers)) {
+			for(String index : identifiers)
+				if(__inject__(StringHelper.class).isNotBlank(index))
+					addScopes(new ScopeDto().setIdentifier(index));
+		}
+		return this;
+	}
+	
+	public UserAccountDto addScopesByIdentifiers(String...identifiers) {
+		if(__inject__(ArrayHelper.class).isNotEmpty(identifiers))
+			addScopesByIdentifiers(__inject__(CollectionHelper.class).instanciate(identifiers));
+		return this;
+	}
+	
+	public UserAccountDto addScopes(Collection<ScopeDto> scopes) {
+		if(__inject__(CollectionHelper.class).isNotEmpty(scopes))
+			getScopes(Boolean.TRUE).add(scopes);	
+		return this;
+	}
+	
+	public UserAccountDto addScopes(ScopeDto...scopes) {
+		if(__inject__(ArrayHelper.class).isNotEmpty(scopes))
+			addScopes(__inject__(CollectionHelper.class).instanciate(scopes));
+		return this;
+	}
+	
+	public ScopeDtoCollection getScopes(Boolean instanciateIfNull) {
+		return (ScopeDtoCollection) __getInstanciateIfNull__(FIELD_SCOPES, instanciateIfNull);
+	}
+	
 	/**/
 	
 	public static final String FIELD_USER = "user";
@@ -142,5 +176,6 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 	public static final String FIELD_FUNCTIONS = "functions";
 	public static final String FIELD_PROFILES = "profiles";
 	public static final String FIELD_FUNCTION_SCOPES = "functionScopes";
+	public static final String FIELD_SCOPES = "scopes";
 	
 }

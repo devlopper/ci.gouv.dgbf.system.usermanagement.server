@@ -30,6 +30,8 @@ public class ScopeDto extends AbstractEntityFromPersistenceEntityLinkedAndNamed 
 		Collection<String> strings = new ArrayList<>();
 		if(Boolean.TRUE.equals(__inject__(StringHelper.class).isNotBlank(getName())))
 			strings.add("name : "+getName());
+		else
+			strings.add("identifier : "+getIdentifier());
 		if(type != null)
 			strings.add("type : "+type.toString());
 		return __inject__(StringHelper.class).concatenate(strings, ",");

@@ -17,17 +17,21 @@ import org.cyk.utility.string.Strings;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountFunctionScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountProfileBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountFunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountProfilePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileTypePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileType;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 
 @ApplicationScoped
 public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAccount, UserAccountPersistence> implements UserAccountBusiness,Serializable {
@@ -50,6 +54,13 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 	@Override
 	protected void __listenExecuteCreateAfter__(UserAccount userAccount, Properties properties,BusinessFunctionCreator function) {
 		super.__listenExecuteCreateAfter__(userAccount, properties, function);
+		if(Boolean.TRUE.equals(__injectCollectionHelper__().isNotEmpty(userAccount.getScopes()))) {
+			Collection<UserAccountScope> userAccountScopes = new ArrayList<>();
+			for(Scope index : userAccount.getScopes().get())
+				userAccountScopes.add(new UserAccountScope().setUserAccount(userAccount).setScope(index));
+			__inject__(UserAccountScopeBusiness.class).createMany(userAccountScopes);
+		}
+		
 		if(Boolean.TRUE.equals(__injectCollectionHelper__().isNotEmpty(userAccount.getProfiles()))) {
 			Collection<UserAccountProfile> userAccountProfiles = new ArrayList<>();
 			for(Profile index : userAccount.getProfiles().get())
@@ -93,6 +104,7 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 			userAccount.getUser().setFunctions(userAccount.getFunctions());
 		__inject__(UserBusiness.class).update(userAccount.getUser(),properties);
 		__save__(userAccount.getAccount());
+		
 		if(__injectCollectionHelper__().isNotEmpty(fields)) {
 			for(String index : fields.get()) {
 				if(UserAccount.FIELD_PROFILES.equals(index)) {
@@ -102,6 +114,13 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 					
 					__delete__(userAccount.getProfiles(), databaseUserAccountProfiles,UserAccountProfile.FIELD_PROFILE);
 					__save__(UserAccountProfile.class,userAccount.getProfiles(), databaseProfiles, UserAccountProfile.FIELD_PROFILE, userAccount, UserAccountProfile.FIELD_USER_ACCOUNT);
+				}else if(UserAccount.FIELD_SCOPES.equals(index)) {
+					Collection<UserAccountScope> databaseUserAccountScopes = __inject__(UserAccountScopePersistence.class).readByUserAccounts(userAccount);
+					Collection<Scope> databaseScopes = __injectCollectionHelper__().isEmpty(databaseUserAccountScopes) ? null : databaseUserAccountScopes.stream()
+							.map(UserAccountScope::getScope).collect(Collectors.toList());
+					
+					__delete__(userAccount.getScopes(), databaseUserAccountScopes,UserAccountScope.FIELD_SCOPE);
+					__save__(UserAccountScope.class,userAccount.getScopes(), databaseScopes, UserAccountScope.FIELD_SCOPE, userAccount, UserAccountScope.FIELD_USER_ACCOUNT);
 				}else if(UserAccount.FIELD_FUNCTION_SCOPES.equals(index)) {
 					Collection<UserAccountFunctionScope> databaseCollection = __inject__(UserAccountFunctionScopePersistence.class).readByUserAccount(userAccount);
 					Collection<FunctionScope> databaseFunctionScopes = __injectCollectionHelper__().isEmpty(databaseCollection) ? null : databaseCollection.stream()

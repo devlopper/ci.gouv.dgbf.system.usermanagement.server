@@ -20,6 +20,8 @@ import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByString;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profiles;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scopes;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScopes;
@@ -44,6 +46,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	
 	@Transient private Functions functions;
 	@Transient private Profiles profiles;
+	@Transient private Scopes scopes;
 	//@Transient private Profiles systemProfiles;
 	@Transient private Privileges privileges;
 	@Transient private FunctionScopes functionScopes;
@@ -93,6 +96,32 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 		return addFunctionsByCodes(__inject__(CollectionHelper.class).instanciate(functionsCodes));
 	}
 	
+	public Scopes getScopes(Boolean injectIfNull) {
+		return (Scopes) __getInjectIfNull__(FIELD_SCOPES, injectIfNull);
+	}
+	
+	public UserAccount addScopes(Collection<Scope> scopes) {
+		getScopes(Boolean.TRUE).add(scopes);
+		return this;
+	}
+	
+	public UserAccount addScopes(Scope...scopes) {
+		getScopes(Boolean.TRUE).add(scopes);
+		return this;
+	}
+	
+	public UserAccount addScopesByIdentifiers(Collection<String> identifiers) {
+		if(__inject__(CollectionHelper.class).isNotEmpty(identifiers)) {
+			for(String index : identifiers)
+				addScopes(__inject__(InstanceHelper.class).getByIdentifierSystem(Scope.class, index));
+		}
+		return this;
+	}
+	
+	public UserAccount addScopesByIdentifiers(String...identifiers) {
+		return addScopesByIdentifiers(__inject__(CollectionHelper.class).instanciate(identifiers));
+	}
+	
 	public Profiles getProfiles(Boolean injectIfNull) {
 		return (Profiles) __getInjectIfNull__(FIELD_PROFILES, injectIfNull);
 	}
@@ -134,7 +163,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	}
 	
 	public UserAccount addPrivilegesByCodes(String...privilegesCodes) {
-		return addFunctionsByCodes(__inject__(CollectionHelper.class).instanciate(privilegesCodes));
+		return addPrivilegesByCodes(__inject__(CollectionHelper.class).instanciate(privilegesCodes));
 	}
 	
 	public FunctionScopes getFunctionScopes(Boolean injectIfNull) {
@@ -158,6 +187,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	public static final String FIELD_USER = "user";
 	public static final String FIELD_ACCOUNT = "account";
 	public static final String FIELD_FUNCTIONS = "functions";
+	public static final String FIELD_SCOPES = "scopes";
 	//public static final String FIELD_SYSTEM_PROFILES = "systemProfiles";
 	public static final String FIELD_PROFILES = "profiles";
 	public static final String FIELD_PRIVILEGES = "privileges";

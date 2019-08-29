@@ -14,6 +14,9 @@ import org.cyk.utility.server.persistence.test.TestPersistenceCreate;
 import org.cyk.utility.server.persistence.test.arquillian.AbstractPersistenceArquillianIntegrationTestWithDefaultDeployment;
 import org.junit.Test;
 
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.AccountPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
@@ -26,11 +29,14 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.Pr
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePrivilegePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileServiceResourcePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileTypePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ScopePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ScopeTypePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.User;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountInterim;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
@@ -519,6 +525,52 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		profile.setCode(__getRandomCode__()).setName(__getRandomName__()).setType(new ProfileType().setCode(__getRandomCode__()).setName(__getRandomName__()));
 		UserAccountProfile userAccountProfile = new UserAccountProfile().setUserAccount(userAccount).setProfile(profile);
 		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(userAccount.getUser(),userAccount.getAccount(),userAccount,profile.getType(),profile).addObjects(userAccountProfile).execute();
+	}
+	
+	@Test
+	public void create_userAccount_withScope() throws Exception{
+		userTransaction.begin();
+		__inject__(ScopeTypePersistence.class).create(new ScopeType().setCode("st01").setName(__getRandomName__()));
+		__inject__(ScopePersistence.class).createMany(Arrays.asList(
+				new Scope().setIdentifier("s01").setName(__getRandomName__()).setTypeFromCode("st01")
+				,new Scope().setIdentifier("s02").setName(__getRandomName__()).setTypeFromCode("st01")
+				));
+		
+		UserAccount userAccount = new UserAccount().setIdentifier("ua01").setIsPersistToKeycloakOnCreate(Boolean.FALSE);
+		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
+		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
+		__inject__(UserPersistence.class).create(userAccount.getUser());
+		__inject__(AccountPersistence.class).create(userAccount.getAccount());
+		__inject__(UserAccountPersistence.class).create(userAccount);
+		userTransaction.commit();	
+		
+		userAccount = __inject__(UserAccountPersistence.class).readBySystemIdentifier("ua01", new Properties().setFields("identifier,scopes"));
+		assertThat(userAccount).isNotNull();
+		assertThat(userAccount.getScopes()).isNull();
+		
+		userTransaction.begin();
+		__inject__(UserAccountScopePersistence.class).createMany(Arrays.asList(
+				new UserAccountScope().setUserAccount(userAccount).setScopeFromIdentifier("s01")
+				));
+		userTransaction.commit();	
+		
+		userAccount = __inject__(UserAccountPersistence.class).readBySystemIdentifier("ua01", new Properties().setFields("identifier,scopes"));
+		assertThat(userAccount).isNotNull();
+		assertThat(userAccount.getScopes()).isNotNull();
+		assertThat(userAccount.getScopes().get()).hasSize(1);
+		assertThat(userAccount.getScopes().get().stream().map(Scope::getIdentifier).collect(Collectors.toList())).containsOnly("s01");
+		
+		userTransaction.begin();
+		__inject__(UserAccountScopePersistence.class).createMany(Arrays.asList(
+				new UserAccountScope().setUserAccount(userAccount).setScopeFromIdentifier("s02")
+				));
+		userTransaction.commit();	
+		
+		userAccount = __inject__(UserAccountPersistence.class).readBySystemIdentifier("ua01", new Properties().setFields("identifier,scopes"));
+		assertThat(userAccount).isNotNull();
+		assertThat(userAccount.getScopes()).isNotNull();
+		assertThat(userAccount.getScopes().get()).hasSize(2);
+		assertThat(userAccount.getScopes().get().stream().map(Scope::getIdentifier).collect(Collectors.toList())).containsOnly("s01","s02");
 	}
 	
 	@Test

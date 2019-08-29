@@ -427,7 +427,15 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_USER+","+User.FIELD_FUNCTIONS));
 		assertThat(userAccount01).isNotNull();
 		assertThat(userAccount01.getUser().getFunctions()).isNull();
-			
+		
+		assertThat(userAccount01.getScopes()).isNull();
+		userAccount01.addScopesByIdentifiers("21");
+		__inject__(UserAccountBusiness.class).update(userAccount01,new Properties().setFields("scopes"));
+		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields("identifier,scopes"));
+		assertThat(userAccount01.getScopes()).isNotNull();
+		assertThat(userAccount01.getScopes().get()).hasSize(1);
+		assertThat(userAccount01.getScopes().get().stream().map(Scope::getIdentifier).collect(Collectors.toList())).containsOnly("21");
+		
 		if(Boolean.TRUE.equals(Topic.MAIL.getIsConsumerStarted())) {
 			__inject__(TimeHelper.class).pause(1000l * 25);
 			stopServersKafkaAndZookeeper();	
