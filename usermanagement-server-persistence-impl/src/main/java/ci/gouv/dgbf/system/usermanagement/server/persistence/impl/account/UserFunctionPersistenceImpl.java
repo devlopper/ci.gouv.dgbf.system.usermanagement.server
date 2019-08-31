@@ -32,45 +32,89 @@ public class UserFunctionPersistenceImpl extends AbstractPersistenceEntityImpl<U
 	}
 	
 	@Override
+	public Collection<UserFunction> readByUsersIdentifiers(Collection<String> usersIdentifiers, Properties properties) {
+		if(properties == null)
+			properties = new Properties();
+		properties.setIfNull(Properties.QUERY_IDENTIFIER, readByUsersIdentifiers);
+		return __readMany__(properties,____getQueryParameters____(properties,usersIdentifiers));	
+	}
+	
+	@Override
 	public Collection<UserFunction> readByUsersIdentifiers(Collection<String> usersIdentifieurs) {
-		Properties properties = new Properties().setQueryIdentifier(readByUsersIdentifiers);
-		return __readMany__(properties,____getQueryParameters____(properties,usersIdentifieurs));	
+		return readByUsersIdentifiers(usersIdentifieurs,null);	
+	}
+	
+	@Override
+	public Collection<UserFunction> readByUsersIdentifiers(Properties properties, String... usersIdentifiers) {
+		return readByUsersIdentifiers(__injectCollectionHelper__().instanciate(usersIdentifiers),properties);
 	}
 	
 	@Override
 	public Collection<UserFunction> readByUsersIdentifiers(String... usersIdentifiers) {
-		return readByUsersIdentifiers(__injectCollectionHelper__().instanciate(usersIdentifiers));
+		return readByUsersIdentifiers(null,usersIdentifiers);
+	}
+	
+	@Override
+	public Collection<UserFunction> readByUsers(Collection<User> users, Properties properties) {
+		return __injectCollectionHelper__().isEmpty(users) ? null : readByUsersIdentifiers(users.stream().map(User::getIdentifier).collect(Collectors.toList()),properties);
 	}
 	
 	@Override
 	public Collection<UserFunction> readByUsers(Collection<User> users) {
-		return __injectCollectionHelper__().isEmpty(users) ? null : readByUsersIdentifiers(users.stream().map(User::getIdentifier).collect(Collectors.toList()));
+		return readByUsers(users,null);
+	}
+	
+	@Override
+	public Collection<UserFunction> readByUsers(Properties properties, User... users) {
+		return readByUsers(__injectCollectionHelper__().instanciate(users),properties);
 	}
 	
 	@Override
 	public Collection<UserFunction> readByUsers(User... users) {
-		return readByUsers(__injectCollectionHelper__().instanciate(users));
+		return readByUsers(null,users);
 	}
 	
 	@Override
-	public Collection<UserFunction> readByFunctionsCodes(Collection<String> functionsCodes) {
-		Properties properties = new Properties().setQueryIdentifier(readByFunctionsCodes);
+	public Collection<UserFunction> readByFunctionsCodes(Collection<String> functionsCodes,Properties properties) {
+		if(properties == null)
+			properties = new Properties();
+		properties.setIfNull(Properties.QUERY_IDENTIFIER, readByFunctionsCodes);
 		return __readMany__(properties,____getQueryParameters____(properties,functionsCodes));	
 	}
 	
 	@Override
+	public Collection<UserFunction> readByFunctionsCodes(Collection<String> functionsCodes) {
+		return readByFunctionsCodes(functionsCodes,null);	
+	}
+	
+	@Override
+	public Collection<UserFunction> readByFunctionsCodes(Properties properties, String... functionsCodes) {
+		return readByFunctionsCodes(__injectCollectionHelper__().instanciate(functionsCodes),properties);
+	}
+	
+	@Override
 	public Collection<UserFunction> readByFunctionsCodes(String... functionsCodes) {
-		return readByFunctionsCodes(__injectCollectionHelper__().instanciate(functionsCodes));
+		return readByFunctionsCodes(null,functionsCodes);
+	}
+	
+	@Override
+	public Collection<UserFunction> readByFunctions(Collection<Function> functions,Properties properties) {
+		return __injectCollectionHelper__().isEmpty(functions) ? null : readByFunctionsCodes(functions.stream().map(Function::getCode).collect(Collectors.toList()),properties);
 	}
 	
 	@Override
 	public Collection<UserFunction> readByFunctions(Collection<Function> functions) {
-		return __injectCollectionHelper__().isEmpty(functions) ? null : readByFunctionsCodes(functions.stream().map(Function::getCode).collect(Collectors.toList()));
+		return readByFunctions(functions,null);
+	}
+	
+	@Override
+	public Collection<UserFunction> readByFunctions(Properties properties,Function... functions) {
+		return readByFunctions(__injectCollectionHelper__().instanciate(functions),properties);
 	}
 	
 	@Override
 	public Collection<UserFunction> readByFunctions(Function... functions) {
-		return readByFunctions(__injectCollectionHelper__().instanciate(functions));
+		return readByFunctions(null,functions);
 	}
 	
 	@Override

@@ -19,13 +19,18 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAcc
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountScopePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePrivilegePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.User;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountScope;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfilePrivilege;
 
 @ApplicationScoped
 public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<UserAccount> implements UserAccountPersistence,Serializable {
@@ -81,6 +86,21 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 				//userAccount.getProfiles(Boolean.TRUE).add(userAccountProfiles.stream().map(UserAccountProfile::getProfile).collect(Collectors.toList()));
 			}
 		}*/
+	}
+	
+	@Override
+	protected void __listenExecuteReadAfterSetFieldValue__(UserAccount userAccount, String fieldName,Properties properties) {
+		if(userAccount.getUser()!=null && (UserAccount.FIELD_USER+"."+User.FIELD_FUNCTIONS).equals(fieldName)) {
+			Collection<UserFunction> userFunctions = __inject__(UserFunctionPersistence.class).readByUsers(userAccount.getUser());
+			if(__injectCollectionHelper__().isNotEmpty(userFunctions))
+				userAccount.getUser().getFunctions(Boolean.TRUE).add(userFunctions.stream().map(UserFunction::getFunction).collect(Collectors.toList()));
+		}else if(__injectCollectionHelper__().isNotEmpty(userAccount.getProfiles()) && ("profile.privileges").equals(fieldName)) {
+			for(Profile index : userAccount.getProfiles().get()) {
+				Collection<ProfilePrivilege> profilePrivileges = __inject__(ProfilePrivilegePersistence.class).readByProfiles(index);
+				if(__injectCollectionHelper__().isNotEmpty(profilePrivileges))
+					index.getPrivileges(Boolean.TRUE).add(profilePrivileges.stream().map(ProfilePrivilege::getPrivilege).collect(Collectors.toList()));	
+			}
+		}
 	}
 	
 	@Override
