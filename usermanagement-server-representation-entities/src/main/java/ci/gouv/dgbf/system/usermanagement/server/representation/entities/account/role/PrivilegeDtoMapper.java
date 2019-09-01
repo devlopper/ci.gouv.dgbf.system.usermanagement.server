@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Privilege;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Privileges;
 
-@Mapper
+@Mapper(uses= {PrivilegeTypeDtoMapper.class})
 public abstract class PrivilegeDtoMapper extends AbstractNodeMapperImpl<PrivilegeDto, Privilege,PrivilegeDtoCollection,Privileges> {
 	private static final long serialVersionUID = 1L;
     

@@ -1,6 +1,7 @@
 package ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -9,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.cyk.utility.server.persistence.jpa.hierarchy.AbstractIdentifiedByStringAndCodedAndNamed;
@@ -25,6 +27,7 @@ public class Privilege extends AbstractIdentifiedByStringAndCodedAndNamed<Privil
 
 	@ManyToOne @JoinColumn(name=COLUMN_TYPE) @NotNull private PrivilegeType type;
 	@Column(name = COLUMN_URL) private String url;
+	@Transient private Collection<Profile> profiles;
 	
 	@Override
 	public Privilege setIdentifier(String identifier) {
@@ -57,10 +60,11 @@ public class Privilege extends AbstractIdentifiedByStringAndCodedAndNamed<Privil
 	
 	public static final String FIELD_TYPE = "type";
 	public static final String FIELD_URL = "url";
+	public static final String FIELD_PROFILES = "profiles";
 	
 	public static final String TABLE_NAME = "pvlg";
 	
 	public static final String COLUMN_TYPE = "type";
 	public static final String COLUMN_URL = "url";
-	
+
 }
