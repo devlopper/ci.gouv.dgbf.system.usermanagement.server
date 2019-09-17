@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>ci.gouv.dgbf.system.usermanagement.server</groupId>
 		<artifactId>usermanagement-server-_pom</artifactId>
-		<version>0.0.1</version>
+		<version>0.1.0</version>
 	</parent>
 
 	<groupId>ci.gouv.dgbf.system.usermanagement.server.business</groupId>
@@ -18,13 +18,13 @@
 		<dependency>
 			<groupId>ci.gouv.dgbf.system.usermanagement.server.persistence</groupId>
 			<artifactId>usermanagement-server-persistence-entities</artifactId>
-			<version>0.0.1</version>
+			<version>0.1.0</version>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.cyk.jee.utility.server.business</groupId>
 			<artifactId>jee-utility-server-business</artifactId>
-			<version>0.0.1</version>
+			<version>0.1.0</version>
 		</dependency>
 	</dependencies>	
 

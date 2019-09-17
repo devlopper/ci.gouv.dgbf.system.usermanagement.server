@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>org.cyk.pom.jee.server</groupId>
 		<artifactId>pom-jee-server</artifactId>
-		<version>pom.jee.server.0.0.1</version>
+		<version>pom.jee.server.0.1.0</version>
 	</parent>
 
 	<groupId>ci.gouv.dgbf.system.usermanagement.server</groupId>
 	<artifactId>usermanagement-server-_pom</artifactId>
-	<version>0.0.1</version>
+	<version>0.1.0</version>
 	<packaging>pom</packaging>
 
 	<name>usermanagement system server</name>

@@ -23,9 +23,11 @@
     <!-- Configuration to be used when the WildFly managed profile is active -->
     <container qualifier="widlfly-managed" default="true">
         <configuration>
-           <property name="jbossHome">${jboss.home}</property>
+           <property name="jbossHome">target/wildfly-${wildfly.version:17.0.1.Final}</property>
+           <!--
            <property name="javaVmArguments">-Djboss.socket.binding.port-offset=2000 -Dcyk.parameter.system.name="Gestion des acteurs" ${java.vm.arguments}</property>
            <property name="managementPort">11990</property>
+           -->
         </configuration>
     </container>
 

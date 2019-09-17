@@ -5,10 +5,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.cyk.utility.field.FieldValueCopy;
 import org.cyk.utility.request.RequestProcessor;
 import org.cyk.utility.test.arquillian.AbstractArquillianUnitTest;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 
+@Ignore
 public class EntitiesUnitTest extends AbstractArquillianUnitTest {
 	private static final long serialVersionUID = 1L;
 
