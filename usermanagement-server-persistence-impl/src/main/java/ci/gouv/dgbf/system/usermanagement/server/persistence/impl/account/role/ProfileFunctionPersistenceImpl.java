@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.array.ArrayHelper;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
@@ -38,12 +39,12 @@ public class ProfileFunctionPersistenceImpl extends AbstractPersistenceEntityImp
 	
 	@Override
 	public Collection<ProfileFunction> readByFunctionCodes(String... functionCodes) {
-		return readByFunctionCodes(__injectCollectionHelper__().instanciate(functionCodes));
+		return readByFunctionCodes(CollectionHelper.listOf(functionCodes));
 	}
 	
 	@Override
 	public Collection<ProfileFunction> readByFunctions(Collection<Function> functions) {
-		if(__injectCollectionHelper__().isNotEmpty(functions))
+		if(CollectionHelper.isNotEmpty(functions))
 			return readByFunctionCodes(functions.stream().map(Function::getCode).collect(Collectors.toList()));
 		return null;
 	}
@@ -56,12 +57,12 @@ public class ProfileFunctionPersistenceImpl extends AbstractPersistenceEntityImp
 	
 	@Override
 	public Collection<ProfileFunction> readByProfileCodes(String... profileCodes) {
-		return readByProfileCodes(__injectCollectionHelper__().instanciate(profileCodes));
+		return readByProfileCodes(CollectionHelper.listOf(profileCodes));
 	}
 
 	@Override
 	public Collection<ProfileFunction> readByProfiles(Collection<Profile> profiles) {
-		if(__injectCollectionHelper__().isNotEmpty(profiles))
+		if(CollectionHelper.isNotEmpty(profiles))
 			return readByProfileCodes(profiles.stream().map(Profile::getCode).collect(Collectors.toList()));
 		return null;
 	}

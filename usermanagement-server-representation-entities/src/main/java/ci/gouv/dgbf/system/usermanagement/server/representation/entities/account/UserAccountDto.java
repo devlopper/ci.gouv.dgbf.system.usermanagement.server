@@ -6,9 +6,9 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.cyk.utility.array.ArrayHelper;
-import org.cyk.utility.collection.CollectionHelper;
+import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.server.representation.AbstractEntityFromPersistenceEntity;
-import org.cyk.utility.string.StringHelper;
+import org.cyk.utility.__kernel__.string.StringHelper;
 
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionDtoCollection;
@@ -44,9 +44,9 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 	}
 	
 	public UserAccountDto addFunctionsByCodes(Collection<String> functionsCodes) {
-		if(__inject__(CollectionHelper.class).isNotEmpty(functionsCodes)) {
+		if(CollectionHelper.isNotEmpty(functionsCodes)) {
 			for(String index : functionsCodes)
-				if(__inject__(StringHelper.class).isNotBlank(index))
+				if(StringHelper.isNotBlank(index))
 					addFunctions(new FunctionDto().setCode(index));
 		}
 		return this;
@@ -54,19 +54,19 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 	
 	public UserAccountDto addFunctionsByCodes(String...functionsCodes) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(functionsCodes))
-			addFunctionsByCodes(__inject__(CollectionHelper.class).instanciate(functionsCodes));
+			addFunctionsByCodes(CollectionHelper.listOf(functionsCodes));
 		return this;
 	}
 	
 	public UserAccountDto addFunctions(Collection<FunctionDto> functions) {
-		if(__inject__(CollectionHelper.class).isNotEmpty(functions))
+		if(CollectionHelper.isNotEmpty(functions))
 			getFunctions(Boolean.TRUE).add(functions);	
 		return this;
 	}
 	
 	public UserAccountDto addFunctions(FunctionDto...functions) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(functions))
-			addFunctions(__inject__(CollectionHelper.class).instanciate(functions));
+			addFunctions(CollectionHelper.listOf(functions));
 		return this;
 	}
 	
@@ -75,9 +75,9 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 	}
 	
 	public UserAccountDto addFunctionScopesByCodes(Collection<String> functionScopesCodes) {
-		if(__inject__(CollectionHelper.class).isNotEmpty(functionScopesCodes)) {
+		if(CollectionHelper.isNotEmpty(functionScopesCodes)) {
 			for(String index : functionScopesCodes)
-				if(__inject__(StringHelper.class).isNotBlank(index))
+				if(StringHelper.isNotBlank(index))
 					addFunctionScopes(new FunctionScopeDto().setCode(index));
 		}
 		return this;
@@ -85,19 +85,19 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 	
 	public UserAccountDto addFunctionScopesByCodes(String...functionScopesCodes) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(functionScopesCodes))
-			addFunctionScopesByCodes(__inject__(CollectionHelper.class).instanciate(functionScopesCodes));
+			addFunctionScopesByCodes(CollectionHelper.listOf(functionScopesCodes));
 		return this;
 	}
 	
 	public UserAccountDto addFunctionScopes(Collection<FunctionScopeDto> functionScopes) {
-		if(__inject__(CollectionHelper.class).isNotEmpty(functionScopes))
+		if(CollectionHelper.isNotEmpty(functionScopes))
 			getFunctionScopes(Boolean.TRUE).add(functionScopes);	
 		return this;
 	}
 	
 	public UserAccountDto addFunctionScopes(FunctionScopeDto...functionScopes) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(functionScopes))
-			addFunctionScopes(__inject__(CollectionHelper.class).instanciate(functionScopes));
+			addFunctionScopes(CollectionHelper.listOf(functionScopes));
 		return this;
 	}
 	
@@ -108,9 +108,9 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 	/**/
 	
 	public UserAccountDto addProfilesByCodes(Collection<String> profilesCodes) {
-		if(__inject__(CollectionHelper.class).isNotEmpty(profilesCodes)) {
+		if(CollectionHelper.isNotEmpty(profilesCodes)) {
 			for(String index : profilesCodes)
-				if(__inject__(StringHelper.class).isNotBlank(index))
+				if(StringHelper.isNotBlank(index))
 					addProfiles(new ProfileDto().setCode(index));
 		}
 		return this;
@@ -118,19 +118,19 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 	
 	public UserAccountDto addProfilesByCodes(String...profilesCodes) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(profilesCodes))
-			addProfilesByCodes(__inject__(CollectionHelper.class).instanciate(profilesCodes));
+			addProfilesByCodes(CollectionHelper.listOf(profilesCodes));
 		return this;
 	}
 	
 	public UserAccountDto addProfiles(Collection<ProfileDto> profiles) {
-		if(__inject__(CollectionHelper.class).isNotEmpty(profiles))
+		if(CollectionHelper.isNotEmpty(profiles))
 			getProfiles(Boolean.TRUE).add(profiles);	
 		return this;
 	}
 	
 	public UserAccountDto addProfiles(ProfileDto...profiles) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(profiles))
-			addProfiles(__inject__(CollectionHelper.class).instanciate(profiles));
+			addProfiles(CollectionHelper.listOf(profiles));
 		return this;
 	}
 	
@@ -139,9 +139,9 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 	}
 	
 	public UserAccountDto addScopesByIdentifiers(Collection<String> identifiers) {
-		if(__inject__(CollectionHelper.class).isNotEmpty(identifiers)) {
+		if(CollectionHelper.isNotEmpty(identifiers)) {
 			for(String index : identifiers)
-				if(__inject__(StringHelper.class).isNotBlank(index))
+				if(StringHelper.isNotBlank(index))
 					addScopes(new ScopeDto().setIdentifier(index));
 		}
 		return this;
@@ -149,19 +149,19 @@ public class UserAccountDto extends AbstractEntityFromPersistenceEntity implemen
 	
 	public UserAccountDto addScopesByIdentifiers(String...identifiers) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(identifiers))
-			addScopesByIdentifiers(__inject__(CollectionHelper.class).instanciate(identifiers));
+			addScopesByIdentifiers(CollectionHelper.listOf(identifiers));
 		return this;
 	}
 	
 	public UserAccountDto addScopes(Collection<ScopeDto> scopes) {
-		if(__inject__(CollectionHelper.class).isNotEmpty(scopes))
+		if(CollectionHelper.isNotEmpty(scopes))
 			getScopes(Boolean.TRUE).add(scopes);	
 		return this;
 	}
 	
 	public UserAccountDto addScopes(ScopeDto...scopes) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(scopes))
-			addScopes(__inject__(CollectionHelper.class).instanciate(scopes));
+			addScopes(CollectionHelper.listOf(scopes));
 		return this;
 	}
 	

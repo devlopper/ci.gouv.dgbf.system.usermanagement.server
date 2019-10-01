@@ -7,10 +7,11 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.__kernel__.constant.ConstantCharacter;
 import org.cyk.utility.__kernel__.properties.Properties;
+import org.cyk.utility.__kernel__.string.StringHelper;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
-import org.cyk.utility.string.StringHelper;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserPersistence;
@@ -26,7 +27,7 @@ public class UserPersistenceImpl extends AbstractPersistenceEntityImpl<User> imp
 	protected void __listenExecuteReadAfterSetFieldValue__(User user, Field field, Properties properties) {
 		if(User.FIELD_NAMES.equals(field.getName())) {
 			String names = user.getFirstName();
-			if(__inject__(StringHelper.class).isNotBlank(user.getLastNames()))
+			if(StringHelper.isNotBlank(user.getLastNames()))
 				names = names + ConstantCharacter.SPACE + user.getLastNames();
 			user.setNames(names);
 		}else if(User.FIELD_FUNCTIONS.equals(field.getName()))
@@ -36,7 +37,7 @@ public class UserPersistenceImpl extends AbstractPersistenceEntityImpl<User> imp
 	@Override
 	public UserPersistence setFunctions(User user) {
 		Collection<UserFunction> userFunctions = __inject__(UserFunctionPersistence.class).readByUsers(user);
-		if(__injectCollectionHelper__().isNotEmpty(userFunctions))
+		if(CollectionHelper.isNotEmpty(userFunctions))
 			user.setFunctions(__inject__(Functions.class).add(userFunctions.stream().map(UserFunction::getFunction).collect(Collectors.toList())));
 		return this;
 	}

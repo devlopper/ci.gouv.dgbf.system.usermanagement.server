@@ -7,6 +7,7 @@ import java.util.Collection;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.cyk.utility.__kernel__.properties.Properties;
+import org.cyk.utility.__kernel__.value.ValueHelper;
 import org.cyk.utility.server.business.AbstractBusinessEntityImpl;
 import org.cyk.utility.server.business.BusinessFunctionCreator;
 import org.cyk.utility.server.business.BusinessFunctionRemover;
@@ -28,7 +29,7 @@ public class FunctionBusinessImpl extends AbstractBusinessEntityImpl<Function, F
 	@Override
 	protected void __listenExecuteCreateAfter__(Function function, Properties properties,BusinessFunctionCreator functionCreator) {
 		super.__listenExecuteCreateAfter__(function, properties, functionCreator);
-		if(Boolean.TRUE.equals(__injectValueHelper__().defaultToIfNull(function.getIsProfileCreatableOnCreate(),Boolean.TRUE))) {
+		if(Boolean.TRUE.equals(ValueHelper.defaultToIfNull(function.getIsProfileCreatableOnCreate(),Boolean.TRUE))) {
 			Profile profile = new Profile();
 			profile.setCode(function.getCode());
 			profile.setName(function.getName());

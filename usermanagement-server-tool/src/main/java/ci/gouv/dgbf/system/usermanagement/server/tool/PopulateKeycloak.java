@@ -13,9 +13,9 @@ import org.cyk.utility.__kernel__.DependencyInjection;
 import org.cyk.utility.__kernel__.object.dynamic.AbstractObject;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.array.ArrayInstanceTwoDimensionString;
-import org.cyk.utility.collection.CollectionHelper;
+import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.file.excel.FileExcelSheetDataArrayReader;
-import org.cyk.utility.string.StringHelper;
+import org.cyk.utility.__kernel__.string.StringHelper;
 import org.jboss.weld.environment.se.Weld;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
@@ -220,7 +220,7 @@ public class PopulateKeycloak extends AbstractObject {
 	private void deleteRoles(RolesResource rolesResource) {
 		Integer count;
 		try {
-			count = __inject__(CollectionHelper.class).getSize(rolesResource.list());
+			count = CollectionHelper.getSize(rolesResource.list());
 		} catch (Exception e) {
 			e.printStackTrace();
 			count = null;
@@ -243,7 +243,7 @@ public class PopulateKeycloak extends AbstractObject {
 
 	private void deleteClients(ClientsResource clientsResource) {
 		List<ClientRepresentation> clientRepresentations = clientsResource.findAll();
-		for(Integer index = 0 ; index <  __inject__(CollectionHelper.class).getSize(clientRepresentations);) {
+		for(Integer index = 0 ; index <  CollectionHelper.getSize(clientRepresentations);) {
 			ClientRepresentation clientRepresentation = clientRepresentations.get(index);
 			if(Arrays.asList("account","admin-cli","broker","master-realm","security-admin-console","realm-management").contains(clientRepresentation.getName())) {
 				//clientsResource.get(clientRepresentation.getId()).remove();
@@ -251,7 +251,7 @@ public class PopulateKeycloak extends AbstractObject {
 			}else
 				clientRepresentations.remove(index.intValue());
 		}
-		System.out.print("Deleting "+__inject__(CollectionHelper.class).getSize(clientRepresentations)+" clients... ");
+		System.out.print("Deleting "+CollectionHelper.getSize(clientRepresentations)+" clients... ");
 		for(ClientRepresentation clientRepresentation : clientRepresentations)
 			clientsResource.get(clientRepresentation.getId()).remove();
 		System.out.println("OK");
@@ -261,7 +261,7 @@ public class PopulateKeycloak extends AbstractObject {
 		clientsResource.get("").
 		System.out.print("Deleting all clients... ");
 		for(ClientRepresentation index : clientsResource.findAll())
-			if(index.getAttributes()!=null && __inject__(StringHelper.class).isNotBlank(index.getAttributes().get("uuid")))
+			if(index.getAttributes()!=null && StringHelper.isNotBlank(index.getAttributes().get("uuid")))
 				clientsResource.get(index.getId()).remove();
 		System.out.println("OK");
 	}*/

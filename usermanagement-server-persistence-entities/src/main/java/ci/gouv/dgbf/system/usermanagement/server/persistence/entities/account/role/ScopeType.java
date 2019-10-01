@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
 
 @Entity @Getter @Setter @Accessors(chain=true) @Access(AccessType.FIELD)
 @Table(name=ScopeType.TABLE_NAME)
-public class ScopeType extends AbstractIdentifiedByStringAndCodedAndNamed<ScopeType,ScopeTypes> implements Serializable {
+public class ScopeType extends AbstractIdentifiedByStringAndCodedAndNamed<ScopeType> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Override

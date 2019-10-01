@@ -7,13 +7,14 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.__kernel__.properties.Properties;
+import org.cyk.utility.__kernel__.string.Strings;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
 import org.cyk.utility.server.persistence.PersistenceFunctionCreator;
 import org.cyk.utility.server.persistence.PersistenceFunctionModifier;
 import org.cyk.utility.server.persistence.PersistenceFunctionRemover;
 import org.cyk.utility.server.persistence.query.PersistenceQuery;
-import org.cyk.utility.string.Strings;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountFunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountPersistence;
@@ -48,7 +49,7 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 	@Override
 	protected void __listenExecuteCreateBefore__(UserAccount userAccount, Properties properties,PersistenceFunctionCreator function) {
 		super.__listenExecuteCreateBefore__(userAccount, properties, function);
-		/*if(Boolean.TRUE.equals(__injectValueHelper__().defaultToIfNull(userAccount.getIsPersistToKeycloakOnCreate(),Boolean.TRUE))) {
+		/*if(Boolean.TRUE.equals(ValueHelper.defaultToIfNull(userAccount.getIsPersistToKeycloakOnCreate(),Boolean.TRUE))) {
 			String identifier = __inject__(KeycloakHelper.class).saveUserAccount(userAccount);
 			userAccount.setIdentifier(identifier);	
 		}*/
@@ -65,22 +66,22 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 	protected void __listenExecuteReadAfterSetFieldValue__(UserAccount userAccount, Field field, Properties properties) {
 		if(UserAccount.FIELD_PROFILES.equals(field.getName())) {
 			Collection<UserAccountProfile> userAccountProfiles = __inject__(UserAccountProfilePersistence.class).readByUserAccount(userAccount);
-			if(__injectCollectionHelper__().isNotEmpty(userAccountProfiles))
+			if(CollectionHelper.isNotEmpty(userAccountProfiles))
 				userAccount.getProfiles(Boolean.TRUE).add(userAccountProfiles.stream().map(UserAccountProfile::getProfile).collect(Collectors.toList()));
 		}else if(UserAccount.FIELD_FUNCTION_SCOPES.equals(field.getName())) {
 			Collection<UserAccountFunctionScope> userAccountRolePostes = __inject__(UserAccountFunctionScopePersistence.class).readByUserAccount(userAccount);
-			if(__injectCollectionHelper__().isNotEmpty(userAccountRolePostes))
+			if(CollectionHelper.isNotEmpty(userAccountRolePostes))
 				userAccount.getFunctionScopes(Boolean.TRUE).add(userAccountRolePostes.stream().map(UserAccountFunctionScope::getFunctionScope).collect(Collectors.toList()));
 		}else if((UserAccount.FIELD_FUNCTIONS).equals(field.getName())) {
 			__inject__(UserPersistence.class).setFunctions(userAccount.getUser());
 			userAccount.setFunctions(userAccount.getUser().getFunctions());
 		}else if((UserAccount.FIELD_SCOPES).equals(field.getName())) {
 			Collection<UserAccountScope> userAccountScopes = __inject__(UserAccountScopePersistence.class).readByUserAccounts(userAccount);
-			if(__injectCollectionHelper__().isNotEmpty(userAccountScopes))
+			if(CollectionHelper.isNotEmpty(userAccountScopes))
 				userAccount.getScopes(Boolean.TRUE).add(userAccountScopes.stream().map(UserAccountScope::getScope).collect(Collectors.toList()));
 		}/*else if((UserAccount.FIELD_SYSTEM_PROFILES).equals(field.getName())) {
 			Collection<UserAccountProfile> userAccountProfiles = __inject__(UserAccountProfilePersistence.class).readByUserAccount(userAccount);
-			if(__injectCollectionHelper__().isNotEmpty(userAccountProfiles)) {
+			if(CollectionHelper.isNotEmpty(userAccountProfiles)) {
 				//Collection<Profile> userProfiles = userAccountProfiles.stream().map(UserAccountProfile::getProfile).collect(Collectors.toList());
 				
 				//userAccount.getProfiles(Boolean.TRUE).add(userAccountProfiles.stream().map(UserAccountProfile::getProfile).collect(Collectors.toList()));
@@ -92,12 +93,12 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 	protected void __listenExecuteReadAfterSetFieldValue__(UserAccount userAccount, String fieldName,Properties properties) {
 		if(userAccount.getUser()!=null && (UserAccount.FIELD_USER+"."+User.FIELD_FUNCTIONS).equals(fieldName)) {
 			Collection<UserFunction> userFunctions = __inject__(UserFunctionPersistence.class).readByUsers(userAccount.getUser());
-			if(__injectCollectionHelper__().isNotEmpty(userFunctions))
+			if(CollectionHelper.isNotEmpty(userFunctions))
 				userAccount.getUser().getFunctions(Boolean.TRUE).add(userFunctions.stream().map(UserFunction::getFunction).collect(Collectors.toList()));
-		}else if(__injectCollectionHelper__().isNotEmpty(userAccount.getProfiles()) && ("profile.privileges").equals(fieldName)) {
+		}else if(CollectionHelper.isNotEmpty(userAccount.getProfiles()) && ("profile.privileges").equals(fieldName)) {
 			for(Profile index : userAccount.getProfiles().get()) {
 				Collection<ProfilePrivilege> profilePrivileges = __inject__(ProfilePrivilegePersistence.class).readByProfiles(index);
-				if(__injectCollectionHelper__().isNotEmpty(profilePrivileges))
+				if(CollectionHelper.isNotEmpty(profilePrivileges))
 					index.getPrivileges(Boolean.TRUE).add(profilePrivileges.stream().map(ProfilePrivilege::getPrivilege).collect(Collectors.toList()));	
 			}
 		}
@@ -107,10 +108,10 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 	protected void __listenExecuteReadAfter__(UserAccount userAccount, Properties properties) {
 		super.__listenExecuteReadAfter__(userAccount, properties);
 		Strings fields = __getFieldsFromProperties__(properties);
-		if(__injectCollectionHelper__().isNotEmpty(fields)) {
+		if(CollectionHelper.isNotEmpty(fields)) {
 			for(String index : fields.get()) {
 				if((Profile.FIELD_PRIVILEGES).equals(index)) {
-					if(__injectCollectionHelper__().isNotEmpty(userAccount.getProfiles()))
+					if(CollectionHelper.isNotEmpty(userAccount.getProfiles()))
 						for(Profile profile : userAccount.getProfiles().get())
 							__inject__(ProfilePersistence.class).setPrivileges(profile);
 				}

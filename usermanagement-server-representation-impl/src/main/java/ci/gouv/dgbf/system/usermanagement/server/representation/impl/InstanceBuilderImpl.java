@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import org.cyk.utility.__kernel__.properties.Properties;
-import org.cyk.utility.collection.CollectionHelper;
+import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.instance.AbstractInstanceBuilderImpl;
 import org.cyk.utility.instance.InstanceHelper;
-import org.cyk.utility.string.StringHelper;
+import org.cyk.utility.__kernel__.string.StringHelper;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionScopePersistence;
@@ -69,7 +69,7 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			representation.setIdentifier(persistence.getIdentifier());
 			representation.setCode(persistence.getCode());
 			representation.setName(persistence.getName()); 
-			if(__injectCollectionHelper__().isNotEmpty(persistence.getFunctions()))
+			if(CollectionHelper.isNotEmpty(persistence.getFunctions()))
 				for(Function index : persistence.getFunctions().get())
 					representation.addFunctions(__inject__(InstanceHelper.class).buildOne(FunctionDto.class, index));
 		}else if(source instanceof ProfileFunction && destination instanceof ProfileFunctionDto) {
@@ -78,9 +78,9 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			representation.setIdentifier(persistence.getIdentifier());
 			@SuppressWarnings("unchecked")
 			Collection<String> fields = (Collection<String>) properties.getFields();
-			if(__inject__(CollectionHelper.class).contains(fields, ProfileFunction.FIELD_PROFILE))
+			if(CollectionHelper.contains(fields, ProfileFunction.FIELD_PROFILE))
 				representation.setProfile(__inject__(InstanceHelper.class).buildOne(ProfileDto.class, persistence.getProfile()));
-			if(__inject__(CollectionHelper.class).contains(fields, ProfileFunction.FIELD_FUNCTION))
+			if(CollectionHelper.contains(fields, ProfileFunction.FIELD_FUNCTION))
 				representation.setFunction(__inject__(InstanceHelper.class).buildOne(FunctionDto.class, persistence.getFunction()));
 		}else if(source instanceof UserAccount && destination instanceof UserAccountDto) {
 			UserAccount persistence = (UserAccount) source;
@@ -88,10 +88,10 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			representation.setIdentifier(persistence.getIdentifier());
 			//representation.setUser(__inject__(InstanceHelper.class).buildOne(UserDto.class, persistence.getUser()));
 			//representation.setAccount(__inject__(InstanceHelper.class).buildOne(AccountDto.class, persistence.getAccount()));
-			if(__injectCollectionHelper__().isNotEmpty(persistence.getFunctionScopes()))
+			if(CollectionHelper.isNotEmpty(persistence.getFunctionScopes()))
 				for(FunctionScope index : persistence.getFunctionScopes().get())
 					representation.addFunctionScopes(__inject__(InstanceHelper.class).buildOne(FunctionScopeDto.class, index));
-			if(__injectCollectionHelper__().isNotEmpty(persistence.getProfiles()))
+			if(CollectionHelper.isNotEmpty(persistence.getProfiles()))
 				for(Profile index : persistence.getProfiles().get())
 					representation.addProfiles(__inject__(InstanceHelper.class).buildOne(ProfileDto.class, index));
 		}
@@ -103,20 +103,20 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			persistence.setUser(__inject__(InstanceHelper.class).buildOne(User.class, representation.getUser()));
 			persistence.setAccount(__inject__(InstanceHelper.class).buildOne(Account.class, representation.getAccount()));
 			persistence.setFunctionScopes(null).setProfiles(null);
-			if(representation.getFunctionScopes()!=null && __injectCollectionHelper__().isNotEmpty(representation.getFunctionScopes().getCollection()))
+			if(representation.getFunctionScopes()!=null && CollectionHelper.isNotEmpty(representation.getFunctionScopes().getCollection()))
 				for(FunctionScopeDto index : representation.getFunctionScopes().getCollection()) {
 					FunctionScope functionScope = null;
-					if(__inject__(StringHelper.class).isBlank(index.getIdentifier()))
+					if(StringHelper.isBlank(index.getIdentifier()))
 						functionScope = __inject__(FunctionScopePersistence.class).readByBusinessIdentifier(index.getCode());
 					else
 						functionScope = __inject__(FunctionScopePersistence.class).readBySystemIdentifier(index.getIdentifier());
 					if(functionScope != null)
 						persistence.getFunctionScopes(Boolean.TRUE).add(functionScope);
 				}
-			if(representation.getProfiles()!=null && __injectCollectionHelper__().isNotEmpty(representation.getProfiles().getCollection()))
+			if(representation.getProfiles()!=null && CollectionHelper.isNotEmpty(representation.getProfiles().getCollection()))
 				for(ProfileDto index : representation.getProfiles().getCollection()) {
 					Profile profile = null;
-					if(__inject__(StringHelper.class).isBlank(index.getIdentifier()))
+					if(StringHelper.isBlank(index.getIdentifier()))
 						profile = __inject__(ProfilePersistence.class).readByBusinessIdentifier(index.getCode());
 					else
 						profile = __inject__(ProfilePersistence.class).readBySystemIdentifier(index.getIdentifier());
@@ -130,10 +130,10 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			persistence.setCode(representation.getCode());
 			persistence.setName(representation.getName());
 			persistence.setFunctions(null);
-			if(representation.getFunctions()!=null && __injectCollectionHelper__().isNotEmpty(representation.getFunctions().getCollection()))
+			if(representation.getFunctions()!=null && CollectionHelper.isNotEmpty(representation.getFunctions().getCollection()))
 				for(FunctionDto index : representation.getFunctions().getCollection()) {
 					Function function = null;
-					if(__inject__(StringHelper.class).isBlank(index.getIdentifier()))
+					if(StringHelper.isBlank(index.getIdentifier()))
 						function = __inject__(FunctionPersistence.class).readByBusinessIdentifier(index.getCode());
 					else
 						function = __inject__(FunctionPersistence.class).readBySystemIdentifier(index.getIdentifier());

@@ -22,7 +22,7 @@ import lombok.experimental.Accessors;
 
 @Entity @Getter @Setter @Accessors(chain=true) @Access(AccessType.FIELD) @ToString
 @Table(name=Privilege.TABLE_NAME)
-public class Privilege extends AbstractIdentifiedByStringAndCodedAndNamed<Privilege,Privileges> implements Serializable {
+public class Privilege extends AbstractIdentifiedByStringAndCodedAndNamed<Privilege> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne @JoinColumn(name=COLUMN_TYPE) @NotNull private PrivilegeType type;

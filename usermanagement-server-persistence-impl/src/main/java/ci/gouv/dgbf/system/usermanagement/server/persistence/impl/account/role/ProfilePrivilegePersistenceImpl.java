@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.array.ArrayHelper;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
@@ -36,19 +37,19 @@ private String readByProfileCodes;
 	
 	@Override
 	public Collection<ProfilePrivilege> readByProfileCodes(String... profileCodes) {
-		return readByProfileCodes(__injectCollectionHelper__().instanciate(profileCodes));
+		return readByProfileCodes(CollectionHelper.listOf(profileCodes));
 	}
 
 	@Override
 	public Collection<ProfilePrivilege> readByProfiles(Collection<Profile> profiles) {
-		if(__injectCollectionHelper__().isNotEmpty(profiles))
+		if(CollectionHelper.isNotEmpty(profiles))
 			return readByProfileCodes(profiles.stream().map(Profile::getCode).collect(Collectors.toList()));
 		return null;
 	}
 	
 	@Override
 	public Collection<ProfilePrivilege> readByProfiles(Profile... profiles) {
-		return readByProfiles(__injectCollectionHelper__().instanciate(profiles));
+		return readByProfiles(CollectionHelper.listOf(profiles));
 	}
 	
 	@Override

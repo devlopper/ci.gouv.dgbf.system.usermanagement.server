@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.array.ArrayHelper;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
@@ -46,19 +47,19 @@ public class ProfileServiceResourcePersistenceImpl extends AbstractPersistenceEn
 	
 	@Override
 	public Collection<ProfileServiceResource> readByProfilesCodes(String... profilesCodes) {
-		return readByProfilesCodes(__injectCollectionHelper__().instanciate(profilesCodes));
+		return readByProfilesCodes(CollectionHelper.listOf(profilesCodes));
 	}
 	
 	@Override
 	public Collection<ProfileServiceResource> readByProfiles(Collection<Profile> profiles) {
-		if(__injectCollectionHelper__().isNotEmpty(profiles))
+		if(CollectionHelper.isNotEmpty(profiles))
 			return readByProfilesCodes(profiles.stream().map(Profile::getCode).collect(Collectors.toList()));
 		return null;
 	}
 	
 	@Override
 	public Collection<ProfileServiceResource> readByProfiles(Profile... profiles) {
-		return readByProfiles(__injectCollectionHelper__().instanciate(profiles));
+		return readByProfiles(CollectionHelper.listOf(profiles));
 	}
 	
 	@Override

@@ -14,7 +14,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.cyk.utility.array.ArrayHelper;
-import org.cyk.utility.collection.CollectionHelper;
+import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.instance.InstanceHelper;
 import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByString;
 
@@ -85,7 +85,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	}
 	
 	public UserAccount addFunctionsByCodes(Collection<String> functionsCodes) {
-		if(__inject__(CollectionHelper.class).isNotEmpty(functionsCodes)) {
+		if(CollectionHelper.isNotEmpty(functionsCodes)) {
 			for(String index : functionsCodes)
 				addFunctions(__inject__(InstanceHelper.class).getByIdentifierBusiness(Function.class, index));
 		}
@@ -93,7 +93,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	}
 	
 	public UserAccount addFunctionsByCodes(String...functionsCodes) {
-		return addFunctionsByCodes(__inject__(CollectionHelper.class).instanciate(functionsCodes));
+		return addFunctionsByCodes(CollectionHelper.listOf(functionsCodes));
 	}
 	
 	public Scopes getScopes(Boolean injectIfNull) {
@@ -111,7 +111,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	}
 	
 	public UserAccount addScopesByIdentifiers(Collection<String> identifiers) {
-		if(__inject__(CollectionHelper.class).isNotEmpty(identifiers)) {
+		if(CollectionHelper.isNotEmpty(identifiers)) {
 			for(String index : identifiers)
 				addScopes(__inject__(InstanceHelper.class).getByIdentifierSystem(Scope.class, index));
 		}
@@ -119,7 +119,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	}
 	
 	public UserAccount addScopesByIdentifiers(String...identifiers) {
-		return addScopesByIdentifiers(__inject__(CollectionHelper.class).instanciate(identifiers));
+		return addScopesByIdentifiers(CollectionHelper.listOf(identifiers));
 	}
 	
 	public Profiles getProfiles(Boolean injectIfNull) {
@@ -133,7 +133,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	
 	public UserAccount addProfiles(Profile...profiles) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(profiles)) {
-			addProfiles(__inject__(CollectionHelper.class).instanciate(profiles));
+			addProfiles(CollectionHelper.listOf(profiles));
 		}
 		return this;
 	}
@@ -149,13 +149,13 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	
 	public UserAccount addPrivileges(Privilege...privileges) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(privileges)) {
-			addPrivileges(__inject__(CollectionHelper.class).instanciate(privileges));
+			addPrivileges(CollectionHelper.listOf(privileges));
 		}
 		return this;
 	}
 	
 	public UserAccount addPrivilegesByCodes(Collection<String> privilegesCodes) {
-		if(__inject__(CollectionHelper.class).isNotEmpty(privilegesCodes)) {
+		if(CollectionHelper.isNotEmpty(privilegesCodes)) {
 			for(String index : privilegesCodes)
 				addPrivileges(__inject__(InstanceHelper.class).getByIdentifierBusiness(Privilege.class, index));
 		}
@@ -163,7 +163,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	}
 	
 	public UserAccount addPrivilegesByCodes(String...privilegesCodes) {
-		return addPrivilegesByCodes(__inject__(CollectionHelper.class).instanciate(privilegesCodes));
+		return addPrivilegesByCodes(CollectionHelper.listOf(privilegesCodes));
 	}
 	
 	public FunctionScopes getFunctionScopes(Boolean injectIfNull) {
@@ -177,7 +177,7 @@ public class UserAccount extends AbstractIdentifiedByString implements Serializa
 	
 	public UserAccount addFunctionScopes(FunctionScope...functionScopes) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(functionScopes)) {
-			addFunctionScopes(__inject__(CollectionHelper.class).instanciate(functionScopes));
+			addFunctionScopes(CollectionHelper.listOf(functionScopes));
 		}
 		return this;
 	}

@@ -2,7 +2,7 @@ package ci.gouv.dgbf.system.usermanagement.server.representation.entities.accoun
 
 import org.cyk.utility.__kernel__.object.__static__.representation.Action;
 import org.cyk.utility.server.representation.AbstractMapperSourceDestinationImpl;
-import org.cyk.utility.string.Strings;
+import org.cyk.utility.__kernel__.string.Strings;
 import org.mapstruct.Mapper;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;

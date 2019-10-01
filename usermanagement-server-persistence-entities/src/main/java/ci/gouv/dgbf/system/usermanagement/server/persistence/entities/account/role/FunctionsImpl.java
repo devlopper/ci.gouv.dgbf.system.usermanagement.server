@@ -3,7 +3,7 @@ package ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.r
 import java.io.Serializable;
 import java.util.Collection;
 
-import org.cyk.utility.collection.AbstractCollectionInstanceImpl;
+import org.cyk.utility.__kernel__.collection.AbstractCollectionInstanceImpl;
 
 public class FunctionsImpl extends AbstractCollectionInstanceImpl<Function> implements Functions,Serializable {
 	private static final long serialVersionUID = 1L;

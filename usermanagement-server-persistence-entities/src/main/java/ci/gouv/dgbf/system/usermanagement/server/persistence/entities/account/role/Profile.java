@@ -13,7 +13,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.cyk.utility.array.ArrayHelper;
-import org.cyk.utility.collection.CollectionHelper;
+import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.instance.InstanceHelper;
 import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByStringAndCodedAndNamed;
 
@@ -71,20 +71,20 @@ public class Profile extends AbstractIdentifiedByStringAndCodedAndNamed implemen
 	
 	public Profile addFunctions(Function...functions) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(functions)) {
-			addFunctions(__inject__(CollectionHelper.class).instanciate(functions));
+			addFunctions(CollectionHelper.listOf(functions));
 		}
 		return this;
 	}
 	
 	public Profile addFunctionsByCodes(Collection<String> codes) {
-		if(Boolean.TRUE.equals(__inject__(CollectionHelper.class).isNotEmpty(codes)))
+		if(CollectionHelper.isNotEmpty(codes))
 			for(String index : codes)
 				getFunctions(Boolean.TRUE).add(__inject__(InstanceHelper.class).getByIdentifierBusiness(Function.class, index));
 		return this;
 	}
 	
 	public Profile addFunctionsByCodes(String... codes) {
-		addFunctionsByCodes(__inject__(CollectionHelper.class).instanciate(codes));
+		addFunctionsByCodes(CollectionHelper.listOf(codes));
 		return this;
 	}
 	
@@ -99,20 +99,20 @@ public class Profile extends AbstractIdentifiedByStringAndCodedAndNamed implemen
 	
 	public Profile addPrivileges(Privilege...privileges) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(privileges)) {
-			addPrivileges(__inject__(CollectionHelper.class).instanciate(privileges));
+			addPrivileges(CollectionHelper.listOf(privileges));
 		}
 		return this;
 	}
 	
 	public Profile addPrivilegesByCodes(Collection<String> codes) {
-		if(Boolean.TRUE.equals(__inject__(CollectionHelper.class).isNotEmpty(codes)))
+		if(CollectionHelper.isNotEmpty(codes))
 			for(String index : codes)
 				getPrivileges(Boolean.TRUE).add(__inject__(InstanceHelper.class).getByIdentifierBusiness(Privilege.class, index));
 		return this;
 	}
 	
 	public Profile addPrivilegesByCodes(String... codes) {
-		addPrivilegesByCodes(__inject__(CollectionHelper.class).instanciate(codes));
+		addPrivilegesByCodes(CollectionHelper.listOf(codes));
 		return this;
 	}
 	

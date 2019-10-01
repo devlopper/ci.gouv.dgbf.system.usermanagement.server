@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.array.ArrayHelper;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
@@ -46,7 +47,7 @@ public class UserFunctionPersistenceImpl extends AbstractPersistenceEntityImpl<U
 	
 	@Override
 	public Collection<UserFunction> readByUsersIdentifiers(Properties properties, String... usersIdentifiers) {
-		return readByUsersIdentifiers(__injectCollectionHelper__().instanciate(usersIdentifiers),properties);
+		return readByUsersIdentifiers(CollectionHelper.listOf(usersIdentifiers),properties);
 	}
 	
 	@Override
@@ -56,7 +57,7 @@ public class UserFunctionPersistenceImpl extends AbstractPersistenceEntityImpl<U
 	
 	@Override
 	public Collection<UserFunction> readByUsers(Collection<User> users, Properties properties) {
-		return __injectCollectionHelper__().isEmpty(users) ? null : readByUsersIdentifiers(users.stream().map(User::getIdentifier).collect(Collectors.toList()),properties);
+		return CollectionHelper.isEmpty(users) ? null : readByUsersIdentifiers(users.stream().map(User::getIdentifier).collect(Collectors.toList()),properties);
 	}
 	
 	@Override
@@ -66,7 +67,7 @@ public class UserFunctionPersistenceImpl extends AbstractPersistenceEntityImpl<U
 	
 	@Override
 	public Collection<UserFunction> readByUsers(Properties properties, User... users) {
-		return readByUsers(__injectCollectionHelper__().instanciate(users),properties);
+		return readByUsers(CollectionHelper.listOf(users),properties);
 	}
 	
 	@Override
@@ -89,7 +90,7 @@ public class UserFunctionPersistenceImpl extends AbstractPersistenceEntityImpl<U
 	
 	@Override
 	public Collection<UserFunction> readByFunctionsCodes(Properties properties, String... functionsCodes) {
-		return readByFunctionsCodes(__injectCollectionHelper__().instanciate(functionsCodes),properties);
+		return readByFunctionsCodes(CollectionHelper.listOf(functionsCodes),properties);
 	}
 	
 	@Override
@@ -99,7 +100,7 @@ public class UserFunctionPersistenceImpl extends AbstractPersistenceEntityImpl<U
 	
 	@Override
 	public Collection<UserFunction> readByFunctions(Collection<Function> functions,Properties properties) {
-		return __injectCollectionHelper__().isEmpty(functions) ? null : readByFunctionsCodes(functions.stream().map(Function::getCode).collect(Collectors.toList()),properties);
+		return CollectionHelper.isEmpty(functions) ? null : readByFunctionsCodes(functions.stream().map(Function::getCode).collect(Collectors.toList()),properties);
 	}
 	
 	@Override
@@ -109,7 +110,7 @@ public class UserFunctionPersistenceImpl extends AbstractPersistenceEntityImpl<U
 	
 	@Override
 	public Collection<UserFunction> readByFunctions(Properties properties,Function... functions) {
-		return readByFunctions(__injectCollectionHelper__().instanciate(functions),properties);
+		return readByFunctions(CollectionHelper.listOf(functions),properties);
 	}
 	
 	@Override

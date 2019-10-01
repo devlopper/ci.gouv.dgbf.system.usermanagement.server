@@ -2,6 +2,7 @@ package ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.r
 
 import java.io.Serializable;
 
+import javax.json.bind.annotation.JsonbProperty;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
@@ -12,9 +13,6 @@ import javax.validation.constraints.NotNull;
 
 import org.cyk.utility.server.persistence.jpa.hierarchy.AbstractIdentifiedByStringAndLinkedByStringAndNamed;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -22,8 +20,7 @@ import lombok.experimental.Accessors;
 @Entity @Access(AccessType.FIELD)
 @Getter @Setter @Accessors(chain=true)
 @Table(name=Scope.TABLE_NAME)
-@JsonIgnoreProperties(ignoreUnknown=true)
-public class Scope extends AbstractIdentifiedByStringAndLinkedByStringAndNamed<Scope,Scopes> implements Serializable {
+public class Scope extends AbstractIdentifiedByStringAndLinkedByStringAndNamed<Scope> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne @JoinColumn(name=COLUMN_TYPE) @NotNull private ScopeType type;
@@ -43,12 +40,12 @@ public class Scope extends AbstractIdentifiedByStringAndLinkedByStringAndNamed<S
 		return this;
 	}
 	
-	@Override @JsonProperty(value="uuid")
+	@Override @JsonbProperty(value="uuid")
 	public String getLink() {
 		return super.getLink();
 	}
 	
-	@Override @JsonProperty(value="libelleCourt")
+	@Override @JsonbProperty(value="libelleCourt")
 	public String getName() {
 		return super.getName();
 	}

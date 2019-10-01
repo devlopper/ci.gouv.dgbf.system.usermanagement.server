@@ -10,7 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.cyk.utility.collection.CollectionHelper;
+import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.instance.InstanceHelper;
 import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByString;
 
@@ -59,7 +59,7 @@ public class User extends AbstractIdentifiedByString implements Serializable {
 	}
 	
 	public User addFunctionsByCodes(Collection<String> functionsCodes) {
-		if(__inject__(CollectionHelper.class).isNotEmpty(functionsCodes)) {
+		if(CollectionHelper.isNotEmpty(functionsCodes)) {
 			for(String index : functionsCodes)
 				addFunctions(__inject__(InstanceHelper.class).getByIdentifierBusiness(Function.class, index));
 		}
@@ -67,7 +67,7 @@ public class User extends AbstractIdentifiedByString implements Serializable {
 	}
 	
 	public User addFunctionsByCodes(String...functionsCodes) {
-		return addFunctionsByCodes(__inject__(CollectionHelper.class).instanciate(functionsCodes));
+		return addFunctionsByCodes(CollectionHelper.listOf(functionsCodes));
 	}
 	
 	/**/

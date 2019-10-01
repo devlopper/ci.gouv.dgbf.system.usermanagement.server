@@ -7,7 +7,7 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.cyk.utility.__kernel__.DependencyInjection;
 import org.cyk.utility.array.ArrayInstanceTwoDimensionString;
-import org.cyk.utility.collection.CollectionHelper;
+import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.file.excel.FileExcelSheetDataArrayReader;
 import org.cyk.utility.server.business.AbstractApplicationScopeLifeCycleListenerImplementation;
 
@@ -176,7 +176,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		Collection<FunctionScope> functionScopes = new ArrayList<>();
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount(); index = index + 1) {
 			Function function = new Function().setCode(arrayInstance.get(index, 0)).setName(arrayInstance.get(index, 1))
-					.setType(__inject__(CollectionHelper.class).getElementAt(functionTypes, arrayInstance.get(index, 2).startsWith("ADMIN") ? 0 : 1));
+					.setType(CollectionHelper.getElementAt(functionTypes, arrayInstance.get(index, 2).startsWith("ADMIN") ? 0 : 1));
 			function.setIsProfileCreatableOnCreate(Boolean.TRUE);
 			functions.add(function);
 			if(arrayInstance.get(index, 3).startsWith("oui")) {

@@ -1,6 +1,6 @@
 package ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role;
 
-import org.cyk.utility.collection.CollectionInstance;
+import org.cyk.utility.__kernel__.collection.CollectionInstance;
 
 public interface PrivilegeTypes extends CollectionInstance<PrivilegeType> {
 

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.array.ArrayHelper;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
@@ -48,11 +49,11 @@ public class ProfilePersistenceImpl extends AbstractPersistenceEntityImpl<Profil
 	protected void __listenExecuteReadAfterSetFieldValue__(Profile profile, Field field, Properties properties) {
 		if(Profile.FIELD_FUNCTIONS.equals(field.getName())) {
 			Collection<ProfileFunction> profileFunctions = __inject__(ProfileFunctionPersistence.class).readByProfiles(Arrays.asList(profile));
-			if(__injectCollectionHelper__().isNotEmpty(profileFunctions))
+			if(CollectionHelper.isNotEmpty(profileFunctions))
 				profile.getFunctions(Boolean.TRUE).add(profileFunctions.stream().map(ProfileFunction::getFunction).collect(Collectors.toList()));
 		}else if(Profile.FIELD_PRIVILEGES.equals(field.getName())) {
 			Collection<ProfilePrivilege> profilePrivileges = __inject__(ProfilePrivilegePersistence.class).readByProfiles(Arrays.asList(profile));
-			if(__injectCollectionHelper__().isNotEmpty(profilePrivileges))
+			if(CollectionHelper.isNotEmpty(profilePrivileges))
 				profile.getPrivileges(Boolean.TRUE).add(profilePrivileges.stream().map(ProfilePrivilege::getPrivilege).collect(Collectors.toList()));
 		}
 	}
@@ -66,7 +67,7 @@ public class ProfilePersistenceImpl extends AbstractPersistenceEntityImpl<Profil
 	@Override
 	public ProfilePersistence setPrivileges(Profile profile) {
 		Collection<ProfilePrivilege> profilePrivileges = __inject__(ProfilePrivilegePersistence.class).readByProfiles(profile);
-		if(__injectCollectionHelper__().isNotEmpty(profilePrivileges))
+		if(CollectionHelper.isNotEmpty(profilePrivileges))
 			profile.setPrivileges(__inject__(Privileges.class).add(profilePrivileges.stream().map(ProfilePrivilege::getPrivilege).collect(Collectors.toList())));
 		return this;
 	}

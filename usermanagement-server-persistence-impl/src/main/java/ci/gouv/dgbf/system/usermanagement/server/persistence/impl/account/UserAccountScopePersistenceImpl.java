@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.cyk.utility.__kernel__.properties.Properties;
-import org.cyk.utility.collection.CollectionHelper;
+import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
 import org.cyk.utility.server.persistence.query.PersistenceQueryContext;
 
@@ -42,7 +42,7 @@ public class UserAccountScopePersistenceImpl extends AbstractPersistenceEntityIm
 
 	@Override
 	public Collection<UserAccountScope> readByUserAccountsIdentifiers(Properties properties,String... userAccountsIdentifiers) {
-		return readByUserAccountsIdentifiers(__inject__(CollectionHelper.class).instanciate(userAccountsIdentifiers),properties);
+		return readByUserAccountsIdentifiers(CollectionHelper.listOf(userAccountsIdentifiers),properties);
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class UserAccountScopePersistenceImpl extends AbstractPersistenceEntityIm
 
 	@Override
 	public Collection<UserAccountScope> readByUserAccounts(Properties properties, UserAccount... userAccounts) {
-		return readByUserAccounts(__inject__(CollectionHelper.class).instanciate(userAccounts),properties);
+		return readByUserAccounts(CollectionHelper.listOf(userAccounts),properties);
 	}
 
 	@Override

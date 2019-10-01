@@ -7,9 +7,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.cyk.utility.array.ArrayHelper;
-import org.cyk.utility.collection.CollectionHelper;
+import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.server.representation.AbstractEntityFromPersistenceEntityCodedAndNamed;
-import org.cyk.utility.string.StringHelper;
+import org.cyk.utility.__kernel__.string.StringHelper;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,9 +40,9 @@ public class ProfileDto extends AbstractEntityFromPersistenceEntityCodedAndNamed
 	}
 	
 	public ProfileDto addFunctionsByCodes(Collection<String> functionsCodes) {
-		if(__inject__(CollectionHelper.class).isNotEmpty(functionsCodes)) {
+		if(CollectionHelper.isNotEmpty(functionsCodes)) {
 			for(String index : functionsCodes)
-				if(__inject__(StringHelper.class).isNotBlank(index))
+				if(StringHelper.isNotBlank(index))
 					addFunctions(new FunctionDto().setCode(index));
 		}
 		return this;
@@ -50,19 +50,19 @@ public class ProfileDto extends AbstractEntityFromPersistenceEntityCodedAndNamed
 	
 	public ProfileDto addFunctionsByCodes(String...functionsCodes) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(functionsCodes))
-			addFunctionsByCodes(__inject__(CollectionHelper.class).instanciate(functionsCodes));
+			addFunctionsByCodes(CollectionHelper.listOf(functionsCodes));
 		return this;
 	}
 	
 	public ProfileDto addFunctions(Collection<FunctionDto> functions) {
-		if(__inject__(CollectionHelper.class).isNotEmpty(functions))
+		if(CollectionHelper.isNotEmpty(functions))
 			getFunctions(Boolean.TRUE).add(functions);	
 		return this;
 	}
 	
 	public ProfileDto addFunctions(FunctionDto...functions) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(functions))
-			addFunctions(__inject__(CollectionHelper.class).instanciate(functions));
+			addFunctions(CollectionHelper.listOf(functions));
 		return this;
 	}
 	
@@ -78,9 +78,9 @@ public class ProfileDto extends AbstractEntityFromPersistenceEntityCodedAndNamed
 	}
 	
 	public ProfileDto addPrivilegesByCodes(Collection<String> privilegesCodes) {
-		if(__inject__(CollectionHelper.class).isNotEmpty(privilegesCodes)) {
+		if(CollectionHelper.isNotEmpty(privilegesCodes)) {
 			for(String index : privilegesCodes)
-				if(__inject__(StringHelper.class).isNotBlank(index))
+				if(StringHelper.isNotBlank(index))
 					addPrivileges(new PrivilegeDto().setCode(index));
 		}
 		return this;
@@ -88,19 +88,19 @@ public class ProfileDto extends AbstractEntityFromPersistenceEntityCodedAndNamed
 	
 	public ProfileDto addPrivilegesByCodes(String...privilegesCodes) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(privilegesCodes))
-			addPrivilegesByCodes(__inject__(CollectionHelper.class).instanciate(privilegesCodes));
+			addPrivilegesByCodes(CollectionHelper.listOf(privilegesCodes));
 		return this;
 	}
 	
 	public ProfileDto addPrivileges(Collection<PrivilegeDto> privileges) {
-		if(__inject__(CollectionHelper.class).isNotEmpty(privileges))
+		if(CollectionHelper.isNotEmpty(privileges))
 			getPrivileges(Boolean.TRUE).add(privileges);	
 		return this;
 	}
 	
 	public ProfileDto addPrivileges(PrivilegeDto...privileges) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(privileges))
-			addPrivileges(__inject__(CollectionHelper.class).instanciate(privileges));
+			addPrivileges(CollectionHelper.listOf(privileges));
 		return this;
 	}
 	

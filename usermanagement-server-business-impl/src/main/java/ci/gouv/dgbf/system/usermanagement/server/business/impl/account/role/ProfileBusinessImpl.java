@@ -8,12 +8,13 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.__kernel__.properties.Properties;
+import org.cyk.utility.__kernel__.string.Strings;
 import org.cyk.utility.server.business.AbstractBusinessEntityImpl;
 import org.cyk.utility.server.business.BusinessFunctionCreator;
 import org.cyk.utility.server.business.BusinessFunctionModifier;
 import org.cyk.utility.server.business.BusinessFunctionRemover;
-import org.cyk.utility.string.Strings;
 
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileFunctionBusiness;
@@ -43,7 +44,7 @@ public class ProfileBusinessImpl extends AbstractBusinessEntityImpl<Profile, Pro
 	@Override
 	protected void __listenExecuteCreateAfter__(Profile profile, Properties properties,BusinessFunctionCreator function) {
 		super.__listenExecuteCreateAfter__(profile, properties, function);
-		if(Boolean.TRUE.equals(__injectCollectionHelper__().isNotEmpty(profile.getFunctions()))) {
+		if(Boolean.TRUE.equals(CollectionHelper.isNotEmpty(profile.getFunctions()))) {
 			Collection<ProfileFunction> profileFunctions = new ArrayList<>();
 			for(Function index : profile.getFunctions().get())
 				profileFunctions.add(new ProfileFunction().setProfile(profile).setFunction(index));
@@ -55,18 +56,18 @@ public class ProfileBusinessImpl extends AbstractBusinessEntityImpl<Profile, Pro
 	protected void __listenExecuteUpdateBefore__(Profile profile, Properties properties,BusinessFunctionModifier function) {
 		super.__listenExecuteUpdateBefore__(profile, properties, function);
 		Strings fields = __getFieldsFromProperties__(properties);
-		if(__injectCollectionHelper__().isNotEmpty(fields)) {
+		if(CollectionHelper.isNotEmpty(fields)) {
 			for(String index : fields.get()) {
 				if(Profile.FIELD_FUNCTIONS.equals(index)) {
 					Collection<ProfileFunction> databaseCollection = __inject__(ProfileFunctionPersistence.class).readByProfiles(Arrays.asList(profile));
-					Collection<Function> databaseFunctions = __injectCollectionHelper__().isEmpty(databaseCollection) ? null : databaseCollection.stream()
+					Collection<Function> databaseFunctions = CollectionHelper.isEmpty(databaseCollection) ? null : databaseCollection.stream()
 							.map(ProfileFunction::getFunction).collect(Collectors.toList());
 					
 					__delete__(profile.getFunctions(), databaseCollection,ProfileFunction.FIELD_FUNCTION);
 					__save__(ProfileFunction.class,profile.getFunctions(), databaseFunctions, ProfileFunction.FIELD_FUNCTION, profile, ProfileFunction.FIELD_PROFILE);			
 				}else if(Profile.FIELD_PRIVILEGES.equals(index)) {
 					Collection<ProfilePrivilege> databaseCollection = __inject__(ProfilePrivilegePersistence.class).readByProfiles(Arrays.asList(profile));
-					Collection<Privilege> databasePrivileges = __injectCollectionHelper__().isEmpty(databaseCollection) ? null : databaseCollection.stream()
+					Collection<Privilege> databasePrivileges = CollectionHelper.isEmpty(databaseCollection) ? null : databaseCollection.stream()
 							.map(ProfilePrivilege::getPrivilege).collect(Collectors.toList());
 					
 					__delete__(profile.getPrivileges(), databaseCollection,ProfilePrivilege.FIELD_PRIVILEGE);

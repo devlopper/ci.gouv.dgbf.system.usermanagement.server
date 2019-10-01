@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.cyk.utility.__kernel__.properties.Properties;
-import org.cyk.utility.collection.CollectionHelper;
+import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.server.business.test.TestBusinessCreate;
 import org.cyk.utility.server.business.test.arquillian.AbstractBusinessArquillianIntegrationTestWithDefaultDeployment;
 import org.cyk.utility.server.persistence.query.filter.Filter;
@@ -57,7 +57,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	protected void __listenBefore__() {
 		super.__listenBefore__();
 		__inject__(ApplicationScopeLifeCycleListener.class).initialize(null);
-		__inject__(ProfileTypeBusiness.class).createMany(__inject__(CollectionHelper.class).instanciate(new ProfileType().setCode(ProfileType.CODE_SYSTEM).setName("Système")
+		__inject__(ProfileTypeBusiness.class).createMany(CollectionHelper.listOf(new ProfileType().setCode(ProfileType.CODE_SYSTEM).setName("Système")
 				,new ProfileType().setCode(ProfileType.CODE_UTILISATEUR).setName("Utilisateur")));
 	}
 	
@@ -187,8 +187,8 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		Privilege privilegeModule03 = new Privilege().setCode("m03").setName(__getRandomName__()).setType(privilegeType);
 		Privilege privilegeService03 = new Privilege().setCode("s03").setName(__getRandomName__()).setType(privilegeType).addParents(privilegeModule03);
 		Privilege privilegeAction03 = new Privilege().setCode("a03").setName(__getRandomName__()).setType(privilegeType).addParents(privilegeService03);
-		__inject__(PrivilegeTypeBusiness.class).createMany(__inject__(CollectionHelper.class).instanciate(privilegeType));
-		__inject__(PrivilegeBusiness.class).createMany(__inject__(CollectionHelper.class).instanciate(privilegeModule01,privilegeService01,privilegeService02
+		__inject__(PrivilegeTypeBusiness.class).createMany(CollectionHelper.listOf(privilegeType));
+		__inject__(PrivilegeBusiness.class).createMany(CollectionHelper.listOf(privilegeModule01,privilegeService01,privilegeService02
 				,privilegeAction01,privilegeAction02,privilegeModule02,privilegeModule03,privilegeService03,privilegeAction03));
 		Profile profile;
 		profile = new Profile().setCode("up01").setName(__getRandomName__());
@@ -485,7 +485,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		UserRepresentation userRepresentation = userResource.toRepresentation();
 		Map<String,List<String>> attributes = userRepresentation.getAttributes();
 		assertThat(attributes).contains(
-				new AbstractMap.SimpleEntry<String, List<String>>("MINISTERE",(List<String>)__inject__(CollectionHelper.class).instanciate("21"))
+				new AbstractMap.SimpleEntry<String, List<String>>("MINISTERE",(List<String>)CollectionHelper.listOf("21"))
 				).hasSize(1);
 		
 		userAccount = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(), new Properties().setFields(__inject__(Strings.class)
@@ -517,7 +517,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		userRepresentation = userResource.toRepresentation();
 		attributes = userRepresentation.getAttributes();
 		assertThat(attributes).contains(
-				new AbstractMap.SimpleEntry<String, List<String>>("MINISTERE",(List<String>)__inject__(CollectionHelper.class).instanciate("21"))
+				new AbstractMap.SimpleEntry<String, List<String>>("MINISTERE",(List<String>)CollectionHelper.listOf("21"))
 				).hasSize(1);
 		
 		scope = new Scope().setIdentifier("18").setType(scopeType);
@@ -543,7 +543,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		userRepresentation = userResource.toRepresentation();
 		attributes = userRepresentation.getAttributes();
 		assertThat(attributes).contains(
-				new AbstractMap.SimpleEntry<String, List<String>>("MINISTERE",(List<String>)__inject__(CollectionHelper.class).instanciate("21","18"))
+				new AbstractMap.SimpleEntry<String, List<String>>("MINISTERE",(List<String>)CollectionHelper.listOf("21","18"))
 				).hasSize(1);
 		
 		__inject__(UserAccountBusiness.class).delete(userAccount);

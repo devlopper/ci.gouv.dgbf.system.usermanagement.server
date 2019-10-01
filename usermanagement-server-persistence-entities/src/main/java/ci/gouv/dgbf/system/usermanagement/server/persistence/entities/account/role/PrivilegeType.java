@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
 
 @Entity @Getter @Setter @Accessors(chain=true) @Access(AccessType.FIELD) @ToString
 @Table(name=PrivilegeType.TABLE_NAME)
-public class PrivilegeType extends AbstractIdentifiedByStringAndCodedAndNamed<PrivilegeType,PrivilegeTypes> implements Serializable {
+public class PrivilegeType extends AbstractIdentifiedByStringAndCodedAndNamed<PrivilegeType> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Override

@@ -17,13 +17,13 @@ import javax.transaction.UserTransaction;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
+import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.__kernel__.object.__static__.identifiable.AbstractIdentified;
 import org.cyk.utility.__kernel__.properties.Properties;
-import org.cyk.utility.collection.CollectionHelper;
+import org.cyk.utility.__kernel__.string.StringHelper;
+import org.cyk.utility.__kernel__.value.ValueHelper;
 import org.cyk.utility.configuration.ConstantParameterName;
 import org.cyk.utility.helper.AbstractHelper;
-import org.cyk.utility.string.StringHelper;
-import org.cyk.utility.value.ValueHelper;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -74,12 +74,12 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 		super.__listenPostConstruct__();
 		__isEnable__ = ConstantParameterName.is(ConstantParameterName.SECURITY_DELEGATE_SYSTEM_IS_ENABLE);
 		if(Boolean.TRUE.equals(__isEnable__)) {
-			String url = __inject__(ValueHelper.class).returnOrThrowIfBlank("keycloak server url",ConstantParameterName.get("keycloak.server.url")); 
-			realmName = __inject__(ValueHelper.class).returnOrThrowIfBlank("keycloak realm name",ConstantParameterName.get("keycloak.realm.name")); 
-			String clientIdentifier = __inject__(ValueHelper.class).returnOrThrowIfBlank("keycloak client identifier",ConstantParameterName.get("keycloak.client.identifier")); 
-			String clientSecret = __inject__(ValueHelper.class).returnOrThrowIfBlank("keycloak client secret",ConstantParameterName.get("keycloak.client.secret")); 
-			String username = __inject__(ValueHelper.class).returnOrThrowIfBlank("keycloak credentials username",ConstantParameterName.get("keycloak.credential.username")); 
-			String password = __inject__(ValueHelper.class).returnOrThrowIfBlank("keycloak credentials password",ConstantParameterName.get("keycloak.credential.password"));
+			String url = ValueHelper.returnOrThrowIfBlank("keycloak server url",ConstantParameterName.get("keycloak.server.url")); 
+			realmName = ValueHelper.returnOrThrowIfBlank("keycloak realm name",ConstantParameterName.get("keycloak.realm.name")); 
+			String clientIdentifier = ValueHelper.returnOrThrowIfBlank("keycloak client identifier",ConstantParameterName.get("keycloak.client.identifier")); 
+			String clientSecret = ValueHelper.returnOrThrowIfBlank("keycloak client secret",ConstantParameterName.get("keycloak.client.secret")); 
+			String username = ValueHelper.returnOrThrowIfBlank("keycloak credentials username",ConstantParameterName.get("keycloak.credential.username")); 
+			String password = ValueHelper.returnOrThrowIfBlank("keycloak credentials password",ConstantParameterName.get("keycloak.credential.password"));
 			
 			__logInfo__("KEYCLOAK CLIENT TO BE CREATED\nurl:"+url+"\nrealm:"+realmName+"\nclient identifier:"+clientIdentifier+"\nclient secret:"+clientSecret
 					+"\nusername:"+username+"\npassword:"+password);
@@ -125,7 +125,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 				if(index.getAttributes()!=null) {
 					for(Map.Entry<String, List<String>> indexEntry : attributes.entrySet()) {
 						if(index.getAttributes().containsKey(indexEntry.getKey())) {
-							if(Boolean.TRUE.equals(__inject__(CollectionHelper.class).containsAll(index.getAttributes().get(indexEntry.getKey()), attributes.get(indexEntry.getKey())))){
+							if(Boolean.TRUE.equals(CollectionHelper.containsAll(index.getAttributes().get(indexEntry.getKey()), attributes.get(indexEntry.getKey())))){
 								add = Boolean.TRUE;
 								break;
 							}
@@ -151,7 +151,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	public Collection<RoleRepresentation> getRolesByProperty(String name, String... values) {
 		Properties keycloakProperties = new Properties();
 		Map<String,List<String>> attributes = new HashMap<>();
-		attributes.put(name, (List<String>) __inject__(CollectionHelper.class).instanciate(List.class,values));
+		attributes.put(name, CollectionHelper.listOf(values));
 		keycloakProperties.setAttributes(attributes);
 		return __inject__(KeycloakHelper.class).getRoles(keycloakProperties);
 	}
@@ -190,7 +190,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	
 	@Override
 	public KeycloakHelper createRole(String code, String name, String type, String... parentsCodes) {
-		return createRole(code, name, type, __inject__(CollectionHelper.class).instanciate(parentsCodes));
+		return createRole(code, name, type, CollectionHelper.listOf(parentsCodes));
 	}
 	
 	@Override
@@ -213,7 +213,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 			RoleRepresentation roleRepresentation = roleResource.toRepresentation();
 			Map<String,List<String>> attributes = new LinkedHashMap<>();
 			attributes.put(ROLE_ATTRIBUTE_NAME, Arrays.asList(name));
-			if(__inject__(StringHelper.class).isNotBlank(type))
+			if(StringHelper.isNotBlank(type))
 				attributes.put("type", Arrays.asList(type));
 			roleRepresentation.setAttributes(attributes);
 			roleResource.update(roleRepresentation);
@@ -222,7 +222,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	
 	private void saveRoleComposites(String code,Collection<String> parentsCodes) {
 		if(Boolean.TRUE.equals(__isEnable__)) {
-			if(Boolean.TRUE.equals(__inject__(CollectionHelper.class ).isNotEmpty(parentsCodes))) {
+			if(Boolean.TRUE.equals(CollectionHelper.isNotEmpty(parentsCodes))) {
 				RolesResource rolesResource = getRolesResource();
 				List<RoleRepresentation> composites = new ArrayList<>();
 				for(String indexParentCode : parentsCodes) {
@@ -235,7 +235,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 						
 					}
 				}
-				if(__inject__(CollectionHelper.class).isNotEmpty(composites))
+				if(CollectionHelper.isNotEmpty(composites))
 					rolesResource.get(code).addComposites(composites);	
 			}
 		}
@@ -246,7 +246,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 		if(Boolean.TRUE.equals(__isEnable__)) {
 			UsersResource usersRessource = getUsersResource();
 			UserResource userResource = null;
-			if(__inject__(StringHelper.class).isNotBlank(identifier))
+			if(StringHelper.isNotBlank(identifier))
 				try {
 					userResource = usersRessource.get(identifier);
 				} catch (NotFoundException exception) {
@@ -277,7 +277,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 			userRepresentation.setEmail(electronicMailAddress);
 			userRepresentation.setAttributes(attributes);
 			
-			if(__inject__(StringHelper.class).isBlank(identifier)) {
+			if(StringHelper.isBlank(identifier)) {
 				Response response = usersRessource.create(userRepresentation);
 				identifier = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");	
 				userResource = usersRessource.get(identifier);
@@ -285,11 +285,11 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 				CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
 				credentialRepresentation.setTemporary(Boolean.TRUE);
 				credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
-				credentialRepresentation.setValue(__inject__(ValueHelper.class).defaultToIfNull(pass, "123"));
+				credentialRepresentation.setValue(ValueHelper.defaultToIfNull(pass, "123"));
 				userResource.resetPassword(credentialRepresentation);
 			}
 					
-			if(__inject__(CollectionHelper.class).isNotEmpty(rolesCodes)) 
+			if(CollectionHelper.isNotEmpty(rolesCodes)) 
 				for(String index : rolesCodes) {
 					try {
 						RoleRepresentation roleRepresentation = getRealmResource().roles().get(index).toRepresentation();
@@ -306,7 +306,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	public String saveUserAccount(UserAccount userAccount) {
 		String identifier = null;
 		if(Boolean.TRUE.equals(__isEnable__)) {
-			Collection<String> rolesCodes = __inject__(CollectionHelper.class).isEmpty(userAccount.getProfiles()) ? null : userAccount.getProfiles().get()
+			Collection<String> rolesCodes = CollectionHelper.isEmpty(userAccount.getProfiles()) ? null : userAccount.getProfiles().get()
 					.stream().map(x -> x.getCode()).collect(Collectors.toList());
 			
 			identifier = saveUserAccount(userAccount.getIdentifier(),userAccount.getUser().getFirstName(), userAccount.getUser().getLastNames(), userAccount.getUser().getElectronicMailAddress()
@@ -333,7 +333,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	@Override
 	public KeycloakHelper addUserAccountAttributeValue(String identifier, String attributeName, String attributeValue) {
 		if(Boolean.TRUE.equals(__isEnable__)) {
-			if(Boolean.TRUE.equals(__inject__(StringHelper.class).isNotBlank(attributeName)) && Boolean.TRUE.equals(__inject__(StringHelper.class).isNotBlank(attributeValue))) {
+			if(Boolean.TRUE.equals(StringHelper.isNotBlank(attributeName)) && Boolean.TRUE.equals(StringHelper.isNotBlank(attributeValue))) {
 				UserResource userResource = getUsersResource().get(identifier);
 				UserRepresentation userRepresentation = userResource.toRepresentation();
 				Map<String,List<String>> attributes = userRepresentation.getAttributes();
@@ -364,7 +364,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	@Override
 	public KeycloakHelper removeUserAccountAttributeValue(String identifier, String attributeName,String attributeValue) {
 		if(Boolean.TRUE.equals(__isEnable__)) {
-			if(Boolean.TRUE.equals(__inject__(StringHelper.class).isNotBlank(attributeName)) && Boolean.TRUE.equals(__inject__(StringHelper.class).isNotBlank(attributeValue))) {
+			if(Boolean.TRUE.equals(StringHelper.isNotBlank(attributeName)) && Boolean.TRUE.equals(StringHelper.isNotBlank(attributeValue))) {
 				UserResource userResource = getUsersResource().get(identifier);
 				UserRepresentation userRepresentation = userResource.toRepresentation();
 				Map<String,List<String>> attributes = userRepresentation.getAttributes();

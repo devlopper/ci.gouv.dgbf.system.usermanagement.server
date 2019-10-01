@@ -6,9 +6,9 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.cyk.utility.array.ArrayHelper;
-import org.cyk.utility.collection.CollectionHelper;
+import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.server.representation.AbstractEntityFromPersistenceEntity;
-import org.cyk.utility.string.StringHelper;
+import org.cyk.utility.__kernel__.string.StringHelper;
 
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionDtoCollection;
@@ -29,9 +29,9 @@ public class UserDto extends AbstractEntityFromPersistenceEntity implements Seri
 	private FunctionDtoCollection functions;
 	
 	public UserDto addFunctionsByCodes(Collection<String> functionsCodes) {
-		if(__inject__(CollectionHelper.class).isNotEmpty(functionsCodes)) {
+		if(CollectionHelper.isNotEmpty(functionsCodes)) {
 			for(String index : functionsCodes)
-				if(__inject__(StringHelper.class).isNotBlank(index))
+				if(StringHelper.isNotBlank(index))
 					addFunctions(new FunctionDto().setCode(index));
 		}
 		return this;
@@ -39,19 +39,19 @@ public class UserDto extends AbstractEntityFromPersistenceEntity implements Seri
 	
 	public UserDto addFunctionsByCodes(String...functionsCodes) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(functionsCodes))
-			addFunctionsByCodes(__inject__(CollectionHelper.class).instanciate(functionsCodes));
+			addFunctionsByCodes(CollectionHelper.listOf(functionsCodes));
 		return this;
 	}
 	
 	public UserDto addFunctions(Collection<FunctionDto> functions) {
-		if(__inject__(CollectionHelper.class).isNotEmpty(functions))
+		if(CollectionHelper.isNotEmpty(functions))
 			getFunctions(Boolean.TRUE).add(functions);	
 		return this;
 	}
 	
 	public UserDto addFunctions(FunctionDto...functions) {
 		if(__inject__(ArrayHelper.class).isNotEmpty(functions))
-			addFunctions(__inject__(CollectionHelper.class).instanciate(functions));
+			addFunctions(CollectionHelper.listOf(functions));
 		return this;
 	}
 	

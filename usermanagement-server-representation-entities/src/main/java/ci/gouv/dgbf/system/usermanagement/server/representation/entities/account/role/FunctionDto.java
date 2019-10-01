@@ -7,7 +7,7 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.cyk.utility.server.representation.AbstractEntityFromPersistenceEntityCodedAndNamed;
-import org.cyk.utility.string.StringHelper;
+import org.cyk.utility.__kernel__.string.StringHelper;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,12 +34,12 @@ public class FunctionDto extends AbstractEntityFromPersistenceEntityCodedAndName
 	@Override
 	public String toString() {
 		Collection<String> strings = new ArrayList<>();
-		if(Boolean.TRUE.equals(__inject__(StringHelper.class).isNotBlank(getCode())))
+		if(Boolean.TRUE.equals(StringHelper.isNotBlank(getCode())))
 			strings.add("code : "+getCode());
-		if(Boolean.TRUE.equals(__inject__(StringHelper.class).isNotBlank(getName())))
+		if(Boolean.TRUE.equals(StringHelper.isNotBlank(getName())))
 			strings.add("name : "+getName());
 		if(type != null)
 			strings.add("type : "+type.toString());
-		return __inject__(StringHelper.class).concatenate(strings, ",");
+		return StringHelper.concatenate(strings, ",");
 	}
 }

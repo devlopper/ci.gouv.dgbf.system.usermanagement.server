@@ -7,7 +7,7 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.cyk.utility.server.representation.AbstractEntityFromPersistenceEntityLinkedAndNamed;
-import org.cyk.utility.string.StringHelper;
+import org.cyk.utility.__kernel__.string.StringHelper;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,12 +28,12 @@ public class ScopeDto extends AbstractEntityFromPersistenceEntityLinkedAndNamed 
 	@Override
 	public String toString() {
 		Collection<String> strings = new ArrayList<>();
-		if(Boolean.TRUE.equals(__inject__(StringHelper.class).isNotBlank(getName())))
+		if(Boolean.TRUE.equals(StringHelper.isNotBlank(getName())))
 			strings.add("name : "+getName());
 		else
 			strings.add("identifier : "+getIdentifier());
 		if(type != null)
 			strings.add("type : "+type.toString());
-		return __inject__(StringHelper.class).concatenate(strings, ",");
+		return StringHelper.concatenate(strings, ",");
 	}
 }
