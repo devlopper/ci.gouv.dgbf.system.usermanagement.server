@@ -20,7 +20,6 @@ import org.cyk.utility.server.persistence.query.PersistenceQueryContext;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePrivilegePersistence;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Privileges;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfilePrivilege;
@@ -50,11 +49,11 @@ public class ProfilePersistenceImpl extends AbstractPersistenceEntityImpl<Profil
 		if(Profile.FIELD_FUNCTIONS.equals(field.getName())) {
 			Collection<ProfileFunction> profileFunctions = __inject__(ProfileFunctionPersistence.class).readByProfiles(Arrays.asList(profile));
 			if(CollectionHelper.isNotEmpty(profileFunctions))
-				profile.getFunctions(Boolean.TRUE).add(profileFunctions.stream().map(ProfileFunction::getFunction).collect(Collectors.toList()));
+				profile.addFunctions(profileFunctions.stream().map(ProfileFunction::getFunction).collect(Collectors.toList()));
 		}else if(Profile.FIELD_PRIVILEGES.equals(field.getName())) {
 			Collection<ProfilePrivilege> profilePrivileges = __inject__(ProfilePrivilegePersistence.class).readByProfiles(Arrays.asList(profile));
 			if(CollectionHelper.isNotEmpty(profilePrivileges))
-				profile.getPrivileges(Boolean.TRUE).add(profilePrivileges.stream().map(ProfilePrivilege::getPrivilege).collect(Collectors.toList()));
+				profile.addPrivileges(profilePrivileges.stream().map(ProfilePrivilege::getPrivilege).collect(Collectors.toList()));
 		}
 	}
 	
@@ -68,7 +67,7 @@ public class ProfilePersistenceImpl extends AbstractPersistenceEntityImpl<Profil
 	public ProfilePersistence setPrivileges(Profile profile) {
 		Collection<ProfilePrivilege> profilePrivileges = __inject__(ProfilePrivilegePersistence.class).readByProfiles(profile);
 		if(CollectionHelper.isNotEmpty(profilePrivileges))
-			profile.setPrivileges(__inject__(Privileges.class).add(profilePrivileges.stream().map(ProfilePrivilege::getPrivilege).collect(Collectors.toList())));
+			profile.setPrivileges(profilePrivileges.stream().map(ProfilePrivilege::getPrivilege).collect(Collectors.toList()));
 		return this;
 	}
 	

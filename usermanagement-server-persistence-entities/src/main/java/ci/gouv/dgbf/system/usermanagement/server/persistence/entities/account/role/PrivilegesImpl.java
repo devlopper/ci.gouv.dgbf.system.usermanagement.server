@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import org.cyk.utility.__kernel__.collection.AbstractCollectionInstanceImpl;
 
+@Deprecated
 public class PrivilegesImpl extends AbstractCollectionInstanceImpl<Privilege> implements Privileges,Serializable {
 	private static final long serialVersionUID = 1L;
 

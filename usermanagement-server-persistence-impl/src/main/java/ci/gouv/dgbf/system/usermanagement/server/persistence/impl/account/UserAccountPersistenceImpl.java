@@ -67,18 +67,18 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 		if(UserAccount.FIELD_PROFILES.equals(field.getName())) {
 			Collection<UserAccountProfile> userAccountProfiles = __inject__(UserAccountProfilePersistence.class).readByUserAccount(userAccount);
 			if(CollectionHelper.isNotEmpty(userAccountProfiles))
-				userAccount.getProfiles(Boolean.TRUE).add(userAccountProfiles.stream().map(UserAccountProfile::getProfile).collect(Collectors.toList()));
+				userAccount.addProfiles(userAccountProfiles.stream().map(UserAccountProfile::getProfile).collect(Collectors.toList()));
 		}else if(UserAccount.FIELD_FUNCTION_SCOPES.equals(field.getName())) {
 			Collection<UserAccountFunctionScope> userAccountRolePostes = __inject__(UserAccountFunctionScopePersistence.class).readByUserAccount(userAccount);
 			if(CollectionHelper.isNotEmpty(userAccountRolePostes))
-				userAccount.getFunctionScopes(Boolean.TRUE).add(userAccountRolePostes.stream().map(UserAccountFunctionScope::getFunctionScope).collect(Collectors.toList()));
+				userAccount.addFunctionScopes(userAccountRolePostes.stream().map(UserAccountFunctionScope::getFunctionScope).collect(Collectors.toList()));
 		}else if((UserAccount.FIELD_FUNCTIONS).equals(field.getName())) {
 			__inject__(UserPersistence.class).setFunctions(userAccount.getUser());
 			userAccount.setFunctions(userAccount.getUser().getFunctions());
 		}else if((UserAccount.FIELD_SCOPES).equals(field.getName())) {
 			Collection<UserAccountScope> userAccountScopes = __inject__(UserAccountScopePersistence.class).readByUserAccounts(userAccount);
 			if(CollectionHelper.isNotEmpty(userAccountScopes))
-				userAccount.getScopes(Boolean.TRUE).add(userAccountScopes.stream().map(UserAccountScope::getScope).collect(Collectors.toList()));
+				userAccount.addScopes(userAccountScopes.stream().map(UserAccountScope::getScope).collect(Collectors.toList()));
 		}/*else if((UserAccount.FIELD_SYSTEM_PROFILES).equals(field.getName())) {
 			Collection<UserAccountProfile> userAccountProfiles = __inject__(UserAccountProfilePersistence.class).readByUserAccount(userAccount);
 			if(CollectionHelper.isNotEmpty(userAccountProfiles)) {
@@ -94,12 +94,12 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 		if(userAccount.getUser()!=null && (UserAccount.FIELD_USER+"."+User.FIELD_FUNCTIONS).equals(fieldName)) {
 			Collection<UserFunction> userFunctions = __inject__(UserFunctionPersistence.class).readByUsers(userAccount.getUser());
 			if(CollectionHelper.isNotEmpty(userFunctions))
-				userAccount.getUser().getFunctions(Boolean.TRUE).add(userFunctions.stream().map(UserFunction::getFunction).collect(Collectors.toList()));
+				userAccount.getUser().addFunctions(userFunctions.stream().map(UserFunction::getFunction).collect(Collectors.toList()));
 		}else if(CollectionHelper.isNotEmpty(userAccount.getProfiles()) && ("profile.privileges").equals(fieldName)) {
-			for(Profile index : userAccount.getProfiles().get()) {
+			for(Profile index : userAccount.getProfiles()) {
 				Collection<ProfilePrivilege> profilePrivileges = __inject__(ProfilePrivilegePersistence.class).readByProfiles(index);
 				if(CollectionHelper.isNotEmpty(profilePrivileges))
-					index.getPrivileges(Boolean.TRUE).add(profilePrivileges.stream().map(ProfilePrivilege::getPrivilege).collect(Collectors.toList()));	
+					index.addPrivileges(profilePrivileges.stream().map(ProfilePrivilege::getPrivilege).collect(Collectors.toList()));	
 			}
 		}
 	}
@@ -112,7 +112,7 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 			for(String index : fields.get()) {
 				if((Profile.FIELD_PRIVILEGES).equals(index)) {
 					if(CollectionHelper.isNotEmpty(userAccount.getProfiles()))
-						for(Profile profile : userAccount.getProfiles().get())
+						for(Profile profile : userAccount.getProfiles())
 							__inject__(ProfilePersistence.class).setPrivileges(profile);
 				}
 			}	

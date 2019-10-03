@@ -9,7 +9,7 @@ import org.cyk.utility.server.representation.AbstractEntityCollectionMapperImpl;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PrivilegeHierarchies;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PrivilegeHierarchy;
 
-@ApplicationScoped
+@ApplicationScoped @Deprecated
 public class PrivilegeHierarchyDtoCollectionMapper extends AbstractEntityCollectionMapperImpl<PrivilegeHierarchyDtoCollection,PrivilegeHierarchyDto,PrivilegeHierarchies,PrivilegeHierarchy> implements Serializable {
 	private static final long serialVersionUID = 1L;
 

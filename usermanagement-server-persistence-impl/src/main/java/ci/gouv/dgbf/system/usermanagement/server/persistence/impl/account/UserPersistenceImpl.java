@@ -17,7 +17,6 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserFun
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.User;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserFunction;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Functions;
 
 @ApplicationScoped
 public class UserPersistenceImpl extends AbstractPersistenceEntityImpl<User> implements UserPersistence,Serializable {
@@ -38,7 +37,7 @@ public class UserPersistenceImpl extends AbstractPersistenceEntityImpl<User> imp
 	public UserPersistence setFunctions(User user) {
 		Collection<UserFunction> userFunctions = __inject__(UserFunctionPersistence.class).readByUsers(user);
 		if(CollectionHelper.isNotEmpty(userFunctions))
-			user.setFunctions(__inject__(Functions.class).add(userFunctions.stream().map(UserFunction::getFunction).collect(Collectors.toList())));
+			user.setFunctions(userFunctions.stream().map(UserFunction::getFunction).collect(Collectors.toList()));
 		return this;
 	}
 	

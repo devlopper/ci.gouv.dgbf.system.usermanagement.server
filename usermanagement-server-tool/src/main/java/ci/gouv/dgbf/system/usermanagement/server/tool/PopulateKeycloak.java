@@ -2,7 +2,6 @@ package ci.gouv.dgbf.system.usermanagement.server.tool;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,12 +9,12 @@ import java.util.Map;
 import javax.ws.rs.NotFoundException;
 
 import org.cyk.utility.__kernel__.DependencyInjection;
+import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.__kernel__.object.dynamic.AbstractObject;
 import org.cyk.utility.__kernel__.properties.Properties;
-import org.cyk.utility.array.ArrayInstanceTwoDimensionString;
-import org.cyk.utility.__kernel__.collection.CollectionHelper;
-import org.cyk.utility.file.excel.FileExcelSheetDataArrayReader;
 import org.cyk.utility.__kernel__.string.StringHelper;
+import org.cyk.utility.array.ArrayInstanceTwoDimensionString;
+import org.cyk.utility.file.excel.FileExcelSheetDataArrayReader;
 import org.jboss.weld.environment.se.Weld;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
@@ -128,7 +127,7 @@ public class PopulateKeycloak extends AbstractObject {
 	}
 	
 	private void saveRoleComposites(RolesResource rolesResource,String code,String parents) {
-		if(Boolean.TRUE.equals(DependencyInjection.inject(StringHelper.class ).isNotBlank(parents))) {
+		if(Boolean.TRUE.equals(StringHelper.isNotBlank(parents))) {
 			List<RoleRepresentation> composites = new ArrayList<>();
 			for(String indexParent : parents.split(",")) {
 				RoleResource roleResource = rolesResource.get(indexParent);
@@ -137,7 +136,7 @@ public class PopulateKeycloak extends AbstractObject {
 					composites.add(roleResource.toRepresentation());
 				}
 			}
-			if(DependencyInjection.inject(CollectionHelper.class).isNotEmpty(composites)) {
+			if(CollectionHelper.isNotEmpty(composites)) {
 				System.out.print("\t"+code+"... ");
 				rolesResource.get(code).addComposites(composites);	
 				System.out.println("OK");
@@ -184,7 +183,7 @@ public class PopulateKeycloak extends AbstractObject {
 	}
 	
 	private void saveClient(ClientsResource clientsResource,String code,String name,String url,String uuid) {
-		if(DependencyInjection.inject(StringHelper.class).isBlank(code)) {
+		if(StringHelper.isBlank(code)) {
 			System.err.println("Service named <<"+name+">> has been skipped because it does not have a code");
 			return;
 		}

@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.cyk.utility.__kernel__.collection.CollectionInstance;
 
+@Deprecated
 public interface Functions extends CollectionInstance<Function> {
 
 	@Override Functions add(Collection<Function> functions);

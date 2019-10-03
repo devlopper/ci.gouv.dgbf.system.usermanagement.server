@@ -167,8 +167,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 				);
 		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(8l);
 		Profile profile = __inject__(ProfileBusiness.class).findByBusinessIdentifier("p02");
-		profile.getFunctions(Boolean.TRUE).removeAll();
-		profile.getFunctions(Boolean.TRUE).add(__inject__(FunctionPersistence.class).readByBusinessIdentifier("f02"));
+		profile.setFunctions(null).addFunctions(__inject__(FunctionPersistence.class).readByBusinessIdentifier("f02"));
 		__inject__(ProfileBusiness.class).update(profile,new Properties().setFields(Profile.FIELD_FUNCTIONS));
 		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(6l);
 		__inject__(ProfileBusiness.class).deleteByBusinessIdentifier("p01");
@@ -203,7 +202,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		assertThat(profile.getPrivileges()).isNull();
 		profile = __inject__(ProfileBusiness.class).findByBusinessIdentifier("up01",new Properties().setFields(Profile.FIELD_PRIVILEGES));
 		assertThat(profile.getPrivileges()).isNotNull();
-		assertThat(profile.getPrivileges().get().stream().map(Privilege::getCode).collect(Collectors.toList())).containsOnly("m01");
+		assertThat(profile.getPrivileges().stream().map(Privilege::getCode).collect(Collectors.toList())).containsOnly("m01");
 	}
 	
 	@Test
@@ -298,7 +297,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		assertThat(user.getFunctions()).isNull();
 		user.addFunctionsByCodes("f01");
 		assertThat(user.getFunctions()).isNotNull();
-		assertThat(user.getFunctions().get()).hasSize(1);
+		assertThat(user.getFunctions()).hasSize(1);
 		__inject__(UserBusiness.class).update(user,new Properties().setFields("functions"));
 		
 		user = __inject__(UserBusiness.class).findBySystemIdentifier("u01");
@@ -311,7 +310,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		assertThat(user.getLastNames()).isEqualTo("Yao Christian");
 		assertThat(user.getNames()).isEqualTo("Komenan Yao Christian");
 		assertThat(user.getFunctions()).isNotNull();
-		assertThat(user.getFunctions().get().stream().map(Function::getCode).collect(Collectors.toList())).containsOnly("f01");
+		assertThat(user.getFunctions().stream().map(Function::getCode).collect(Collectors.toList())).containsOnly("f01");
 		
 		user.addFunctionsByCodes("f03");
 		__inject__(UserBusiness.class).update(user,new Properties().setFields("functions"));
@@ -324,18 +323,17 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		assertThat(user).isNotNull();
 		assertThat(user.getNames()).isEqualTo("Komenan Yao Christian");
 		assertThat(user.getFunctions()).isNotNull();
-		assertThat(user.getFunctions().get().stream().map(Function::getCode).collect(Collectors.toList())).containsOnly("f01","f03");
+		assertThat(user.getFunctions().stream().map(Function::getCode).collect(Collectors.toList())).containsOnly("f01","f03");
 		
-		user.getFunctions().removeAll();
-		user.addFunctionsByCodes("f03");
+		user.setFunctions(null).addFunctionsByCodes("f03");
 		__inject__(UserBusiness.class).update(user,new Properties().setFields("functions"));
 		user = __inject__(UserBusiness.class).findBySystemIdentifier("u01",new Properties().setFields("names,functions"));
 		assertThat(user).isNotNull();
 		assertThat(user.getNames()).isEqualTo("Komenan Yao Christian");
 		assertThat(user.getFunctions()).isNotNull();
-		assertThat(user.getFunctions().get().stream().map(Function::getCode).collect(Collectors.toList())).containsOnly("f03");
+		assertThat(user.getFunctions().stream().map(Function::getCode).collect(Collectors.toList())).containsOnly("f03");
 		
-		user.getFunctions().removeAll();
+		user.setFunctions(null);
 		__inject__(UserBusiness.class).update(user,new Properties().setFields("functions"));
 		user = __inject__(UserBusiness.class).findBySystemIdentifier("u01",new Properties().setFields("names,functions"));
 		assertThat(user).isNotNull();
@@ -386,31 +384,31 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields("user,"+User.FIELD_FUNCTIONS));
 		assertThat(userAccount01).isNotNull();
 		assertThat(userAccount01.getUser().getFunctions()).isNotNull();
-		assertThat(userAccount01.getUser().getFunctions().get()).isNotEmpty();
-		assertThat(userAccount01.getUser().getFunctions().get().stream().map(Function::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER");
+		assertThat(userAccount01.getUser().getFunctions()).isNotEmpty();
+		assertThat(userAccount01.getUser().getFunctions().stream().map(Function::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER");
 		
 		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_FUNCTION_SCOPES));
 		assertThat(userAccount01).isNotNull();
 		assertThat(userAccount01.getFunctionScopes()).isNotNull();
-		assertThat(userAccount01.getFunctionScopes().get()).isNotEmpty();
-		assertThat(userAccount01.getFunctionScopes().get().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
+		assertThat(userAccount01.getFunctionScopes()).isNotEmpty();
+		assertThat(userAccount01.getFunctionScopes().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
 		assertThat(userAccount01.getProfiles()).isNull();
 		
 		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_PROFILES));
 		assertThat(userAccount01).isNotNull();
 		assertThat(userAccount01.getProfiles()).isNotNull();
-		assertThat(userAccount01.getProfiles().get()).isNotEmpty();
-		assertThat(userAccount01.getProfiles().get().stream().map(Profile::getCode).collect(Collectors.toList())).contains("p001");
+		assertThat(userAccount01.getProfiles()).isNotEmpty();
+		assertThat(userAccount01.getProfiles().stream().map(Profile::getCode).collect(Collectors.toList())).contains("p001");
 		assertThat(userAccount01.getFunctionScopes()).isNull();
 		
 		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(Arrays.asList(UserAccount.FIELD_FUNCTION_SCOPES,UserAccount.FIELD_PROFILES)));
 		assertThat(userAccount01).isNotNull();
 		assertThat(userAccount01.getFunctionScopes()).isNotNull();
-		assertThat(userAccount01.getFunctionScopes().get()).isNotEmpty();
-		assertThat(userAccount01.getFunctionScopes().get().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
+		assertThat(userAccount01.getFunctionScopes()).isNotEmpty();
+		assertThat(userAccount01.getFunctionScopes().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
 		assertThat(userAccount01.getProfiles()).isNotNull();
-		assertThat(userAccount01.getProfiles().get()).isNotEmpty();
-		assertThat(userAccount01.getProfiles().get().stream().map(Profile::getCode).collect(Collectors.toList())).contains("p001");
+		assertThat(userAccount01.getProfiles()).isNotEmpty();
+		assertThat(userAccount01.getProfiles().stream().map(Profile::getCode).collect(Collectors.toList())).contains("p001");
 		
 		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields("user,account,"+User.FIELD_FUNCTIONS));
 		userAccount01.getUser().addFunctionsByCodes("CE");
@@ -418,11 +416,12 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_USER+","+User.FIELD_FUNCTIONS));
 		assertThat(userAccount01).isNotNull();
 		assertThat(userAccount01.getUser().getFunctions()).isNotNull();
-		assertThat(userAccount01.getUser().getFunctions().get()).isNotEmpty();
-		assertThat(userAccount01.getUser().getFunctions().get().stream().map(Function::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER","CE");
+		assertThat(userAccount01.getUser().getFunctions()).isNotEmpty();
+		assertThat(userAccount01.getUser().getFunctions().stream().map(Function::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER","CE");
 		
 		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_USER+","+User.FIELD_FUNCTIONS));
-		userAccount01.getUser().getFunctions().removeAll();
+		userAccount01.getUser().setFunctions(null);
+		userAccount01.setFunctions(null);
 		__inject__(UserAccountBusiness.class).update(userAccount01,new Properties().setFields("functions"));
 		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_USER+","+User.FIELD_FUNCTIONS));
 		assertThat(userAccount01).isNotNull();
@@ -433,8 +432,8 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		__inject__(UserAccountBusiness.class).update(userAccount01,new Properties().setFields("scopes"));
 		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields("identifier,scopes"));
 		assertThat(userAccount01.getScopes()).isNotNull();
-		assertThat(userAccount01.getScopes().get()).hasSize(1);
-		assertThat(userAccount01.getScopes().get().stream().map(Scope::getIdentifier).collect(Collectors.toList())).containsOnly("21");
+		assertThat(userAccount01.getScopes()).hasSize(1);
+		assertThat(userAccount01.getScopes().stream().map(Scope::getIdentifier).collect(Collectors.toList())).containsOnly("21");
 		
 		if(Boolean.TRUE.equals(Topic.MAIL.getIsConsumerStarted())) {
 			__inject__(TimeHelper.class).pause(1000l * 25);
@@ -492,11 +491,11 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 				.add(UserAccount.FIELD_PROFILES,UserAccount.FIELD_FUNCTION_SCOPES)));
 		assertThat(userAccount).isNotNull();
 		assertThat(userAccount.getFunctionScopes()).isNotNull();
-		assertThat(userAccount.getFunctionScopes().get()).isNotEmpty();
-		assertThat(userAccount.getFunctionScopes().get().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
+		assertThat(userAccount.getFunctionScopes()).isNotEmpty();
+		assertThat(userAccount.getFunctionScopes().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21");
 		assertThat(userAccount.getProfiles()).isNotNull();
-		assertThat(userAccount.getProfiles().get()).isNotEmpty();
-		assertThat(userAccount.getProfiles().get().stream().map(Profile::getCode).collect(Collectors.toList())).contains("p001");
+		assertThat(userAccount.getProfiles()).isNotEmpty();
+		assertThat(userAccount.getProfiles().stream().map(Profile::getCode).collect(Collectors.toList())).contains("p001");
 		
 		userAccount.addFunctionScopes(__inject__(FunctionScopePersistence.class).readByBusinessIdentifier("ASSISTANT_SAISIE_MINISTERE_21"));
 		userAccount.addProfiles(__inject__(ProfilePersistence.class).readByBusinessIdentifier("p002"));
@@ -506,12 +505,12 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 				.add(UserAccount.FIELD_PROFILES,UserAccount.FIELD_FUNCTION_SCOPES)));
 		assertThat(userAccount).isNotNull();
 		assertThat(userAccount.getFunctionScopes()).isNotNull();
-		assertThat(userAccount.getFunctionScopes().get()).isNotEmpty();
-		assertThat(userAccount.getFunctionScopes().get().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21"
+		assertThat(userAccount.getFunctionScopes()).isNotEmpty();
+		assertThat(userAccount.getFunctionScopes().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21"
 				,"ASSISTANT_SAISIE_MINISTERE_21");
 		assertThat(userAccount.getProfiles()).isNotNull();
-		assertThat(userAccount.getProfiles().get()).isNotEmpty();
-		assertThat(userAccount.getProfiles().get().stream().map(Profile::getCode).collect(Collectors.toList())).contains("p001","p002");
+		assertThat(userAccount.getProfiles()).isNotEmpty();
+		assertThat(userAccount.getProfiles().stream().map(Profile::getCode).collect(Collectors.toList())).contains("p001","p002");
 		
 		userResource = __inject__(KeycloakHelper.class).getUsersResource().get(userAccount.getIdentifier());
 		userRepresentation = userResource.toRepresentation();
@@ -532,12 +531,12 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 				.add(UserAccount.FIELD_PROFILES,UserAccount.FIELD_FUNCTION_SCOPES)));
 		assertThat(userAccount).isNotNull();
 		assertThat(userAccount.getFunctionScopes()).isNotNull();
-		assertThat(userAccount.getFunctionScopes().get()).isNotEmpty();
-		assertThat(userAccount.getFunctionScopes().get().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21"
+		assertThat(userAccount.getFunctionScopes()).isNotEmpty();
+		assertThat(userAccount.getFunctionScopes().stream().map(FunctionScope::getCode).collect(Collectors.toList())).contains("CONTROLEUR_FINANCIER_MINISTERE_21"
 				,"ASSISTANT_SAISIE_MINISTERE_21","ASSISTANT_SAISIE_MINISTERE_18");
 		assertThat(userAccount.getProfiles()).isNotNull();
-		assertThat(userAccount.getProfiles().get()).isNotEmpty();
-		assertThat(userAccount.getProfiles().get().stream().map(Profile::getCode).collect(Collectors.toList())).contains("p001","p002");
+		assertThat(userAccount.getProfiles()).isNotEmpty();
+		assertThat(userAccount.getProfiles().stream().map(Profile::getCode).collect(Collectors.toList())).contains("p001","p002");
 		
 		userResource = __inject__(KeycloakHelper.class).getUsersResource().get(userAccount.getIdentifier());
 		userRepresentation = userResource.toRepresentation();

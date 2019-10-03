@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 
-@Ignore
+@Ignore @Deprecated
 public class EntitiesUnitTest extends AbstractArquillianUnitTest {
 	private static final long serialVersionUID = 1L;
 

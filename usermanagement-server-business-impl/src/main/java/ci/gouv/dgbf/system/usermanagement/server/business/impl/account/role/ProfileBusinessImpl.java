@@ -46,7 +46,7 @@ public class ProfileBusinessImpl extends AbstractBusinessEntityImpl<Profile, Pro
 		super.__listenExecuteCreateAfter__(profile, properties, function);
 		if(Boolean.TRUE.equals(CollectionHelper.isNotEmpty(profile.getFunctions()))) {
 			Collection<ProfileFunction> profileFunctions = new ArrayList<>();
-			for(Function index : profile.getFunctions().get())
+			for(Function index : profile.getFunctions())
 				profileFunctions.add(new ProfileFunction().setProfile(profile).setFunction(index));
 			__inject__(ProfileFunctionBusiness.class).createMany(profileFunctions);
 		}

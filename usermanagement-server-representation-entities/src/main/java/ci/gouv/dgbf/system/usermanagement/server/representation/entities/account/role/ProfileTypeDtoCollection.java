@@ -1,11 +1,12 @@
 package ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
-import org.cyk.utility.server.representation.AbstractEntityCollection;
+import org.cyk.utility.__kernel__.object.__static__.representation.AbstractCollectionOfIdentifiedByStringAndCodedAndNamedImpl;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,9 @@ import lombok.experimental.Accessors;
 
 @XmlRootElement @Getter @Setter @Accessors(chain=true) @NoArgsConstructor
 @XmlSeeAlso(ProfileTypeDto.class)
-public class ProfileTypeDtoCollection extends AbstractEntityCollection<ProfileTypeDto> implements Serializable {
+public class ProfileTypeDtoCollection extends AbstractCollectionOfIdentifiedByStringAndCodedAndNamedImpl<ProfileTypeDto> implements Serializable {
 	private static final long serialVersionUID = 1L;
+	
+	private ArrayList<ProfileTypeDto> elements;
 	
 }

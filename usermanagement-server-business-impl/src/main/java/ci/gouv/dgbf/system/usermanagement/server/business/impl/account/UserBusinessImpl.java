@@ -34,7 +34,7 @@ public class UserBusinessImpl extends AbstractBusinessEntityImpl<User, UserPersi
 		super.__listenExecuteCreateAfter__(user, properties, function);
 		if(Boolean.TRUE.equals(CollectionHelper.isNotEmpty(user.getFunctions()))) {
 			Collection<UserFunction> userFunctions = new ArrayList<>();
-			for(Function index : user.getFunctions().get())
+			for(Function index : user.getFunctions())
 				userFunctions.add(new UserFunction().setUser(user).setFunction(index));
 			__inject__(UserFunctionBusiness.class).createMany(userFunctions);
 		}
@@ -54,6 +54,7 @@ public class UserBusinessImpl extends AbstractBusinessEntityImpl<User, UserPersi
 					
 					__delete__(user.getFunctions(), databaseUserFunctions,UserFunction.FIELD_FUNCTION);
 					__save__(UserFunction.class,user.getFunctions(), databaseFunctions, UserFunction.FIELD_FUNCTION, user, UserFunction.FIELD_USER);
+					
 				}
 			}
 		}	

@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.cyk.utility.server.representation.AbstractEntityFromPersistenceEntity;
+import org.cyk.utility.__kernel__.object.__static__.representation.AbstractIdentifiedByStringAndCodedAndNamedImpl;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +12,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @XmlRootElement @Getter @Setter @Accessors(chain=true) @NoArgsConstructor
-public class ServiceDto extends AbstractEntityFromPersistenceEntity implements Serializable {
+public class ServiceDto extends AbstractIdentifiedByStringAndCodedAndNamedImpl implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 }

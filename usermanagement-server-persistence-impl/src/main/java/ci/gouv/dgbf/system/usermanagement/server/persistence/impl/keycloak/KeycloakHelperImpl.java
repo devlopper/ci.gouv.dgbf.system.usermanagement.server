@@ -306,7 +306,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	public String saveUserAccount(UserAccount userAccount) {
 		String identifier = null;
 		if(Boolean.TRUE.equals(__isEnable__)) {
-			Collection<String> rolesCodes = CollectionHelper.isEmpty(userAccount.getProfiles()) ? null : userAccount.getProfiles().get()
+			Collection<String> rolesCodes = CollectionHelper.isEmpty(userAccount.getProfiles()) ? null : userAccount.getProfiles()
 					.stream().map(x -> x.getCode()).collect(Collectors.toList());
 			
 			identifier = saveUserAccount(userAccount.getIdentifier(),userAccount.getUser().getFirstName(), userAccount.getUser().getLastNames(), userAccount.getUser().getElectronicMailAddress()

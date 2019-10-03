@@ -2,6 +2,7 @@ package ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.r
 
 import org.cyk.utility.__kernel__.collection.CollectionInstance;
 
+@Deprecated
 public interface Profiles extends CollectionInstance<Profile> {
 
 }

@@ -59,21 +59,21 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 		super.__listenExecuteCreateAfter__(userAccount, properties, function);
 		if(Boolean.TRUE.equals(CollectionHelper.isNotEmpty(userAccount.getScopes()))) {
 			Collection<UserAccountScope> userAccountScopes = new ArrayList<>();
-			for(Scope index : userAccount.getScopes().get())
+			for(Scope index : userAccount.getScopes())
 				userAccountScopes.add(new UserAccountScope().setUserAccount(userAccount).setScope(index));
 			__inject__(UserAccountScopeBusiness.class).createMany(userAccountScopes);
 		}
 		
 		if(Boolean.TRUE.equals(CollectionHelper.isNotEmpty(userAccount.getProfiles()))) {
 			Collection<UserAccountProfile> userAccountProfiles = new ArrayList<>();
-			for(Profile index : userAccount.getProfiles().get())
+			for(Profile index : userAccount.getProfiles())
 				userAccountProfiles.add(new UserAccountProfile().setUserAccount(userAccount).setProfile(index));
 			__inject__(UserAccountProfileBusiness.class).createMany(userAccountProfiles);
 		}
 		
 		if(Boolean.TRUE.equals(CollectionHelper.isNotEmpty(userAccount.getFunctionScopes()))) {
 			Collection<UserAccountFunctionScope> userAccountRolePostes = new ArrayList<>();
-			for(FunctionScope index : userAccount.getFunctionScopes().get())
+			for(FunctionScope index : userAccount.getFunctionScopes())
 				userAccountRolePostes.add(new UserAccountFunctionScope().setUserAccount(userAccount).setFunctionScope(index));
 			__inject__(UserAccountFunctionScopeBusiness.class).createMany(userAccountRolePostes);
 		}

@@ -9,7 +9,7 @@ import org.cyk.utility.server.representation.AbstractEntityCollectionMapperImpl;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profiles;
 
-@ApplicationScoped
+@ApplicationScoped @Deprecated
 public class ProfileDtoCollectionMapper extends AbstractEntityCollectionMapperImpl<ProfileDtoCollection,ProfileDto,Profiles,Profile> implements Serializable {
 	private static final long serialVersionUID = 1L;
 

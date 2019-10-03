@@ -29,12 +29,15 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileFunctionDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeDto;
 
-@ci.gouv.dgbf.system.usermanagement.server.annotation.System
+@ci.gouv.dgbf.system.usermanagement.server.annotation.System @Deprecated
 public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Override
 	protected void __copy__(Object source, Object destination, Properties properties) {
+		System.out.println("InstanceBuilderImpl.__copy__() ::: ");
+		System.out.println(source.getClass());
+		System.out.println(destination.getClass());
 		//Persistence to Representation
 		if(source instanceof Scope && destination instanceof ScopeDto) {
 			Scope persistence = (Scope) source;
@@ -70,7 +73,7 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			representation.setCode(persistence.getCode());
 			representation.setName(persistence.getName()); 
 			if(CollectionHelper.isNotEmpty(persistence.getFunctions()))
-				for(Function index : persistence.getFunctions().get())
+				for(Function index : persistence.getFunctions())
 					representation.addFunctions(__inject__(InstanceHelper.class).buildOne(FunctionDto.class, index));
 		}else if(source instanceof ProfileFunction && destination instanceof ProfileFunctionDto) {
 			ProfileFunction persistence = (ProfileFunction) source;
@@ -89,10 +92,10 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			//representation.setUser(__inject__(InstanceHelper.class).buildOne(UserDto.class, persistence.getUser()));
 			//representation.setAccount(__inject__(InstanceHelper.class).buildOne(AccountDto.class, persistence.getAccount()));
 			if(CollectionHelper.isNotEmpty(persistence.getFunctionScopes()))
-				for(FunctionScope index : persistence.getFunctionScopes().get())
+				for(FunctionScope index : persistence.getFunctionScopes())
 					representation.addFunctionScopes(__inject__(InstanceHelper.class).buildOne(FunctionScopeDto.class, index));
 			if(CollectionHelper.isNotEmpty(persistence.getProfiles()))
-				for(Profile index : persistence.getProfiles().get())
+				for(Profile index : persistence.getProfiles())
 					representation.addProfiles(__inject__(InstanceHelper.class).buildOne(ProfileDto.class, index));
 		}
 		//Representation to Persistence
@@ -103,8 +106,8 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			persistence.setUser(__inject__(InstanceHelper.class).buildOne(User.class, representation.getUser()));
 			persistence.setAccount(__inject__(InstanceHelper.class).buildOne(Account.class, representation.getAccount()));
 			persistence.setFunctionScopes(null).setProfiles(null);
-			if(representation.getFunctionScopes()!=null && CollectionHelper.isNotEmpty(representation.getFunctionScopes().getCollection()))
-				for(FunctionScopeDto index : representation.getFunctionScopes().getCollection()) {
+			if(representation.getFunctionScopes()!=null && CollectionHelper.isNotEmpty(representation.getFunctionScopes()))
+				for(FunctionScopeDto index : representation.getFunctionScopes()) {
 					FunctionScope functionScope = null;
 					if(StringHelper.isBlank(index.getIdentifier()))
 						functionScope = __inject__(FunctionScopePersistence.class).readByBusinessIdentifier(index.getCode());
@@ -113,8 +116,8 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 					if(functionScope != null)
 						persistence.getFunctionScopes(Boolean.TRUE).add(functionScope);
 				}
-			if(representation.getProfiles()!=null && CollectionHelper.isNotEmpty(representation.getProfiles().getCollection()))
-				for(ProfileDto index : representation.getProfiles().getCollection()) {
+			if(representation.getProfiles()!=null && CollectionHelper.isNotEmpty(representation.getProfiles()))
+				for(ProfileDto index : representation.getProfiles()) {
 					Profile profile = null;
 					if(StringHelper.isBlank(index.getIdentifier()))
 						profile = __inject__(ProfilePersistence.class).readByBusinessIdentifier(index.getCode());
@@ -130,8 +133,8 @@ public class InstanceBuilderImpl extends AbstractInstanceBuilderImpl implements 
 			persistence.setCode(representation.getCode());
 			persistence.setName(representation.getName());
 			persistence.setFunctions(null);
-			if(representation.getFunctions()!=null && CollectionHelper.isNotEmpty(representation.getFunctions().getCollection()))
-				for(FunctionDto index : representation.getFunctions().getCollection()) {
+			if(representation.getFunctions()!=null && CollectionHelper.isNotEmpty(representation.getFunctions()))
+				for(FunctionDto index : representation.getFunctions()) {
 					Function function = null;
 					if(StringHelper.isBlank(index.getIdentifier()))
 						function = __inject__(FunctionPersistence.class).readByBusinessIdentifier(index.getCode());

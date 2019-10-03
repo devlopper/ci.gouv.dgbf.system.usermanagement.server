@@ -259,8 +259,8 @@ public class PersistenceIntegrationTestKeycloak extends AbstractPersistenceArqui
 		profile = __inject__(ProfilePersistence.class).readByBusinessIdentifier("p01",new Properties().setFields("code,name,type,functions,privileges"));
 		assertThat(profile).isNotNull();
 		assertThat(profile.getFunctions()).isNotNull();
-		assertThat(profile.getFunctions().get()).isNotEmpty();
-		assertThat(profile.getFunctions().get().stream().map(Function::getCode).collect(Collectors.toList())).containsOnly("f02");
+		assertThat(profile.getFunctions()).isNotEmpty();
+		assertThat(profile.getFunctions().stream().map(Function::getCode).collect(Collectors.toList())).containsOnly("f02");
 		assertThat(profile.getPrivileges()).isNull();
 		
 		userTransaction.begin();
@@ -271,11 +271,11 @@ public class PersistenceIntegrationTestKeycloak extends AbstractPersistenceArqui
 		profile = __inject__(ProfilePersistence.class).readByBusinessIdentifier("p01",new Properties().setFields("code,name,type,functions,privileges"));
 		assertThat(profile).isNotNull();
 		assertThat(profile.getFunctions()).isNotNull();
-		assertThat(profile.getFunctions().get()).isNotEmpty();
-		assertThat(profile.getFunctions().get().stream().map(Function::getCode).collect(Collectors.toList())).containsOnly("f02");
+		assertThat(profile.getFunctions()).isNotEmpty();
+		assertThat(profile.getFunctions().stream().map(Function::getCode).collect(Collectors.toList())).containsOnly("f02");
 		assertThat(profile.getPrivileges()).isNotNull();
-		assertThat(profile.getPrivileges().get()).isNotEmpty();
-		assertThat(profile.getPrivileges().get().stream().map(Privilege::getCode).collect(Collectors.toList())).containsOnly("pvlg03","pvlg01");
+		assertThat(profile.getPrivileges()).isNotEmpty();
+		assertThat(profile.getPrivileges().stream().map(Privilege::getCode).collect(Collectors.toList())).containsOnly("pvlg03","pvlg01");
 		
 		userTransaction.begin();
 		__inject__(ProfilePrivilegePersistence.class).deleteAll();
@@ -491,7 +491,7 @@ public class PersistenceIntegrationTestKeycloak extends AbstractPersistenceArqui
 		assertThat(user).isNotNull();
 		assertThat(user.getNames()).isEqualTo("Komenan Yao Christian");
 		assertThat(user.getFunctions()).isNotNull();
-		assertThat(user.getFunctions().get().stream().map(Function::getCode).collect(Collectors.toList())).containsOnly("f01");
+		assertThat(user.getFunctions().stream().map(Function::getCode).collect(Collectors.toList())).containsOnly("f01");
 		
 		userTransaction.begin();
 		__inject__(UserFunctionPersistence.class).create(new UserFunction().setUserByIdentifier("u01").setFunctionByCode("f03"));
@@ -505,7 +505,7 @@ public class PersistenceIntegrationTestKeycloak extends AbstractPersistenceArqui
 		assertThat(user).isNotNull();
 		assertThat(user.getNames()).isEqualTo("Komenan Yao Christian");
 		assertThat(user.getFunctions()).isNotNull();
-		assertThat(user.getFunctions().get().stream().map(Function::getCode).collect(Collectors.toList())).containsOnly("f01","f03");
+		assertThat(user.getFunctions().stream().map(Function::getCode).collect(Collectors.toList())).containsOnly("f01","f03");
 	}
 	
 	@Test

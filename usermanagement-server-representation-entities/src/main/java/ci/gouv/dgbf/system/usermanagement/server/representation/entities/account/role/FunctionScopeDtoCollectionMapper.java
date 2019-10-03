@@ -9,7 +9,7 @@ import org.cyk.utility.server.representation.AbstractEntityCollectionMapperImpl;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScopes;
 
-@ApplicationScoped
+@ApplicationScoped @Deprecated
 public class FunctionScopeDtoCollectionMapper extends AbstractEntityCollectionMapperImpl<FunctionScopeDtoCollection,FunctionScopeDto,FunctionScopes,FunctionScope> implements Serializable {
 	private static final long serialVersionUID = 1L;
 

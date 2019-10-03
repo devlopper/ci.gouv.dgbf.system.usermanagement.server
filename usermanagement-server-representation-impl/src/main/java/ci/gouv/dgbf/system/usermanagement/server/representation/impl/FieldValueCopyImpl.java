@@ -2,6 +2,8 @@ package ci.gouv.dgbf.system.usermanagement.server.representation.impl;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.__kernel__.field.FieldHelper;
@@ -13,6 +15,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.Pr
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScopes;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Functions;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Privileges;
@@ -31,7 +34,7 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeDtoCollection;
 
-@ci.gouv.dgbf.system.usermanagement.server.annotation.System
+@ci.gouv.dgbf.system.usermanagement.server.annotation.System @Deprecated
 public class FieldValueCopyImpl extends AbstractFieldValueCopyImpl implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -41,9 +44,9 @@ public class FieldValueCopyImpl extends AbstractFieldValueCopyImpl implements Se
 				&& FieldHelper.getByName(UserAccount.class, UserAccount.FIELD_FUNCTION_SCOPES).equals(destination)) {
 			FunctionScopes functionScopes = null;
 			FunctionScopeDtoCollection rolePosteDtoCollection = ((FunctionScopeDtoCollection) value);
-			if(rolePosteDtoCollection != null && Boolean.TRUE.equals(CollectionHelper.isNotEmpty(rolePosteDtoCollection.getCollection()))) {
+			if(rolePosteDtoCollection != null && Boolean.TRUE.equals(CollectionHelper.isNotEmpty(rolePosteDtoCollection.getElements()))) {
 				functionScopes = __inject__(FunctionScopes.class);
-				for(FunctionScopeDto index : rolePosteDtoCollection.getCollection()) {
+				for(FunctionScopeDto index : rolePosteDtoCollection.getElements()) {
 					functionScopes.add(__inject__(FunctionScopePersistence.class).readByBusinessIdentifier(index.getCode()));
 				}
 			}
@@ -52,21 +55,26 @@ public class FieldValueCopyImpl extends AbstractFieldValueCopyImpl implements Se
 				&& FieldHelper.getByName(UserAccount.class, UserAccount.FIELD_PROFILES).equals(destination)) {
 			Profiles profiles = null;
 			ProfileDtoCollection profileDtoCollection = ((ProfileDtoCollection) value);
-			if(profileDtoCollection != null && Boolean.TRUE.equals(CollectionHelper.isNotEmpty(profileDtoCollection.getCollection()))) {
+			if(profileDtoCollection != null && Boolean.TRUE.equals(CollectionHelper.isNotEmpty(profileDtoCollection.getElements()))) {
 				profiles = __inject__(Profiles.class);
-				for(ProfileDto index : profileDtoCollection.getCollection()) {
+				for(ProfileDto index : profileDtoCollection.getElements()) {
 					profiles.add(__inject__(ProfilePersistence.class).readByBusinessIdentifier(index.getCode()));
 				}
 			}
 			return profiles;
 		}else if(FieldHelper.getByName(UserAccountDto.class, UserAccountDto.FIELD_FUNCTIONS).equals(source) 
 				&& FieldHelper.getByName(UserAccount.class, UserAccount.FIELD_FUNCTIONS).equals(destination)) {
-			Functions functions = null;
-			FunctionDtoCollection functionDtoCollection = ((FunctionDtoCollection) value);
-			if(functionDtoCollection != null && Boolean.TRUE.equals(CollectionHelper.isNotEmpty(functionDtoCollection.getCollection()))) {
-				functions = __inject__(Functions.class);
-				for(FunctionDto index : functionDtoCollection.getCollection()) {
-					functions.add(__inject__(FunctionPersistence.class).readByBusinessIdentifier(index.getCode()));
+			@SuppressWarnings("unchecked")
+			Collection<FunctionDto> functionDtos = (Collection<FunctionDto>) value;
+			Collection<Function> functions = null;
+			if(CollectionHelper.isNotEmpty(functionDtos)) {
+				for(FunctionDto index : functionDtos) {
+					Function function = __inject__(FunctionPersistence.class).readByBusinessIdentifier(index.getCode());
+					if(function == null)
+						continue;
+					if(functions == null)
+						functions = new ArrayList<>();
+					functions.add(function);
 				}
 			}
 			return functions;
@@ -74,9 +82,9 @@ public class FieldValueCopyImpl extends AbstractFieldValueCopyImpl implements Se
 				&& FieldHelper.getByName(UserAccount.class, UserAccount.FIELD_SCOPES).equals(destination)) {
 			Scopes scopes = null;
 			ScopeDtoCollection scopeDtoCollection = ((ScopeDtoCollection) value);
-			if(scopeDtoCollection != null && Boolean.TRUE.equals(CollectionHelper.isNotEmpty(scopeDtoCollection.getCollection()))) {
+			if(scopeDtoCollection != null && Boolean.TRUE.equals(CollectionHelper.isNotEmpty(scopeDtoCollection.getElements()))) {
 				scopes = __inject__(Scopes.class);
-				for(ScopeDto index : scopeDtoCollection.getCollection()) {
+				for(ScopeDto index : scopeDtoCollection.getElements()) {
 					scopes.add(__inject__(ScopePersistence.class).readBySystemIdentifier(index.getIdentifier()));
 				}
 			}
@@ -85,9 +93,9 @@ public class FieldValueCopyImpl extends AbstractFieldValueCopyImpl implements Se
 				&& FieldHelper.getByName(Profile.class, Profile.FIELD_FUNCTIONS).equals(destination)) {
 			Functions functions = null;
 			FunctionDtoCollection functionDtoCollection = ((FunctionDtoCollection) value);
-			if(functionDtoCollection != null && Boolean.TRUE.equals(CollectionHelper.isNotEmpty(functionDtoCollection.getCollection()))) {
+			if(functionDtoCollection != null && Boolean.TRUE.equals(CollectionHelper.isNotEmpty(functionDtoCollection.getElements()))) {
 				functions = __inject__(Functions.class);
-				for(FunctionDto index : functionDtoCollection.getCollection()) {
+				for(FunctionDto index : functionDtoCollection.getElements()) {
 					functions.add(__inject__(FunctionPersistence.class).readByBusinessIdentifier(index.getCode()));
 				}
 			}

@@ -10,12 +10,10 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.cyk.utility.__kernel__.collection.CollectionHelper;
-import org.cyk.utility.instance.InstanceHelper;
 import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByString;
 
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FieldContainerFunctions;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Functions;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -23,7 +21,7 @@ import lombok.experimental.Accessors;
 
 @Entity @Getter @Setter @Accessors(chain=true) @Access(AccessType.FIELD) @ToString
 @Table(name=User.TABLE_NAME)
-public class User extends AbstractIdentifiedByString implements Serializable {
+public class User extends AbstractIdentifiedByString implements FieldContainerFunctions,Serializable {
 	private static final long serialVersionUID = 1L;
 
 	//Names
@@ -37,37 +35,11 @@ public class User extends AbstractIdentifiedByString implements Serializable {
 	/**/
 
 	@Transient private String names;
-	@Transient private Functions functions;
+	@Transient private Collection<Function> functions;
 	
 	@Override
 	public User setIdentifier(String identifier) {
 		return (User) super.setIdentifier(identifier);
-	}
-	
-	public Functions getFunctions(Boolean injectIfNull) {
-		return (Functions) __getInjectIfNull__(FIELD_FUNCTIONS, injectIfNull);
-	}
-	
-	public User addFunctions(Collection<Function> functions) {
-		getFunctions(Boolean.TRUE).add(functions);
-		return this;
-	}
-	
-	public User addFunctions(Function...functions) {
-		getFunctions(Boolean.TRUE).add(functions);
-		return this;
-	}
-	
-	public User addFunctionsByCodes(Collection<String> functionsCodes) {
-		if(CollectionHelper.isNotEmpty(functionsCodes)) {
-			for(String index : functionsCodes)
-				addFunctions(__inject__(InstanceHelper.class).getByIdentifierBusiness(Function.class, index));
-		}
-		return this;
-	}
-	
-	public User addFunctionsByCodes(String...functionsCodes) {
-		return addFunctionsByCodes(CollectionHelper.listOf(functionsCodes));
 	}
 	
 	/**/
@@ -79,7 +51,6 @@ public class User extends AbstractIdentifiedByString implements Serializable {
 	public static final String FIELD_ELECTRONIC_MAIL_ADDRESS = "electronicMailAddress";
 	public static final String FIELD_PHONE_NUMBER = "phoneNumber";
 	public static final String FIELD_NAMES = "names";
-	public static final String FIELD_FUNCTIONS = "functions";
 	
 	public static final String TABLE_NAME = "util";
 	

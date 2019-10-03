@@ -2,7 +2,7 @@ package ci.gouv.dgbf.system.usermanagement.server.representation.entities.accoun
 
 import java.io.Serializable;
 
-import org.cyk.utility.server.representation.AbstractEntityFromPersistenceEntity;
+import org.cyk.utility.__kernel__.object.__static__.representation.AbstractIdentifiedByStringImpl;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,18 +11,22 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 @Getter @Setter @Accessors(chain=true) @NoArgsConstructor @ToString
-public abstract class AbstractUserAccountInterimDto extends AbstractEntityFromPersistenceEntity implements Serializable {
+public abstract class AbstractUserAccountInterimDto extends AbstractIdentifiedByStringImpl implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private UserAccountDto userAccount;
 	private UserAccountDto interim;
 	
 	public UserAccountDto getUserAccount(Boolean injectIfNull) {
-		return (UserAccountDto) __getInjectIfNull__(FIELD_USER_ACCOUNT, injectIfNull);
+		if(userAccount == null && Boolean.TRUE.equals(injectIfNull))
+			userAccount = new UserAccountDto();
+		return userAccount;
 	}
 	
 	public UserAccountDto getInterim(Boolean injectIfNull) {
-		return (UserAccountDto) __getInjectIfNull__(FIELD_INTERIM, injectIfNull);
+		if(interim == null && Boolean.TRUE.equals(injectIfNull))
+			interim = new UserAccountDto();
+		return interim;
 	}
 	
 	/**/
