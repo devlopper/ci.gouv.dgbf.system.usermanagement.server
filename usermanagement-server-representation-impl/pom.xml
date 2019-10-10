@@ -36,7 +36,7 @@
 		<profile>
 			<id>org.cyk.test</id>
 			<properties>
-				<org.cyk.test.classes>ci.gouv.dgbf.system.usermanagement.server.representation.impl.integration.DataSourceDefinition</org.cyk.test.classes>
+				<org.cyk.test.classes>ci.gouv.dgbf.system.usermanagement.server.representation.impl.integration.DataSourceDefinition,ci.gouv.dgbf.system.usermanagement.server.representation.impl.integration.AbstractRepresentationArquillianIntegrationTestWithDefaultDeployment</org.cyk.test.classes>
 			</properties>
 			<dependencies>
 				<dependency>

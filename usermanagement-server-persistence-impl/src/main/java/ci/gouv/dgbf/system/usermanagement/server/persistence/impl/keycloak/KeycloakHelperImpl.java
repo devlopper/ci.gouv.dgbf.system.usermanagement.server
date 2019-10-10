@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -17,6 +18,7 @@ import javax.transaction.UserTransaction;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
+import org.cyk.utility.__kernel__.array.ArrayHelper;
 import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.__kernel__.object.__static__.identifiable.AbstractIdentified;
 import org.cyk.utility.__kernel__.properties.Properties;
@@ -24,6 +26,7 @@ import org.cyk.utility.__kernel__.string.StringHelper;
 import org.cyk.utility.__kernel__.value.ValueHelper;
 import org.cyk.utility.configuration.ConstantParameterName;
 import org.cyk.utility.helper.AbstractHelper;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
@@ -85,7 +88,9 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 					+"\nusername:"+username+"\npassword:"+password);
 			
 			client = KeycloakBuilder.builder().serverUrl(url).realm(realmName).grantType(OAuth2Constants.PASSWORD).clientId(clientIdentifier) //
-					.clientSecret(clientSecret).username(username).password(password).build();
+					.clientSecret(clientSecret).username(username).password(password)
+					.resteasyClient(new ResteasyClientBuilder().connectionPoolSize(10).register(new CustomJacksonProvider()).build())
+					.build();
 		}else {
 			System.out.println("********************************************** KEYCLOAK INTEGRATION HAS NOT BEEN ENABLE ***********************************************");
 		}
@@ -241,78 +246,162 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 		}
 	}
 	
+	/* user account */
+	
 	@Override
-	public String saveUserAccount(String identifier,String firstName, String lastNames, String electronicMailAddress,String userName, String pass,Collection<String> rolesCodes,Map<String,List<String>> attributes) {
-		if(Boolean.TRUE.equals(__isEnable__)) {
-			UsersResource usersRessource = getUsersResource();
-			UserResource userResource = null;
-			if(StringHelper.isNotBlank(identifier))
+	public void createUserAccount(String firstName, String lastNames, String electronicMailAddress,String userName, String pass,Collection<String> rolesCodes,Map<String,List<String>> attributes) {
+		if(__isEnable__ == null || !__isEnable__)
+			return;		
+		UsersResource usersRessource = getUsersResource();
+		UserResource userResource = null;
+		UserRepresentation userRepresentation = new UserRepresentation();
+		userRepresentation.setEnabled(Boolean.TRUE);
+		userRepresentation.setUsername(userName);
+		userRepresentation.setFirstName(firstName);
+		userRepresentation.setLastName(lastNames);
+		userRepresentation.setEmail(electronicMailAddress);
+		//not needed. we can link with user name
+		/*
+		if(MapHelper.isEmpty(attributes))
+			attributes = new HashMap<>();
+		if(attributes.get(User.ATTRIBUTE_NAME_UUID) != null)
+			attributes.put(User.ATTRIBUTE_NAME_UUID, List.of(identifier));
+		*/
+		userRepresentation.setAttributes(attributes);
+		
+		Response response = usersRessource.create(userRepresentation);
+		userResource = usersRessource.get(response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1"));
+		
+		CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
+		credentialRepresentation.setTemporary(Boolean.TRUE);
+		credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
+		credentialRepresentation.setValue(ValueHelper.defaultToIfNull(pass, "123"));
+		userResource.resetPassword(credentialRepresentation);
+						
+		if(CollectionHelper.isNotEmpty(rolesCodes)) 
+			for(String index : rolesCodes) {
 				try {
-					userResource = usersRessource.get(identifier);
+					RoleRepresentation roleRepresentation = getRealmResource().roles().get(index).toRepresentation();
+					userResource.roles().realmLevel().add(Arrays.asList(roleRepresentation));
 				} catch (NotFoundException exception) {
-					__logSevere__("User account <<"+identifier+">> to save not found. "+exception);
-				}/* catch (ProcessingException exception) {
-					__logSevere__("Cannot save user account <<"+identifier+">>. "+exception);
-					return null;
-				}*/
-			UserRepresentation userRepresentation = null;
-			if(userResource!=null)
-				//try {
-					userRepresentation = userResource.toRepresentation();	
-				/*} catch (ProcessingException exception) {
-					__logSevere__("Cannot save user account <<"+identifier+">>. "+exception);
-					return null;
-				}*/
-				
-			if(userRepresentation == null) {
-				userRepresentation = new UserRepresentation();
-				userRepresentation.setEnabled(true);
-			}else {
-				
-			}
-			
-			userRepresentation.setUsername(userName);
-			userRepresentation.setFirstName(firstName);
-			userRepresentation.setLastName(lastNames);
-			userRepresentation.setEmail(electronicMailAddress);
-			userRepresentation.setAttributes(attributes);
-			
-			if(StringHelper.isBlank(identifier)) {
-				Response response = usersRessource.create(userRepresentation);
-				identifier = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");	
-				userResource = usersRessource.get(identifier);
-				
-				CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
-				credentialRepresentation.setTemporary(Boolean.TRUE);
-				credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
-				credentialRepresentation.setValue(ValueHelper.defaultToIfNull(pass, "123"));
-				userResource.resetPassword(credentialRepresentation);
-			}
-					
-			if(CollectionHelper.isNotEmpty(rolesCodes)) 
-				for(String index : rolesCodes) {
-					try {
-						RoleRepresentation roleRepresentation = getRealmResource().roles().get(index).toRepresentation();
-						userResource.roles().realmLevel().add(Arrays.asList(roleRepresentation));
-					} catch (NotFoundException exception) {
-						System.out.println("Saving user account. Role "+exception+" : "+index);
-					}
+					System.out.println("Saving user account. Role "+exception+" : "+index);
 				}
-		}	
-		return identifier;
+			}
 	}
 	
 	@Override
-	public String saveUserAccount(UserAccount userAccount) {
-		String identifier = null;
-		if(Boolean.TRUE.equals(__isEnable__)) {
+	public void createUserAccounts(Collection<UserAccount> userAccounts) {
+		if(__isEnable__ == null || !__isEnable__)
+			return;
+		for(UserAccount userAccount : userAccounts) {
 			Collection<String> rolesCodes = CollectionHelper.isEmpty(userAccount.getProfiles()) ? null : userAccount.getProfiles()
-					.stream().map(x -> x.getCode()).collect(Collectors.toList());
-			
-			identifier = saveUserAccount(userAccount.getIdentifier(),userAccount.getUser().getFirstName(), userAccount.getUser().getLastNames(), userAccount.getUser().getElectronicMailAddress()
-					, userAccount.getAccount().getIdentifier(),  userAccount.getAccount().getPass(),  rolesCodes,null);
+					.stream().map(x -> x.getCode()).collect(Collectors.toList());		
+			createUserAccount(userAccount.getUser().getFirstName(), userAccount.getUser().getLastNames(), userAccount.getUser().getElectronicMailAddress()
+					, userAccount.getAccount().getIdentifier(),  userAccount.getAccount().getPass(),  rolesCodes,null);	
 		}
-		return identifier;
+	}
+	
+	@Override
+	public void createUserAccounts(UserAccount...userAccounts) {
+		if(__isEnable__ == null || !__isEnable__ || ArrayHelper.isEmpty(userAccounts))
+			return;
+		createUserAccounts(CollectionHelper.listOf(userAccounts));
+	}
+	
+	@Override
+	public UserRepresentation getUserRepresentationByUserName(String userName) {
+		Collection<UserRepresentation> userRepresentations = getUsersResource().search(userName);
+		if(CollectionHelper.isEmpty(userRepresentations))
+			return null;
+		if(CollectionHelper.getSize(userRepresentations) > 1)
+			throw new RuntimeException("too many("+CollectionHelper.getSize(userRepresentations)+") user having same username <<"+userName+">> found.");
+		return CollectionHelper.getFirst(userRepresentations);
+	}
+	
+	@Override
+	public void deleteAllUsers(String userNameRegularExpression) {
+		Collection<UserRepresentation> userRepresentations = getUsersResource().list();
+		if(CollectionHelper.isEmpty(userRepresentations))
+			return;
+		Pattern pattern = null;
+		if(StringHelper.isNotBlank(userNameRegularExpression))
+			pattern = Pattern.compile(userNameRegularExpression);
+		for(UserRepresentation index : userRepresentations) {
+			if(pattern != null && !pattern.matcher(index.getUsername()).find())
+				continue;
+			getUsersResource().delete(index.getId());
+		}
+	}
+	
+	@Override
+	public void saveUserAccount(String identifier,String firstName, String lastNames, String electronicMailAddress,String userName, String pass,Collection<String> rolesCodes,Map<String,List<String>> attributes) {
+		if(__isEnable__ == null || !__isEnable__)
+			return;	
+		UsersResource usersRessource = getUsersResource();
+		UserResource userResource = null;
+		if(StringHelper.isNotBlank(identifier))
+			try {
+				userResource = usersRessource.get(identifier);
+			} catch (NotFoundException exception) {
+				__logSevere__("User account <<"+identifier+">> to save not found. "+exception);
+			}/* catch (ProcessingException exception) {
+				__logSevere__("Cannot save user account <<"+identifier+">>. "+exception);
+				return null;
+			}*/
+		UserRepresentation userRepresentation = null;
+		if(userResource!=null)
+			//try {
+				userRepresentation = userResource.toRepresentation();	
+			/*} catch (ProcessingException exception) {
+				__logSevere__("Cannot save user account <<"+identifier+">>. "+exception);
+				return null;
+			}*/
+			
+		if(userRepresentation == null) {
+			userRepresentation = new UserRepresentation();
+			userRepresentation.setEnabled(true);
+		}else {
+			
+		}
+		
+		userRepresentation.setUsername(userName);
+		userRepresentation.setFirstName(firstName);
+		userRepresentation.setLastName(lastNames);
+		userRepresentation.setEmail(electronicMailAddress);
+		userRepresentation.setAttributes(attributes);
+		
+		if(StringHelper.isBlank(identifier)) {
+			Response response = usersRessource.create(userRepresentation);
+			identifier = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");	
+			userResource = usersRessource.get(identifier);
+			
+			CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
+			credentialRepresentation.setTemporary(Boolean.TRUE);
+			credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
+			credentialRepresentation.setValue(ValueHelper.defaultToIfNull(pass, "123"));
+			userResource.resetPassword(credentialRepresentation);
+		}
+				
+		if(CollectionHelper.isNotEmpty(rolesCodes)) 
+			for(String index : rolesCodes) {
+				try {
+					RoleRepresentation roleRepresentation = getRealmResource().roles().get(index).toRepresentation();
+					userResource.roles().realmLevel().add(Arrays.asList(roleRepresentation));
+				} catch (NotFoundException exception) {
+					System.out.println("Saving user account. Role "+exception+" : "+index);
+				}
+			}
+		
+	}
+	
+	@Override
+	public void saveUserAccount(UserAccount userAccount) {
+		if(__isEnable__ == null || !__isEnable__)
+			return;			
+		Collection<String> rolesCodes = CollectionHelper.isEmpty(userAccount.getProfiles()) ? null : userAccount.getProfiles()
+				.stream().map(x -> x.getCode()).collect(Collectors.toList());		
+		saveUserAccount(userAccount.getIdentifier(),userAccount.getUser().getFirstName(), userAccount.getUser().getLastNames(), userAccount.getUser().getElectronicMailAddress()
+				, userAccount.getAccount().getIdentifier(),  userAccount.getAccount().getPass(),  rolesCodes,null);		
 	}
 	
 	@Override

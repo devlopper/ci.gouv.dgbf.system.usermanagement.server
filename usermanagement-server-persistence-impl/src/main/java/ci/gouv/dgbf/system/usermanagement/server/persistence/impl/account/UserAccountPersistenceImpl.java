@@ -10,11 +10,13 @@ import javax.enterprise.context.ApplicationScoped;
 import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.__kernel__.string.Strings;
+import org.cyk.utility.__kernel__.value.ValueHelper;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
 import org.cyk.utility.server.persistence.PersistenceFunctionCreator;
 import org.cyk.utility.server.persistence.PersistenceFunctionModifier;
+import org.cyk.utility.server.persistence.PersistenceFunctionReader;
 import org.cyk.utility.server.persistence.PersistenceFunctionRemover;
-import org.cyk.utility.server.persistence.query.PersistenceQuery;
+import org.cyk.utility.server.persistence.query.PersistenceQueryContext;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountFunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountPersistence;
@@ -24,6 +26,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserFun
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePrivilegePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Account;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.User;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountFunctionScope;
@@ -32,16 +35,18 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Us
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfilePrivilege;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
 @ApplicationScoped
 public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<UserAccount> implements UserAccountPersistence,Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	private String readWhereAccountIdentifierOrFirstUserFirstNameOrUserLastnamesContains;
+	private String readByAccountIdentifier,readWhereAccountIdentifierOrFirstUserFirstNameOrUserLastnamesContains;
 	
 	@Override
 	protected void __listenPostConstructPersistenceQueries__() {
 		super.__listenPostConstructPersistenceQueries__();
+		addQueryCollectInstances(readByAccountIdentifier, "SELECT tuple FROM UserAccount tuple WHERE tuple.account.identifier = :accountIdentifier");
 		addQueryCollectInstances(readWhereAccountIdentifierOrFirstUserFirstNameOrUserLastnamesContains, "SELECT tuple FROM UserAccount tuple WHERE lower(tuple.account.identifier)"
 				+ " LIKE lower(:query) OR lower(tuple.user.firstName) LIKE lower(:query) OR lower(tuple.user.lastNames) LIKE lower(:query)");
 	}
@@ -53,6 +58,13 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 			String identifier = __inject__(KeycloakHelper.class).saveUserAccount(userAccount);
 			userAccount.setIdentifier(identifier);	
 		}*/
+	}
+	
+	@Override
+	protected void __listenExecuteCreateAfter__(UserAccount userAccount, Properties properties,PersistenceFunctionCreator function) {
+		super.__listenExecuteCreateAfter__(userAccount, properties, function);
+		if(Boolean.TRUE.equals(ValueHelper.defaultToIfNull(userAccount.getIsPersistToKeycloakOnCreate(),Boolean.TRUE)))
+			__inject__(KeycloakHelper.class).createUserAccounts(userAccount);
 	}
 	
 	@Override
@@ -132,10 +144,21 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 	}
 	
 	@Override
-	protected Object[] __getQueryParameters__(PersistenceQuery query, Properties properties, Object... objects) {
-		if(query.isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readWhereAccountIdentifierOrFirstUserFirstNameOrUserLastnamesContains))
+	protected String __getQueryIdentifier__(Class<?> functionClass, Properties properties, Object... parameters) {
+		if(PersistenceFunctionReader.class.equals(functionClass)) {
+			if(Boolean.TRUE.equals(__isFilterByKeys__(properties, UserAccount.FIELD_ACCOUNT+"."+Account.FIELD_IDENTIFIER)))
+				return readByAccountIdentifier;
+		}
+		return super.__getQueryIdentifier__(functionClass, properties, parameters);
+	}
+	
+	@Override
+	protected Object[] __getQueryParameters__(PersistenceQueryContext queryContext, Properties properties,Object... objects) {
+		if(queryContext.getQuery().isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readByAccountIdentifier))
+			return new Object[]{"accountIdentifier", queryContext.getFilterByKeysValue(UserAccount.FIELD_ACCOUNT+"."+Account.FIELD_IDENTIFIER)};
+		if(queryContext.getQuery().isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readWhereAccountIdentifierOrFirstUserFirstNameOrUserLastnamesContains))
 			return new Object[]{"accountIdentifier", objects[0]};
-		return super.__getQueryParameters__(query, properties, objects);
+		return super.__getQueryParameters__(queryContext, properties, objects);
 	}
 	
 }

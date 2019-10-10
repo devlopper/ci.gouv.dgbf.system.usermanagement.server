@@ -12,6 +12,12 @@
 	</context-param>
 	
 	<!-- keycloak -->
+	<!--
+	<context-param>
+		<param-name>cyk.parameter.security.delegate.system.is.enable</param-name>
+		<param-value>${cyk.parameter.security.delegate.system.is.enable}</param-value>
+	</context-param>
+	
 	<context-param>
 		<param-name>keycloak.server.url</param-name>
 		<param-value>${keycloak.server.url}</param-value>
@@ -41,5 +47,5 @@
 		<param-name>keycloak.credential.password</param-name>
 		<param-value>${keycloak.credential.password}</param-value>
 	</context-param>
-		
+	-->	
 </web-app>

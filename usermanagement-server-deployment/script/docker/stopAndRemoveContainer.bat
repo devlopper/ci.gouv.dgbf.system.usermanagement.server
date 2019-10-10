@@ -1,1 +1,1 @@
-docker rm $(docker stop $(docker ps -a -q --filter ancestor=usermanagement-server))
+docker rm $(docker stop $(docker ps -a -q --filter ancestor=mic-utilisateur-gestion-server))

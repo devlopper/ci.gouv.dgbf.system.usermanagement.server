@@ -20,6 +20,11 @@ public interface UserAccountRepresentation extends RepresentationEntity<UserAcco
 	@Consumes({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
 	Response importFromKeycloak();
 	
+	@POST
+	@Path("/__internal__/data/export")
+	@Consumes({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
+	Response exportToKeycloak();
+	
 	String PATH = "compteutilisateur";
 	
 }

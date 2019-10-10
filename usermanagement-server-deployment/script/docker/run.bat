@@ -1,1 +1,1 @@
-docker run -p 8080:8080 usermanagement-server:latest
+docker run -p 8081:8081 mic-utilisateur-gestion-server:latest

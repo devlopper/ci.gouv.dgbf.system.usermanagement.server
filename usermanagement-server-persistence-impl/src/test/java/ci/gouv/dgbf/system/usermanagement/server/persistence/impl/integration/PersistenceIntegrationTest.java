@@ -7,11 +7,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.__kernel__.collection.CollectionHelper;
+import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.persistence.query.filter.Filter;
 import org.cyk.utility.server.persistence.test.TestPersistenceCreate;
-import org.cyk.utility.server.persistence.test.arquillian.AbstractPersistenceArquillianIntegrationTestWithDefaultDeployment;
 import org.junit.Test;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.AccountPersistence;
@@ -54,17 +53,9 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Service;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ServiceResource;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.ApplicationScopeLifeCycleListener;
 
 public class PersistenceIntegrationTest extends AbstractPersistenceArquillianIntegrationTestWithDefaultDeployment {
 	private static final long serialVersionUID = 1L;
-	
-	@Override
-	protected void __listenBeforeCallCountIsZero__() throws Exception {
-		super.__listenBeforeCallCountIsZero__();	
-		__inject__(ApplicationScopeLifeCycleListener.class).initialize(null);
-		
-	}
 	
 	@Test
 	public void create_scopeType() throws Exception{
@@ -571,6 +562,39 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		assertThat(userAccount.getScopes()).isNotNull();
 		assertThat(userAccount.getScopes()).hasSize(2);
 		assertThat(userAccount.getScopes().stream().map(Scope::getIdentifier).collect(Collectors.toList())).containsOnly("s01","s02");
+	}
+	
+	@Test
+	public void read_userAccount_byAccountIdentifier() throws Exception{
+		UserAccount userAccount = new UserAccount();
+		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
+		userAccount.getAccount(Boolean.TRUE).setIdentifier("cyk").setPass("123");
+		userTransaction.begin();
+		__inject__(UserPersistence.class).create(userAccount.getUser());
+		__inject__(AccountPersistence.class).create(userAccount.getAccount());
+		__inject__(UserAccountPersistence.class).create(userAccount);
+		userTransaction.commit();
+		userAccount = new UserAccount();
+		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setElectronicMailAddress(__getRandomElectronicMailAddress__());
+		userAccount.getAccount(Boolean.TRUE).setIdentifier("yao").setPass("123");
+		userTransaction.begin();
+		__inject__(UserPersistence.class).create(userAccount.getUser());
+		__inject__(AccountPersistence.class).create(userAccount.getAccount());
+		__inject__(UserAccountPersistence.class).create(userAccount);
+		userTransaction.commit();
+		Collection<UserAccount> userAccounts = __inject__(UserAccountPersistence.class).read(new Properties().setQueryFilters(__inject__(Filter.class)
+					.setKlass(UserAccount.class).addField("account.identifier", "yao")));
+		assertThat(userAccounts).isNotNull();
+		assertThat(userAccounts.stream().map(x -> x.getAccount().getIdentifier())).containsExactly("yao");
+		
+		userAccounts = __inject__(UserAccountPersistence.class).read(new Properties().setQueryFilters(__inject__(Filter.class)
+				.addField("account.identifier", "cyk")));
+		assertThat(userAccounts).isNotNull();
+		assertThat(userAccounts.stream().map(x -> x.getAccount().getIdentifier())).containsExactly("cyk");
+		
+		userAccounts = __inject__(UserAccountPersistence.class).read(new Properties().setQueryFilters(__inject__(Filter.class)
+				.addField("account.identifier", "abc")));
+		assertThat(userAccounts).isEmpty();
 	}
 	
 	@Test

@@ -51,6 +51,7 @@ public class UserAccount extends AbstractIdentifiedByString implements FieldCont
 	@Transient private Collection<FunctionScope> functionScopes;
 	@Transient private Boolean isProfileCreatableOnCreate;
 	@Transient private Boolean isNotifiableByMail,isPersistToKeycloakOnCreate;
+	@Transient private String keycloakIdentifier;
 	
 	/**/
 	
