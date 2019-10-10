@@ -1,1 +1,1 @@
-docker rm $(docker stop $(docker ps -a -q --filter ancestor=mic-utilisateur-gestion-server))
+docker stop mic-utilisateur-gestion-server

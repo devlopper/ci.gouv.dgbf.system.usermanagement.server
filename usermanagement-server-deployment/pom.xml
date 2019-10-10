@@ -64,15 +64,6 @@
 				<data.base.management.system.sid>SIB</data.base.management.system.sid>
 				<data.source.user>GESTION_ACTEUR</data.source.user>
 				<data.source.password>GESTION_ACTEUR</data.source.password>
-				<!--
-				<cyk.parameter.security.delegate.system.is.enable>true</cyk.parameter.security.delegate.system.is.enable>
-				<keycloak.server.url>http://10.3.4.20:31000/auth/</keycloak.server.url>
-				<keycloak.realm.name>SIB</keycloak.realm.name>
-				<keycloak.client.identifier>admin-cli</keycloak.client.identifier>
-				<keycloak.client.secret>b235602b-e5c9-4ddb-bfe5-aaaf79dacb71</keycloak.client.secret>
-				<keycloak.credential.username>admin</keycloak.credential.username>
-				<keycloak.credential.password>admin</keycloak.credential.password>
-				-->
 			</properties>
 		</profile>
 	</profiles>
