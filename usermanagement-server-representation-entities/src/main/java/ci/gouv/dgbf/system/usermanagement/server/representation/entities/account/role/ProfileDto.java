@@ -5,7 +5,7 @@ import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.cyk.utility.server.representation.AbstractEntityFromPersistenceEntityCodedAndNamed;
+import org.cyk.utility.__kernel__.object.__static__.representation.AbstractIdentifiedByStringAndCodedAndNamedImpl;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +13,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @XmlRootElement @Getter @Setter @Accessors(chain=true) @NoArgsConstructor
-public class ProfileDto extends AbstractEntityFromPersistenceEntityCodedAndNamed implements FieldContainerFunctions,FieldContainerPrivileges, Serializable {
+public class ProfileDto extends AbstractIdentifiedByStringAndCodedAndNamedImpl implements FieldContainerFunctions,FieldContainerPrivileges, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private ProfileTypeDto type;

@@ -7,18 +7,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.server.persistence.query.filter.FilterDto;
-import org.cyk.utility.server.representation.AbstractEntityCollection;
 import org.cyk.utility.server.representation.test.TestRepresentationCreate;
-import org.cyk.utility.server.representation.test.arquillian.AbstractRepresentationArquillianIntegrationTestWithDefaultDeployment;
 import org.junit.Test;
 
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileTypeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileFunction;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileType;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.UserAccountRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.UserFunctionRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.role.FunctionRepresentation;
@@ -38,21 +33,9 @@ import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileFunctionDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeTypeDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.impl.ApplicationScopeLifeCycleListener;
 
 public class RepresentationIntegrationTest extends AbstractRepresentationArquillianIntegrationTestWithDefaultDeployment {
 	private static final long serialVersionUID = 1L;
-	
-	@Override
-	protected void __listenBefore__() {
-		super.__listenBefore__();
-		__inject__(ApplicationScopeLifeCycleListener.class).initialize(null);
-		
-		//AbstractSystemFunctionImpl.MONITORABLE = Boolean.FALSE;
-		//AbstractSystemFunctionImpl.LOGGABLE = Boolean.FALSE;
-		__inject__(ProfileTypeBusiness.class).createMany(CollectionHelper.listOf(new ProfileType().setCode(ProfileType.CODE_SYSTEM).setName("Système")
-				,new ProfileType().setCode(ProfileType.CODE_UTILISATEUR).setName("Utilisateur")));
-	}
 	
 	@Test
 	public void create_functionType() throws Exception{
@@ -377,10 +360,4 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		__inject__(TestRepresentationCreate.class).setName("Create user account interim").addObjectsToBeCreatedArray(userAccount,interim).addObjects(userAccountInterim).execute();
 	}
 	
-	@Override
-	protected <ENTITY> Class<? extends AbstractEntityCollection<ENTITY>> __getEntityCollectionClass__(Class<ENTITY> aClass) {
-		return null;
-	}
-	
-
 }

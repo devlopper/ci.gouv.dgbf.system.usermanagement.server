@@ -3,12 +3,11 @@ package ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.r
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.cyk.utility.__kernel__.DependencyInjection;
 import org.cyk.utility.__kernel__.array.ArrayHelper;
 import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.__kernel__.field.FieldHelper;
 import org.cyk.utility.__kernel__.field.container.FieldContainerCollection;
-import org.cyk.utility.instance.InstanceHelper;
+import org.cyk.utility.__kernel__.instance.InstanceHelper;
 
 public interface FieldContainerScopes extends FieldContainerCollection {
 
@@ -47,7 +46,7 @@ public interface FieldContainerScopes extends FieldContainerCollection {
 		if(CollectionHelper.isEmpty(codes))
 			return this;
 		for(String index : codes)
-			addScopes(DependencyInjection.inject(InstanceHelper.class).getByIdentifierBusiness(Scope.class, index));
+			addScopes(InstanceHelper.getByBusinessIdentifier(Scope.class, index));
 		return this;
 	}
 	

@@ -27,9 +27,9 @@ public class UserFunctionPersistenceImpl extends AbstractPersistenceEntityImpl<U
 	@Override
 	protected void __listenPostConstructPersistenceQueries__() {
 		super.__listenPostConstructPersistenceQueries__();
-		addQueryCollectInstances(readByUsersIdentifiers, String.format("SELECT tuple FROM %s tuple WHERE tuple.user.identifier IN :identifiers", __getTupleName__()));
-		addQueryCollectInstances(readByFunctionsIdentifiers, String.format("SELECT tuple FROM %s tuple WHERE tuple.function.identifier IN :identifiers", __getTupleName__()));
-		addQueryCollectInstances(readByFunctionsCodes, String.format("SELECT tuple FROM %s tuple WHERE tuple.function.code IN :codes", __getTupleName__()));
+		addQueryCollectInstances(readByUsersIdentifiers, String.format("SELECT tuple FROM %s tuple WHERE tuple.user.identifier IN :identifiers", __tupleName__));
+		addQueryCollectInstances(readByFunctionsIdentifiers, String.format("SELECT tuple FROM %s tuple WHERE tuple.function.identifier IN :identifiers", __tupleName__));
+		addQueryCollectInstances(readByFunctionsCodes, String.format("SELECT tuple FROM %s tuple WHERE tuple.function.code IN :codes", __tupleName__));
 	}
 	
 	@Override

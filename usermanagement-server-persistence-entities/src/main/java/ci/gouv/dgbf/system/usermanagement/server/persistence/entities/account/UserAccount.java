@@ -14,7 +14,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.cyk.utility.__kernel__.collection.CollectionHelper;
-import org.cyk.utility.instance.InstanceHelper;
+import org.cyk.utility.__kernel__.instance.InstanceHelper;
 import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByString;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FieldContainerFunctionScopes;
@@ -77,7 +77,7 @@ public class UserAccount extends AbstractIdentifiedByString implements FieldCont
 	public UserAccount addScopesByIdentifiers(Collection<String> identifiers) {
 		if(CollectionHelper.isNotEmpty(identifiers)) {
 			for(String index : identifiers)
-				addScopes(__inject__(InstanceHelper.class).getByIdentifierSystem(Scope.class, index));
+				addScopes(InstanceHelper.getBySystemIdentifier(Scope.class, index));
 		}
 		return this;
 	}

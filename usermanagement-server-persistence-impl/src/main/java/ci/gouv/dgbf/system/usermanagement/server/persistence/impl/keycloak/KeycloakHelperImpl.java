@@ -24,7 +24,8 @@ import org.cyk.utility.__kernel__.object.__static__.identifiable.AbstractIdentif
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.__kernel__.string.StringHelper;
 import org.cyk.utility.__kernel__.value.ValueHelper;
-import org.cyk.utility.configuration.ConstantParameterName;
+import org.cyk.utility.__kernel__.configuration.ConfigurationHelper;
+import org.cyk.utility.__kernel__.configuration.ConstantParameterName;
 import org.cyk.utility.helper.AbstractHelper;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.keycloak.OAuth2Constants;
@@ -75,14 +76,14 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	@Override
 	protected void __listenPostConstruct__() {
 		super.__listenPostConstruct__();
-		__isEnable__ = ConstantParameterName.is(ConstantParameterName.SECURITY_DELEGATE_SYSTEM_IS_ENABLE);
+		__isEnable__ = ConfigurationHelper.is(ConstantParameterName.SECURITY_DELEGATE_SYSTEM_IS_ENABLE);
 		if(Boolean.TRUE.equals(__isEnable__)) {
-			String url = ValueHelper.returnOrThrowIfBlank("keycloak server url",ConstantParameterName.get("keycloak.server.url")); 
-			realmName = ValueHelper.returnOrThrowIfBlank("keycloak realm name",ConstantParameterName.get("keycloak.realm.name")); 
-			String clientIdentifier = ValueHelper.returnOrThrowIfBlank("keycloak client identifier",ConstantParameterName.get("keycloak.client.identifier")); 
-			String clientSecret = ValueHelper.returnOrThrowIfBlank("keycloak client secret",ConstantParameterName.get("keycloak.client.secret")); 
-			String username = ValueHelper.returnOrThrowIfBlank("keycloak credentials username",ConstantParameterName.get("keycloak.credential.username")); 
-			String password = ValueHelper.returnOrThrowIfBlank("keycloak credentials password",ConstantParameterName.get("keycloak.credential.password"));
+			String url = ValueHelper.returnOrThrowIfBlank("keycloak server url",ConfigurationHelper.getValueAsString("keycloak.server.url")); 
+			realmName = ValueHelper.returnOrThrowIfBlank("keycloak realm name",ConfigurationHelper.getValueAsString("keycloak.realm.name")); 
+			String clientIdentifier = ValueHelper.returnOrThrowIfBlank("keycloak client identifier",ConfigurationHelper.getValueAsString("keycloak.client.identifier")); 
+			String clientSecret = ValueHelper.returnOrThrowIfBlank("keycloak client secret",ConfigurationHelper.getValueAsString("keycloak.client.secret")); 
+			String username = ValueHelper.returnOrThrowIfBlank("keycloak credentials username",ConfigurationHelper.getValueAsString("keycloak.credential.username")); 
+			String password = ValueHelper.returnOrThrowIfBlank("keycloak credentials password",ConfigurationHelper.getValueAsString("keycloak.credential.password"));
 			
 			__logInfo__("KEYCLOAK CLIENT TO BE CREATED\nurl:"+url+"\nrealm:"+realmName+"\nclient identifier:"+clientIdentifier+"\nclient secret:"+clientSecret
 					+"\nusername:"+username+"\npassword:"+password);
