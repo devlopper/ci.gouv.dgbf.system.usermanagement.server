@@ -6,8 +6,12 @@ import java.util.Collection;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.cyk.utility.__kernel__.collection.CollectionHelper;
+import org.cyk.utility.__kernel__.properties.Properties;
+import org.cyk.utility.__kernel__.value.ValueUsageType;
+import org.cyk.utility.server.persistence.query.filter.Filter;
 import org.cyk.utility.server.representation.AbstractRepresentationEntityImpl;
 import org.keycloak.representations.idm.UserRepresentation;
 
@@ -69,5 +73,14 @@ public class UserAccountRepresentationImpl extends AbstractRepresentationEntityI
 		if(CollectionHelper.isNotEmpty(userAccountsToBeExported))
 			__inject__(KeycloakHelper.class).createUserAccounts(userAccountsToBeExported);
 		return Response.ok(CollectionHelper.getSize(userAccounts)+" found and "+CollectionHelper.getSize(userAccountsToBeExported)+" exported").build();
+	}
+
+	@Override
+	public Response whoIsByAccountIdentifier(String accountIdentifier) {
+		UserAccount userAccount = CollectionHelper.getFirst(__inject__(UserAccountPersistence.class).read(new Properties().setQueryFilters(__inject__(Filter.class)
+				.setKlass(UserAccount.class).addField("account.identifier", accountIdentifier))));
+		if(userAccount == null)
+			return Response.status(Status.NOT_FOUND).build();
+		return getOne(userAccount.getIdentifier(), ValueUsageType.SYSTEM.name(), UserAccountDto.FIELD_PRIVILEGES+","+UserAccountDto.FIELD_SCOPES);
 	}
 }

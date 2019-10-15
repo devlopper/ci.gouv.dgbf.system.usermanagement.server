@@ -216,10 +216,6 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		UserAccountDto userAccount = new UserAccountDto();
 		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__());
 		userAccount.addFunctionsByCodes("ASSISTANT_SAISIE");
-		//userAccount.addFunctionsByIdentifiers(function.getIdentifier());
-		//System.out.println(ToStringBuilder.reflectionToString(function));
-		//System.out.println(ToStringBuilder.reflectionToString(userAccount.getFunctions().get(0)));
-		//userAccount.addFunctions(function);
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
 		userAccount.addFunctionScopes(functionScope).addProfiles(profile);
 		__inject__(UserAccountRepresentation.class).createOne(userAccount);

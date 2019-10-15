@@ -24,6 +24,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAcc
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.PrivilegePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePrivilegePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Account;
@@ -33,6 +34,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Us
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountProfile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccountScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserFunction;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Privilege;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfilePrivilege;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
@@ -69,9 +71,9 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 	
 	@Override
 	public UserAccount readByAccountIdentifier(String accountIdentifier) {
-		//Properties properties = new Properties();
-		//properties.setQueryIdentifier(readByAccountIdentifier);
-		return __readOne__(null,____getQueryParameters____(null,accountIdentifier));
+		Properties properties = new Properties();
+		properties.setQueryIdentifier(readByAccountIdentifier);
+		return __readOne__(properties,____getQueryParameters____(properties,accountIdentifier));
 	}
 	
 	@Override
@@ -91,6 +93,10 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 			Collection<UserAccountScope> userAccountScopes = __inject__(UserAccountScopePersistence.class).readByUserAccounts(userAccount);
 			if(CollectionHelper.isNotEmpty(userAccountScopes))
 				userAccount.addScopes(userAccountScopes.stream().map(UserAccountScope::getScope).collect(Collectors.toList()));
+		}else if((UserAccount.FIELD_PRIVILEGES).equals(field.getName())) {
+			Collection<Privilege> privileges = __inject__(PrivilegePersistence.class).readByUserAccounts(userAccount);
+			if(CollectionHelper.isNotEmpty(privileges))
+				userAccount.addPrivileges(privileges);
 		}/*else if((UserAccount.FIELD_SYSTEM_PROFILES).equals(field.getName())) {
 			Collection<UserAccountProfile> userAccountProfiles = __inject__(UserAccountProfilePersistence.class).readByUserAccount(userAccount);
 			if(CollectionHelper.isNotEmpty(userAccountProfiles)) {

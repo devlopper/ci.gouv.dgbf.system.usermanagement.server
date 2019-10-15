@@ -9,10 +9,12 @@ import org.cyk.utility.__kernel__.object.__static__.representation.AbstractIdent
 
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FieldContainerFunctionScopes;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FieldContainerFunctions;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FieldContainerPrivileges;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FieldContainerProfiles;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FieldContainerScopes;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.FunctionScopeDto;
+import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.PrivilegeDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDto;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ScopeDto;
 import lombok.Getter;
@@ -22,13 +24,14 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 @XmlRootElement @Getter @Setter @Accessors(chain=true) @NoArgsConstructor @ToString
-public class UserAccountDto extends AbstractIdentifiedByStringImpl implements FieldContainerFunctions,FieldContainerProfiles,FieldContainerScopes,FieldContainerFunctionScopes,Serializable {
+public class UserAccountDto extends AbstractIdentifiedByStringImpl implements FieldContainerFunctions,FieldContainerProfiles,FieldContainerScopes,FieldContainerFunctionScopes,FieldContainerPrivileges,Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private UserDto user;
 	private AccountDto account;
 	private ArrayList<FunctionDto> functions;
 	private ArrayList<ProfileDto> profiles;
+	private ArrayList<PrivilegeDto> privileges;
 	private ArrayList<ScopeDto> scopes;
 	private ArrayList<FunctionScopeDto> functionScopes;
 	
