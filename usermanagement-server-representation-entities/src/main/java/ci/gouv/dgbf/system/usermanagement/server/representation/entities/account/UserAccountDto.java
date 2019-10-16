@@ -29,6 +29,8 @@ public class UserAccountDto extends AbstractIdentifiedByStringImpl implements Fi
 
 	private UserDto user;
 	private AccountDto account;
+	private Byte notation;
+	private String color;
 	private ArrayList<FunctionDto> functions;
 	private ArrayList<ProfileDto> profiles;
 	private ArrayList<PrivilegeDto> privileges;

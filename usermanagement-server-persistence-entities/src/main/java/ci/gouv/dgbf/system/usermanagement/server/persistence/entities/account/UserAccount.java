@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -42,6 +43,8 @@ public class UserAccount extends AbstractIdentifiedByString implements FieldCont
 
 	@ManyToOne @JoinColumn(name=COLUMN_USER) @NotNull private User user;
 	@ManyToOne @JoinColumn(name=COLUMN_ACCOUNT) @NotNull private Account account;
+	@Column(name = COLUMN_NOTATION) private Byte notation;
+	@Column(name = COLUMN_COLOR) private String color;
 	
 	@Transient private Collection<Function> functions;
 	@Transient private Collection<Profile> profiles;
@@ -51,7 +54,6 @@ public class UserAccount extends AbstractIdentifiedByString implements FieldCont
 	@Transient private Collection<FunctionScope> functionScopes;
 	@Transient private Boolean isProfileCreatableOnCreate;
 	@Transient private Boolean isNotifiableByMail,isPersistToKeycloakOnCreate;
-	@Transient private String keycloakIdentifier;
 	
 	/**/
 	
@@ -90,12 +92,16 @@ public class UserAccount extends AbstractIdentifiedByString implements FieldCont
 	
 	public static final String FIELD_USER = "user";
 	public static final String FIELD_ACCOUNT = "account";
+	public static final String FIELD_NOTATION = "notation";
+	public static final String FIELD_COLOR = "color";
 	//public static final String FIELD_SYSTEM_PROFILES = "systemProfiles";
 	
 	public static final String TABLE_NAME = Account.TABLE_NAME+User.TABLE_NAME;
 	
 	public static final String COLUMN_USER = User.TABLE_NAME;
 	public static final String COLUMN_ACCOUNT = Account.TABLE_NAME;
+	public static final String COLUMN_NOTATION = "notation";
+	public static final String COLUMN_COLOR = "couleur";
 	
 	public static final String UNIQUE_CONSTRAINT_USER_ACCOUNT_NAME = COLUMN_USER+COLUMN_ACCOUNT;
 	
