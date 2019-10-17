@@ -251,7 +251,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		userAccount.addFunctionsByCodes("CE");
 		assertThat(userAccount.getUser().getFunctions().stream().map(FunctionDto::getCode).collect(Collectors.toList())).containsOnly("ASSISTANT_SAISIE","CE");
 		assertThat(__inject__(UserFunctionRepresentation.class).count(null).getEntity()).isEqualTo(1l);
-		__inject__(UserAccountRepresentation.class).updateOne(userAccount, "functions");
+		__inject__(UserAccountRepresentation.class).updateOne(userAccount, "user.functions");
 		assertThat(__inject__(UserFunctionRepresentation.class).count(null).getEntity()).isEqualTo(2l);
 		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES+",functions,user,identifier").getEntity();
 		assertThat(userAccount.getUser()).isNotNull();
@@ -260,6 +260,25 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		assertThat(userAccount.getUser().getFunctions()).isNotEmpty();
 		assertThat(userAccount.getUser().getFunctions().stream().map(FunctionDto::getCode).collect(Collectors.toList())).containsOnly("ASSISTANT_SAISIE","CE");
 		
+	}
+	
+	//@Test
+	public void updateProfile(){
+		FunctionTypeDto functionType = new FunctionTypeDto().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(FunctionTypeRepresentation.class).createOne(functionType);
+		FunctionDto function = new FunctionDto().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setType(functionType);
+		__inject__(FunctionRepresentation.class).createOne(function);
+		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("CE").setName(__getRandomName__()).setType(functionType));
+		
+		UserAccountDto userAccount = new UserAccountDto();
+		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__());
+		userAccount.addFunctionsByCodes("ASSISTANT_SAISIE");
+		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
+		__inject__(UserAccountRepresentation.class).createOne(userAccount);
+		
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null, "identifier,user.identifier").getEntity();
+		assertThat(userAccount).as("user account is null").isNotNull();
+		assertThat(userAccount.getUser()).as("user is not null").isNotNull();
 	}
 	
 	@Test

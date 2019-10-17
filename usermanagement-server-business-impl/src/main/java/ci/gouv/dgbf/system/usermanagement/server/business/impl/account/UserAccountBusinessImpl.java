@@ -103,9 +103,15 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 	protected void __listenExecuteUpdateBefore__(UserAccount userAccount, Properties properties,BusinessFunctionModifier function) {
 		super.__listenExecuteUpdateBefore__(userAccount, properties, function);
 		Strings fields = __getFieldsFromProperties__(properties);
+		if(CollectionHelper.isEmpty(fields))
+			return;
+		
 		if(userAccount.getUser().getFunctions() == null)
 			userAccount.getUser().setFunctions(userAccount.getFunctions());
-		__inject__(UserBusiness.class).update(userAccount.getUser(),properties);
+		//find the fields to update in user : these field must starts with user.
+		Collection<String> userFields = StringHelper.filter(fields.get(), "^user\\.", Boolean.TRUE);
+		__inject__(UserBusiness.class).update(userAccount.getUser(),new Properties().setFields(userFields));
+		
 		__save__(userAccount.getAccount());
 		
 		if(CollectionHelper.isNotEmpty(fields)) {
