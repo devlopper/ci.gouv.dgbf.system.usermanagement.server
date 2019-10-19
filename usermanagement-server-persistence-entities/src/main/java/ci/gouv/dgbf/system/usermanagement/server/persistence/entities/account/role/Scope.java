@@ -25,19 +25,19 @@ public class Scope extends AbstractIdentifiedByStringAndLinkedByStringAndNamed<S
 
 	@ManyToOne @JoinColumn(name=COLUMN_TYPE) @NotNull private ScopeType type;
 	
-	@Override
+	public Scope setTypeFromCode(String code) {
+		__setFromBusinessIdentifier__(FIELD_TYPE, code);
+		return this;
+	}
+	
+	@Override @JsonbProperty(value="code")
 	public Scope setIdentifier(String identifier) {
 		return (Scope) super.setIdentifier(identifier);
 	}
 	
-	@Override
-	public Scope setName(String name) {
-		return (Scope) super.setName(name);
-	}
-	
-	public Scope setTypeFromCode(String code) {
-		setFromBusinessIdentifier(FIELD_TYPE, code);
-		return this;
+	@Override @JsonbProperty(value="code")
+	public String getIdentifier() {
+		return super.getIdentifier();
 	}
 	
 	@Override @JsonbProperty(value="uuid")
@@ -45,9 +45,19 @@ public class Scope extends AbstractIdentifiedByStringAndLinkedByStringAndNamed<S
 		return super.getLink();
 	}
 	
-	@Override @JsonbProperty(value="libelleCourt")
+	@Override @JsonbProperty(value="uuid")
+	public Scope setLink(String link) {
+		return (Scope) super.setLink(link);
+	}
+	
+	@Override @JsonbProperty(value="libelle")
 	public String getName() {
 		return super.getName();
+	}
+	
+	@Override @JsonbProperty(value="libelle")
+	public Scope setName(String name) {
+		return (Scope) super.setName(name);
 	}
 	
 	/**/

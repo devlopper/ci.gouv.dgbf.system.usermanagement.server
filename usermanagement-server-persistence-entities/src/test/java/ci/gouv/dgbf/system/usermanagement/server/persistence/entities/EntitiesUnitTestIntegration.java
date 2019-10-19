@@ -2,19 +2,39 @@ package ci.gouv.dgbf.system.usermanagement.server.persistence.entities;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.json.bind.JsonbBuilder;
+import javax.json.bind.JsonbConfig;
+
+import org.apache.commons.io.IOUtils;
 import org.cyk.utility.field.FieldValueCopy;
 import org.cyk.utility.request.RequestProcessor;
-import org.cyk.utility.test.arquillian.AbstractArquillianUnitTest;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.cyk.utility.test.weld.AbstractWeldUnitTest;
+import org.junit.jupiter.api.Test;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 
-@Ignore @Deprecated
-public class EntitiesUnitTest extends AbstractArquillianUnitTest {
+public class EntitiesUnitTestIntegration extends AbstractWeldUnitTest {
 	private static final long serialVersionUID = 1L;
 
 	@Test
+	public void get() {
+		//String url = "http://10.3.4.20:32201/sib/classification-administrative/api/v1/sections-budgetaires";
+		String url = "http://localhost:3000/sections";
+		try {
+			List<Scope> scopes = JsonbBuilder.create().fromJson(new URL(url).openStream()
+					, new ArrayList<Scope>() {}.getClass().getGenericSuperclass());
+			for(Scope index : scopes)
+				System.out.println(index.getIdentifier()+" / "+index.getName()+" / "+index.getLink());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	//@Test
 	public void get_program() {
 		Scope dto = (Scope) __inject__(RequestProcessor.class)
 				.setUniformResourceIdentifierString("http://10.3.4.20:32202/sib/classification-par-programme/api/v1/programmes/code/22060")

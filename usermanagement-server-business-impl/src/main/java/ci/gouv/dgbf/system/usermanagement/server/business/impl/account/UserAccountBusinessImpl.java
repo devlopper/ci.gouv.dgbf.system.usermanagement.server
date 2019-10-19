@@ -106,8 +106,8 @@ public class UserAccountBusinessImpl extends AbstractBusinessEntityImpl<UserAcco
 		if(CollectionHelper.isEmpty(fields))
 			return;
 		
-		if(userAccount.getUser().getFunctions() == null)
-			userAccount.getUser().setFunctions(userAccount.getFunctions());
+		//if(userAccount.getUser().getFunctions() == null)
+		//	userAccount.getUser().setFunctions(userAccount.getFunctions());
 		//find the fields to update in user : these field must starts with user.
 		Collection<String> userFields = StringHelper.filter(fields.get(), "^user\\.", Boolean.TRUE);
 		__inject__(UserBusiness.class).update(userAccount.getUser(),new Properties().setFields(userFields));

@@ -442,18 +442,27 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		assertThat(userAccount.getUser()).isNotNull();
 		assertThat(userAccount.getUser().getFunctions().stream().map(Function::getCode).collect(Collectors.toList())).containsExactlyInAnyOrder("CONTROLEUR_FINANCIER");
 		
+		userAccount.getUser().setFirstName("Konan");
 		userAccount.getUser().setFunctions(null);
 		__inject__(UserAccountBusiness.class).update(userAccount,new Properties().setFields("user.functions"));
 		userAccount = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields("user.functions"));
 		assertThat(userAccount).isNotNull();
 		assertThat(userAccount.getUser()).isNotNull();
+		assertThat(userAccount.getUser().getFirstName()).isEqualTo("Konan");
+		assertThat(userAccount.getUser().getLastNames()).isEqualTo("Paul-François");
 		assertThat(userAccount.getUser().getFunctions()).isNull();
 		
+		userAccount.getUser().setFirstName("Abou");
+		userAccount.getUser().setLastNames("Gérard");
+		userAccount.getUser().setElectronicMailAddress("newmail@mail.com");
 		userAccount.getUser().addFunctionsByCodes("CONTROLEUR_FINANCIER");
 		__inject__(UserAccountBusiness.class).update(userAccount,new Properties().setFields("user.functions"));
 		userAccount = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields("user.functions"));
 		assertThat(userAccount).isNotNull();
 		assertThat(userAccount.getUser()).isNotNull();
+		assertThat(userAccount.getUser().getFirstName()).isEqualTo("Abou");
+		assertThat(userAccount.getUser().getLastNames()).isEqualTo("Gérard");
+		assertThat(userAccount.getUser().getElectronicMailAddress()).isEqualTo("newmail@mail.com");
 		assertThat(userAccount.getUser().getFunctions().stream().map(Function::getCode).collect(Collectors.toList())).containsExactlyInAnyOrder("CONTROLEUR_FINANCIER");
 		
 		userAccount.getUser().addFunctionsByCodes("CE");
@@ -461,6 +470,9 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		userAccount = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields("user.functions"));
 		assertThat(userAccount).isNotNull();
 		assertThat(userAccount.getUser()).isNotNull();
+		assertThat(userAccount.getUser().getFirstName()).isEqualTo("Abou");
+		assertThat(userAccount.getUser().getLastNames()).isEqualTo("Gérard");
+		assertThat(userAccount.getUser().getElectronicMailAddress()).isEqualTo("newmail@mail.com");
 		assertThat(userAccount.getUser().getFunctions().stream().map(Function::getCode).collect(Collectors.toList())).containsExactlyInAnyOrder("CONTROLEUR_FINANCIER","CE");
 		
 	}

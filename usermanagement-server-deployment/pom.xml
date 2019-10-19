@@ -16,6 +16,7 @@
 	
 	<properties>
 		<microprofile.archive.name>usermanagement-server</microprofile.archive.name>
+		<web.context>usermanagement/server</web.context>
 	</properties>
 		
 	<dependencies>

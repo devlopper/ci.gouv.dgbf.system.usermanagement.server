@@ -248,7 +248,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		assertThat(userAccount.getUser().getFunctions()).isNotEmpty();
 		assertThat(userAccount.getUser().getFunctions().stream().map(FunctionDto::getCode).collect(Collectors.toList())).containsOnly("ASSISTANT_SAISIE");
 		
-		userAccount.addFunctionsByCodes("CE");
+		userAccount.getUser().addFunctionsByCodes("CE");
 		assertThat(userAccount.getUser().getFunctions().stream().map(FunctionDto::getCode).collect(Collectors.toList())).containsOnly("ASSISTANT_SAISIE","CE");
 		assertThat(__inject__(UserFunctionRepresentation.class).count(null).getEntity()).isEqualTo(1l);
 		__inject__(UserAccountRepresentation.class).updateOne(userAccount, "user.functions");
@@ -262,8 +262,8 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		
 	}
 	
-	//@Test
-	public void updateProfile(){
+	@Test
+	public void update_userAccount_functionality_profile(){
 		FunctionTypeDto functionType = new FunctionTypeDto().setCode(__getRandomCode__()).setName(__getRandomName__());
 		__inject__(FunctionTypeRepresentation.class).createOne(functionType);
 		FunctionDto function = new FunctionDto().setCode("ASSISTANT_SAISIE").setName(__getRandomName__()).setType(functionType);
@@ -276,9 +276,26 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__()).setPass("123");
 		__inject__(UserAccountRepresentation.class).createOne(userAccount);
 		
-		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null, "identifier,user.identifier").getEntity();
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null, "identifier,user.firstName,user.lastNames,user.functions").getEntity();
 		assertThat(userAccount).as("user account is null").isNotNull();
 		assertThat(userAccount.getUser()).as("user is not null").isNotNull();
+		assertThat(userAccount.getUser().getFirstName()).isEqualTo("Zadi");
+		assertThat(userAccount.getUser().getLastNames()).isEqualTo("Paul-François");
+		assertThat(userAccount.getUser().getFunctions().stream().map(FunctionDto::getCode).collect(Collectors.toList())).containsExactlyInAnyOrder("ASSISTANT_SAISIE");
+		
+		userAccount.getUser().setFirstName("Abou");
+		userAccount.getUser().setLastNames("Gérard");
+		userAccount.getUser().setElectronicMailAddress("newmail@mail.com");
+		userAccount.getUser().addFunctionsByCodes("CE");
+		__inject__(UserAccountRepresentation.class).updateOne(userAccount, "user.firstName,user.lastNames,user.electronicMailAddress,user.functions");
+		
+		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(), null, "identifier,user.firstName,user.lastNames,user.functions").getEntity();
+		assertThat(userAccount).as("user account is null").isNotNull();
+		assertThat(userAccount.getUser()).as("user is not null").isNotNull();
+		assertThat(userAccount.getUser().getFirstName()).isEqualTo("Abou");
+		assertThat(userAccount.getUser().getLastNames()).isEqualTo("Gérard");
+		assertThat(userAccount.getUser().getElectronicMailAddress()).isEqualTo("newmail@mail.com");
+		assertThat(userAccount.getUser().getFunctions().stream().map(FunctionDto::getCode).collect(Collectors.toList())).containsExactlyInAnyOrder("ASSISTANT_SAISIE","CE");
 	}
 	
 	@Test

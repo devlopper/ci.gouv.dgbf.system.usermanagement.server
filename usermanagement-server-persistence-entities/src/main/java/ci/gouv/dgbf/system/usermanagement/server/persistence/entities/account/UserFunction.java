@@ -33,12 +33,12 @@ public class UserFunction extends AbstractIdentifiedByString implements Serializ
 	/**/
 	
 	public UserFunction setUserByIdentifier(String identifier) {
-		setFromSystemIdentifier(FIELD_USER, identifier);
+		__setFromSystemIdentifier__(FIELD_USER, identifier);
 		return this;
 	}
 	
 	public UserFunction setFunctionByCode(String code) {
-		setFromBusinessIdentifier(FIELD_FUNCTION, code);
+		__setFromBusinessIdentifier__(FIELD_FUNCTION, code);
 		return this;
 	}
 	

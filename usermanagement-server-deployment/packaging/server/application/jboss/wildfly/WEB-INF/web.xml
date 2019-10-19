@@ -8,7 +8,17 @@
 	
 	<context-param>
 		<param-name>cyk.parameter.system.name</param-name>
-		<param-value>${cyk.parameter.system.name}</param-value>
+		<param-value>Gestion des acteurs</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.parameter.system.web.context</param-name>
+		<param-value>usermanagement/server</param-value>
+	</context-param>	
+	
+	<context-param>
+		<param-name>cyk.parameter.swagger.bean.config.resource.package</param-name>
+		<param-value> ci.gouv.dgbf.system.usermanagement.server.representation.api</param-value>
 	</context-param>
 		
 </web-app>

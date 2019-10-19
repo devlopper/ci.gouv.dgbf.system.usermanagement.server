@@ -33,7 +33,7 @@ public class UserAccountScope extends AbstractIdentifiedByString implements Seri
 	/**/
 	
 	public UserAccountScope setScopeFromIdentifier(String identifier) {
-		setFromSystemIdentifier(FIELD_SCOPE, identifier);
+		__setFromSystemIdentifier__(FIELD_SCOPE, identifier);
 		return this;
 	}
 	

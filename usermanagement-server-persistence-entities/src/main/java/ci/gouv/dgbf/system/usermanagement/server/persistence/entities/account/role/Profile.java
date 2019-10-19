@@ -53,7 +53,7 @@ public class Profile extends AbstractIdentifiedByStringAndCodedAndNamed implemen
 	}
 	
 	public Profile setTypeFromCode(String code) {
-		setFromBusinessIdentifier(FIELD_TYPE, code);
+		__setFromBusinessIdentifier__(FIELD_TYPE, code);
 		return this;
 	}
 	

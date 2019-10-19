@@ -36,19 +36,4 @@ public abstract class UserAccountDtoMapper extends AbstractMapperSourceDestinati
     	return InstanceHelper.getIdentifiedFromIdentifiers(FunctionScope.class, dtos);
     }
 	
-	@Override
-	protected void __listenGetSourceAfter__(UserAccount destination, UserAccountDto source) {
-		super.__listenGetSourceAfter__(destination, source);
-		if(source.getUser() != null)
-			source.setFunctions(source.getUser().getFunctions());
-	}
-	
-	@Override
-	protected void __listenGetDestinationAfter__(UserAccountDto source, UserAccount destination) {
-		super.__listenGetDestinationAfter__(source, destination);
-		if(destination.getUser() != null)
-			destination.getUser().setFunctions(destination.getFunctions());
-	}
-	
-	
 }
