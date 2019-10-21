@@ -8,9 +8,13 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import org.cyk.utility.__kernel__.collection.CollectionHelper;
+import org.cyk.utility.__kernel__.configuration.ConfigurationHelper;
 import org.cyk.utility.__kernel__.properties.Properties;
+import org.cyk.utility.__kernel__.test.arquillian.archive.builder.WebArchiveBuilder;
 import org.cyk.utility.server.persistence.query.filter.Filter;
 import org.cyk.utility.server.persistence.test.TestPersistenceCreate;
+import org.cyk.utility.server.persistence.test.arquillian.AbstractPersistenceArquillianIntegrationTest;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.AccountPersistence;
@@ -54,8 +58,14 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Service;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ServiceResource;
 
-public class PersistenceIntegrationTest extends AbstractPersistenceArquillianIntegrationTestWithDefaultDeployment {
+public class PersistenceIntegrationTest extends AbstractPersistenceArquillianIntegrationTest {
 	private static final long serialVersionUID = 1L;
+	
+	@Override
+	protected void __listenBefore__() {
+		super.__listenBefore__();
+		ConfigurationHelper.clear();
+	}
 	
 	@Test
 	public void create_scopeType() throws Exception{
@@ -67,6 +77,47 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		ScopeType scopeType = new ScopeType().setCode(__getRandomCode__()).setName(__getRandomName__());
 		Scope scope = new Scope().setType(scopeType);
 		__inject__(TestPersistenceCreate.class).addObjectsToBeCreatedArray(scopeType).addObjects(scope).execute();
+	}
+	
+	@Test
+	public void read_scope_many() throws Exception{
+		ConfigurationHelper.setClassUniformResourceIdentifier(Scope.class, getClass().getResource("scope.json"));
+		ConfigurationHelper.setFieldName(Scope.class, "code", "identifier");
+		ConfigurationHelper.setFieldName(Scope.class, "libelle", "name");
+		ConfigurationHelper.setFieldName(Scope.class, "uuid", "link");
+		
+		userTransaction.begin();
+		ScopeType scopeType = new ScopeType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(ScopeTypePersistence.class).create(scopeType);
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setIdentifier("221"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setIdentifier("240"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setIdentifier("250"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setIdentifier("300"));
+		userTransaction.commit();
+		Collection<Scope> scopes = __inject__(ScopePersistence.class).read();
+		assertThat(scopes).isNotNull();
+		assertThat(scopes.stream().map(Scope::getName).collect(Collectors.toList())).containsAnyOf("Ministère de la Justice","Ministère des infrastructures"
+				,"Ministère de la défense","Ministère du Budget");
+	}
+	
+	@Test
+	public void read_scope_one() throws Exception{
+		ConfigurationHelper.setClassUniformResourceIdentifier(Scope.class, getClass().getResource("scope.json"));
+		ConfigurationHelper.setFieldName(Scope.class, "code", "identifier");
+		ConfigurationHelper.setFieldName(Scope.class, "libelle", "name");
+		ConfigurationHelper.setFieldName(Scope.class, "uuid", "link");
+		
+		userTransaction.begin();
+		ScopeType scopeType = new ScopeType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(ScopeTypePersistence.class).create(scopeType);
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setIdentifier("221"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setIdentifier("240"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setIdentifier("250"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setIdentifier("300"));
+		userTransaction.commit();
+		Scope scope = __inject__(ScopePersistence.class).readBySystemIdentifier("250");
+		assertThat(scope).isNotNull();
+		assertThat(scope.getName()).isEqualTo("Ministère de la défense");
 	}
 	
 	@Test
@@ -676,4 +727,9 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 				,interim.getUser(),interim.getAccount(),interim).addObjects(userAccountInterim).execute();
 	}
 	
+	@org.jboss.arquillian.container.test.api.Deployment
+	public static WebArchive createArchive(){
+		return new WebArchiveBuilder().execute()
+				.addAsResource("ci/gouv/dgbf/system/usermanagement/server/persistence/impl/integration/scope.json"); 
+	}
 }
