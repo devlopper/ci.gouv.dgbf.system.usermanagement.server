@@ -16,7 +16,8 @@
 	
 	<properties>
 		<microprofile.archive.name>usermanagement-server</microprofile.archive.name>
-		<web.context>usermanagement/server</web.context>
+		<jboss-web.context-root>usermanagement/server</jboss-web.context-root>
+		<web.context>/${jboss-web.context-root}</web.context>
 	</properties>
 		
 	<dependencies>
@@ -54,6 +55,8 @@
 				<data.base.management.system.sid>xe</data.base.management.system.sid>
 				<data.source.user>GESTION_ACTEUR</data.source.user>
 				<data.source.password>GESTION_ACTEUR</data.source.password>
+				<jboss-web.context-root></jboss-web.context-root>
+				<swagger.json>/api/swagger.json</swagger.json>
 			</properties>
 		</profile>
 		
@@ -65,6 +68,8 @@
 				<data.base.management.system.sid>SIB</data.base.management.system.sid>
 				<data.source.user>GESTION_ACTEUR</data.source.user>
 				<data.source.password>GESTION_ACTEUR</data.source.password>
+				<jboss-web.context-root></jboss-web.context-root>
+				<swagger.json>/api/swagger.json</swagger.json>
 			</properties>
 		</profile>
 	</profiles>

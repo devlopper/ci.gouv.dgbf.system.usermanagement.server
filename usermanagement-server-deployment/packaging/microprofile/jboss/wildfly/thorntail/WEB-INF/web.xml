@@ -4,48 +4,52 @@
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
 	id="WebApp_ID" version="3.1">
 	
-	<display-name>usermanagement Server</display-name>
+	<display-name>User Management Server</display-name>
+	
+	<!-- System -->
 	
 	<context-param>
-		<param-name>cyk.parameter.system.name</param-name>
-		<param-value>${cyk.parameter.system.name}</param-value>
-	</context-param>
-	
-	<!-- keycloak -->
-	<!--
-	<context-param>
-		<param-name>cyk.parameter.security.delegate.system.is.enable</param-name>
-		<param-value>${cyk.parameter.security.delegate.system.is.enable}</param-value>
+		<param-name>cyk.variable.system.identifier</param-name>
+		<param-value>usermanagement.server</param-value>
 	</context-param>
 	
 	<context-param>
-		<param-name>keycloak.server.url</param-name>
-		<param-value>${keycloak.server.url}</param-value>
+		<param-name>cyk.variable.system.name</param-name>
+		<param-value>Gestion des acteurs</param-value>
 	</context-param>
 	
 	<context-param>
-		<param-name>keycloak.realm.name</param-name>
-		<param-value>${keycloak.realm.name}</param-value>
+		<param-name>cyk.variable.system.web.context</param-name>
+		<param-value>${jboss-web.context-root}</param-value>
+	</context-param>	
+	
+	<!--  -->
+	
+	<context-param>
+		<param-name>cyk.parameter.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope_uri</param-name>
+		<param-value>http://localhost:3000/sections</param-value>
 	</context-param>
 	
 	<context-param>
-		<param-name>keycloak.client.identifier</param-name>
-		<param-value>${keycloak.client.identifier}</param-value>
+		<param-name>cyk.parameter.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope.code</param-name>
+		<param-value>identifier</param-value>
 	</context-param>
 	
 	<context-param>
-		<param-name>keycloak.client.secret</param-name>
-		<param-value>${keycloak.client.secret}</param-value>
+		<param-name>cyk.parameter.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope.libelle</param-name>
+		<param-value>name</param-value>
+	</context-param>
+	
+	<!-- Swagger -->
+	
+	<context-param>
+		<param-name>cyk.variable.swagger.enabled</param-name>
+		<param-value>true</param-value>
 	</context-param>
 	
 	<context-param>
-		<param-name>keycloak.credential.username</param-name>
-		<param-value>${keycloak.credential.username}</param-value>
+		<param-name>cyk.variable.swagger.bean.config.resource.package</param-name>
+		<param-value>ci.gouv.dgbf.system.usermanagement.server.representation.api</param-value>
 	</context-param>
-	
-	<context-param>
-		<param-name>keycloak.credential.password</param-name>
-		<param-value>${keycloak.credential.password}</param-value>
-	</context-param>
-	-->	
+		
 </web-app>

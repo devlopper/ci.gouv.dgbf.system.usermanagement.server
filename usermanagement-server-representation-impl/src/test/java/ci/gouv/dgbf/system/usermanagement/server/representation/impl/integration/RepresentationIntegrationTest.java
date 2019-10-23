@@ -46,6 +46,7 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 	public void create_function() throws Exception{
 		/*
 		
+		
 		*/
 		/*
 		FunctionTypeDto functionType = new FunctionTypeDto().setCode(__getRandomCode__()).setName(__getRandomName__());
