@@ -2,6 +2,7 @@ package ci.gouv.dgbf.system.usermanagement.server.persistence.impl.account.role;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -15,6 +16,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.Sc
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeHierarchies;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeHierarchy;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
 
 @ApplicationScoped
 public class ScopePersistenceImpl extends AbstractPersistenceIdentifiedByStringImpl<Scope,ScopeHierarchy,ScopeHierarchies,ScopeHierarchyPersistence> implements ScopePersistence,Serializable {
@@ -23,9 +25,17 @@ public class ScopePersistenceImpl extends AbstractPersistenceIdentifiedByStringI
 	@Override
 	protected void __listenExecuteReadAfter__(Collection<Scope> scopes, Properties properties) {
 		super.__listenExecuteReadAfter__(scopes, properties);
+		__setFieldsValuesFromUniformResourceIdentifiers__(scopes);
+	}
+	
+	private static void __setFieldsValuesFromUniformResourceIdentifiers__(Collection<Scope> scopes) {
 		if(CollectionHelper.isEmpty(scopes))
 			return;
-		Collection<Scope> __scopes__ = InstanceGetter.getInstance().getFromUniformResourceIdentifier(Scope.class, "code","libelle");
+		Collection<ScopeType> scopeTypes = scopes.stream().map(Scope::getType).collect(Collectors.toList());
+		if(CollectionHelper.isEmpty(scopeTypes))
+			return;
+		Collection<Scope> __scopes__ = InstanceGetter.getInstance().getFromUniformResourceIdentifiers(Scope.class
+				,scopeTypes.stream().map(ScopeType::getCode).collect(Collectors.toSet()), "code","libelle");
 		if(CollectionHelper.isEmpty(__scopes__))
 			return;
 		for(Scope index : scopes) {
@@ -36,5 +46,4 @@ public class ScopePersistenceImpl extends AbstractPersistenceIdentifiedByStringI
 			}
 		}
 	}
-	
 }
