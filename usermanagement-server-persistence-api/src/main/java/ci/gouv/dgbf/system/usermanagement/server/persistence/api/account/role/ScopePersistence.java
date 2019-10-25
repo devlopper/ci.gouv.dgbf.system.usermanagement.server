@@ -6,4 +6,6 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 
 public interface ScopePersistence extends PersistenceIdentifiedByString<Scope> {
 
+	Scope readByTypeCodeByCode(String typeCode,String code);
+	
 }

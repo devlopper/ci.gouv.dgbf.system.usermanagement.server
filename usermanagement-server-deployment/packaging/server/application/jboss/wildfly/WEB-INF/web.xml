@@ -26,17 +26,17 @@
 	<!--  -->
 	
 	<context-param>
-		<param-name>cyk.parameter.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope_uri</param-name>
-		<param-value>http://localhost:3000/sections</param-value>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope|SECTION|uri</param-name>
+		<param-value>http://localhost:3000/section</param-value>
 	</context-param>
 	
 	<context-param>
-		<param-name>cyk.parameter.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope.code</param-name>
-		<param-value>identifier</param-value>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope|SECTION|code</param-name>
+		<param-value>code</param-value>
 	</context-param>
 	
 	<context-param>
-		<param-name>cyk.parameter.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope.libelle</param-name>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope|SECTION|libelle</param-name>
 		<param-value>name</param-value>
 	</context-param>
 	

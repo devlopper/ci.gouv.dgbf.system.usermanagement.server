@@ -124,7 +124,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		__logInfo__("Creating "+privileges.size()+" privileges");
 		//__inject__(PrivilegeBusiness.class).saveByBatch(privileges,100);
 		__inject__(PrivilegeBusiness.class).createMany(privileges);
-		
+		/*
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("ministère");
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
@@ -134,8 +134,13 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount(); index = index + 1)
 			sections.add(new Scope().setIdentifier(arrayInstance.get(index, 0)).setType(scopeTypeSection));
 		__logInfo__("Creating "+sections.size()+" section");
-		__inject__(ScopeBusiness.class).saveByBatch(sections,100);
-		
+		*/
+		try {
+			__inject__(ScopeBusiness.class).import_(null);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		}
+		/*
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
 		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("programme");
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
@@ -157,9 +162,9 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 			uas.add(new Scope().setIdentifier(arrayInstance.get(index, 0)).setType(scopeTypeUa));
 		__logInfo__("Creating "+uas.size()+" ua");
 		__inject__(ScopeBusiness.class).saveByBatch(uas,100);
-		
+		*/
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
-		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("catégorie");
+		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("type de fonction");
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		arrayInstance = reader.execute().getOutput();
 		Collection<FunctionType> functionTypes = new ArrayList<>();
@@ -173,12 +178,13 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		arrayInstance = reader.execute().getOutput();
 		Collection<Function> functions = new ArrayList<>();
-		Collection<FunctionScope> functionScopes = new ArrayList<>();
+		//Collection<FunctionScope> functionScopes = new ArrayList<>();
 		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount(); index = index + 1) {
 			Function function = new Function().setCode(arrayInstance.get(index, 0)).setName(arrayInstance.get(index, 1))
 					.setType(CollectionHelper.getElementAt(functionTypes, arrayInstance.get(index, 2).startsWith("ADMIN") ? 0 : 1));
 			function.setIsProfileCreatableOnCreate(Boolean.TRUE);
 			functions.add(function);
+			/*
 			if(arrayInstance.get(index, 3).startsWith("oui")) {
 				for(Scope indexMinistry : sections)
 					functionScopes.add(new FunctionScope().setFunction(function).setScope(indexMinistry));
@@ -191,12 +197,13 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 				for(Scope indexAdministrativeUnit : uas)
 					functionScopes.add(new FunctionScope().setFunction(function).setScope(indexAdministrativeUnit));
 			}
+			*/
 		}
 		__logInfo__("Creating "+functions.size()+" fonctions");
 		__inject__(FunctionBusiness.class).saveByBatch(functions,100);
 		
-		__logInfo__("Creating "+functionScopes.size()+" fonctions et champs d'actions");
-		__inject__(FunctionScopeBusiness.class).saveByBatch(functionScopes,100);
+		//__logInfo__("Creating "+functionScopes.size()+" fonctions et champs d'actions");
+		//__inject__(FunctionScopeBusiness.class).saveByBatch(functionScopes,100);
 	}
 	
 }

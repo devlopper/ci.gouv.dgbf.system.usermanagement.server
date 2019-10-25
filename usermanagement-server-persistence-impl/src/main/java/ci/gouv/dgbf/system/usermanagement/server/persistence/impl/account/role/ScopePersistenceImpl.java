@@ -5,10 +5,13 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 
 import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.__kernel__.instance.InstanceGetter;
 import org.cyk.utility.__kernel__.properties.Properties;
+import org.cyk.utility.server.persistence.PersistenceFunctionCreator;
 import org.cyk.utility.server.persistence.jpa.hierarchy.AbstractPersistenceIdentifiedByStringImpl;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ScopeHierarchyPersistence;
@@ -22,6 +25,30 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 public class ScopePersistenceImpl extends AbstractPersistenceIdentifiedByStringImpl<Scope,ScopeHierarchy,ScopeHierarchies,ScopeHierarchyPersistence> implements ScopePersistence,Serializable {
 	private static final long serialVersionUID = 1L;
 
+	private String readByTypeCodeByCode;
+	
+	@Override
+	protected void __listenPostConstructPersistenceQueries__() {
+		super.__listenPostConstructPersistenceQueries__();
+		addQueryCollectInstances(readByTypeCodeByCode, "SELECT tuple FROM Scope tuple WHERE tuple.type.code = :typeCode AND tuple.code = :code");
+	}
+	
+	@Override
+	public Scope readByTypeCodeByCode(String typeCode, String code) {
+		try {
+			return __inject__(EntityManager.class).createNamedQuery(readByTypeCodeByCode, Scope.class).setParameter("typeCode", typeCode).setParameter("code", code).getSingleResult();
+		} catch (NoResultException exception) {
+			return null;
+		}
+	}
+	
+	@Override
+	protected void __listenExecuteCreateBefore__(Scope scope, Properties properties,PersistenceFunctionCreator function) {
+		super.__listenExecuteCreateBefore__(scope, properties, function);
+		if(scope.getCode() == null)
+			scope.setCode(scope.getIdentifier());
+	}
+	
 	@Override
 	protected void __listenExecuteReadAfter__(Collection<Scope> scopes, Properties properties) {
 		super.__listenExecuteReadAfter__(scopes, properties);
@@ -34,16 +61,19 @@ public class ScopePersistenceImpl extends AbstractPersistenceIdentifiedByStringI
 		Collection<ScopeType> scopeTypes = scopes.stream().map(Scope::getType).collect(Collectors.toList());
 		if(CollectionHelper.isEmpty(scopeTypes))
 			return;
-		Collection<Scope> __scopes__ = InstanceGetter.getInstance().getFromUniformResourceIdentifiers(Scope.class
-				,scopeTypes.stream().map(ScopeType::getCode).collect(Collectors.toSet()), "code","libelle");
-		if(CollectionHelper.isEmpty(__scopes__))
-			return;
-		for(Scope index : scopes) {
-			for(Scope scope : __scopes__) {
-				if(index.getIdentifier().equals(scope.getIdentifier())) {
-					index.setName(scope.getName());
+		for(ScopeType scopeType : scopeTypes) {
+			Collection<Scope> __scopes__ = InstanceGetter.getInstance().getFromUniformResourceIdentifier(Scope.class,(Object)scopeType.getCode(), "code","libelle");
+			if(CollectionHelper.isEmpty(__scopes__))
+				continue;
+			for(Scope index : scopes) {
+				if(!index.getType().equals(scopeType))
+					continue;
+				for(Scope scope : __scopes__) {
+					if(index.getCode().equals(scope.getCode())) {
+						index.setName(scope.getName());
+					}
 				}
-			}
+			}	
 		}
 	}
 }

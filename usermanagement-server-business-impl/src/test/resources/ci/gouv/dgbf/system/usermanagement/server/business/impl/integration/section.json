@@ -94,29 +94,5 @@
 		"sectionTypeUUID": "a069b7ed-5193-400e-975a-847be9cd4600",
 		"sigle": "fdghf",
 		"uuid": "ed9c9d5a-1c8d-4cf9-b3fe-d69c2409246e"
-	},
-	{
-		"code": "220",
-		"gouvernementCode": "15082019",
-		"gouvernementUUID": "47dbbd97-6760-4e1a-a275-15cf83f467b8",
-		"libelle": "Ministère de la Justice",
-		"natureSectionLibelle": "",
-		"natureSectionUUID": "",
-		"sectionTypeNumero": "22",
-		"sectionTypeUUID": "fe926516-7012-405d-9862-aab0b961a2a6",
-		"sigle": "MJ",
-		"uuid": "e96075f5-a7ef-4d31-b825-927246c36887"
-	},
-	{
-		"code": "222",
-		"gouvernementCode": "15082019",
-		"gouvernementUUID": "47dbbd97-6760-4e1a-a275-15cf83f467b8",
-		"libelle": "Ministère de la Justice",
-		"natureSectionLibelle": "",
-		"natureSectionUUID": "",
-		"sectionTypeNumero": "22",
-		"sectionTypeUUID": "fe926516-7012-405d-9862-aab0b961a2a6",
-		"sigle": "MJ",
-		"uuid": "840bda3a-dbf6-4c73-aa61-20376364b822"
 	}
 ]

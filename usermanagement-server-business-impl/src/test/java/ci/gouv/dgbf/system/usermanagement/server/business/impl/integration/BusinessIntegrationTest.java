@@ -1,25 +1,21 @@
-package ci.gouv.dgbf.system.usermanagement.server.business.impl.integration.account;
+package ci.gouv.dgbf.system.usermanagement.server.business.impl.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.__kernel__.collection.CollectionHelper;
+import org.cyk.utility.__kernel__.configuration.ConfigurationHelper;
+import org.cyk.utility.__kernel__.properties.Properties;
+import org.cyk.utility.__kernel__.test.arquillian.archive.builder.WebArchiveBuilder;
 import org.cyk.utility.server.business.test.TestBusinessCreate;
-import org.cyk.utility.server.business.test.arquillian.AbstractBusinessArquillianIntegrationTestWithDefaultDeployment;
+import org.cyk.utility.server.business.test.arquillian.AbstractBusinessArquillianIntegrationTest;
 import org.cyk.utility.server.persistence.query.filter.Filter;
-import org.cyk.utility.stream.distributed.Topic;
-import org.cyk.utility.system.node.SystemNodeServer;
-import org.cyk.utility.time.TimeHelper;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
-import org.keycloak.admin.client.resource.UserResource;
-import org.keycloak.representations.idm.UserRepresentation;
 
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserAccountBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserBusiness;
@@ -54,23 +50,58 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Service;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ServiceResource;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 
-public class BusinessIntegrationTestKeycloak extends AbstractBusinessArquillianIntegrationTestWithDefaultDeployment {
+public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrationTest {
 	private static final long serialVersionUID = 1L;
 	
 	@Override
 	protected void __listenBefore__() {
 		super.__listenBefore__();
+		ConfigurationHelper.clear();
 		__inject__(ApplicationScopeLifeCycleListener.class).initialize(null);
 		__inject__(ProfileTypeBusiness.class).createMany(CollectionHelper.listOf(new ProfileType().setCode(ProfileType.CODE_SYSTEM).setName("Système")
 				,new ProfileType().setCode(ProfileType.CODE_UTILISATEUR).setName("Utilisateur")));
 	}
 	
-	//@Test
-	public void read_systemName() throws Exception{
-		System.setProperty("cyk.parameter.system.name", "Gestion des acteurs");
-		assertThat(__inject__(SystemNodeServer.class).getName()).isEqualTo("Gestion des acteurs");
+	@Test
+	public void import_scope() throws Exception{
+		__inject__(ScopeTypeBusiness.class).createMany(List.of(new ScopeType().setCode("SECTION").setName("Section"),new ScopeType().setCode("PROGRAM").setName("Program")));
+		ConfigurationHelper.setClassUniformResourceIdentifier(Scope.class,"SECTION", getClass().getResource("section.json"));
+		ConfigurationHelper.setFieldName(Scope.class,"SECTION", "code", "code");
+		ConfigurationHelper.setFieldName(Scope.class,"SECTION", "libelle", "name");
+		ConfigurationHelper.setFieldName(Scope.class,"SECTION", "uuid", "link");
+		ConfigurationHelper.setClassUniformResourceIdentifier(Scope.class,"PROGRAM", getClass().getResource("program.json"));
+		ConfigurationHelper.setFieldName(Scope.class,"PROGRAM", "code", "code");
+		ConfigurationHelper.setFieldName(Scope.class,"PROGRAM", "libelle", "name");
+		ConfigurationHelper.setFieldName(Scope.class,"PROGRAM", "uuid", "link");
+		
+		__inject__(ScopeBusiness.class).import_(null);
+		
+		Collection<Scope> scopes = __inject__(ScopeBusiness.class).find();
+		assertThat(scopes).isNotNull();
+		assertThat(scopes.stream().map(Scope::getName).collect(Collectors.toList())).containsAnyOf("Ministère de la Justice","Ministère des infrastructures"
+				,"Ministère de la défense","Ministère du Budget","Lutte contre la pauvreté","Alphabétisation de la jeune fille","Sécurité et défense de la nation");
+	}
+	
+	@Test
+	public void import_scope_twice() throws Exception{
+		__inject__(ScopeTypeBusiness.class).createMany(List.of(new ScopeType().setCode("SECTION").setName("Section"),new ScopeType().setCode("PROGRAM").setName("Program")));
+		ConfigurationHelper.setClassUniformResourceIdentifier(Scope.class,"SECTION", getClass().getResource("section.json"));
+		ConfigurationHelper.setFieldName(Scope.class,"SECTION", "code", "code");
+		ConfigurationHelper.setFieldName(Scope.class,"SECTION", "libelle", "name");
+		ConfigurationHelper.setFieldName(Scope.class,"SECTION", "uuid", "link");
+		ConfigurationHelper.setClassUniformResourceIdentifier(Scope.class,"PROGRAM", getClass().getResource("program.json"));
+		ConfigurationHelper.setFieldName(Scope.class,"PROGRAM", "code", "code");
+		ConfigurationHelper.setFieldName(Scope.class,"PROGRAM", "libelle", "name");
+		ConfigurationHelper.setFieldName(Scope.class,"PROGRAM", "uuid", "link");
+		
+		__inject__(ScopeBusiness.class).import_(null);
+		__inject__(ScopeBusiness.class).import_(null);
+		
+		Collection<Scope> scopes = __inject__(ScopeBusiness.class).find();
+		assertThat(scopes).isNotNull();
+		assertThat(scopes.stream().map(Scope::getName).collect(Collectors.toList())).containsAnyOf("Ministère de la Justice","Ministère des infrastructures"
+				,"Ministère de la défense","Ministère du Budget","Lutte contre la pauvreté","Alphabétisation de la jeune fille","Sécurité et défense de la nation");
 	}
 	
 	@Test
@@ -173,8 +204,7 @@ public class BusinessIntegrationTestKeycloak extends AbstractBusinessArquillianI
 				);
 		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(8l);
 		Profile profile = __inject__(ProfileBusiness.class).findByBusinessIdentifier("p02");
-		profile.setFunctions(null);
-		profile.getFunctions(Boolean.TRUE).add(__inject__(FunctionPersistence.class).readByBusinessIdentifier("f02"));
+		profile.setFunctions(null).addFunctions(__inject__(FunctionPersistence.class).readByBusinessIdentifier("f02"));
 		__inject__(ProfileBusiness.class).update(profile,new Properties().setFields(Profile.FIELD_FUNCTIONS));
 		assertThat(__inject__(ProfileFunctionPersistence.class).count()).isEqualTo(6l);
 		__inject__(ProfileBusiness.class).deleteByBusinessIdentifier("p01");
@@ -332,8 +362,7 @@ public class BusinessIntegrationTestKeycloak extends AbstractBusinessArquillianI
 		assertThat(user.getFunctions()).isNotNull();
 		assertThat(user.getFunctions().stream().map(Function::getCode).collect(Collectors.toList())).containsOnly("f01","f03");
 		
-		user.setFunctions(null);
-		user.addFunctionsByCodes("f03");
+		user.setFunctions(null).addFunctionsByCodes("f03");
 		__inject__(UserBusiness.class).update(user,new Properties().setFields("functions"));
 		user = __inject__(UserBusiness.class).findBySystemIdentifier("u01",new Properties().setFields("names,functions"));
 		assertThat(user).isNotNull();
@@ -350,16 +379,7 @@ public class BusinessIntegrationTestKeycloak extends AbstractBusinessArquillianI
 	}
 	
 	@Test
-	public void create_userAccount() throws Exception{
-		if(Boolean.TRUE.equals(Topic.MAIL.getIsConsumerStarted())) {
-			startServersZookeeperAndKafka();
-			__inject__(TimeHelper.class).pause(1000l * 15);
-		}
-		
-		if(Boolean.TRUE.equals(Topic.MAIL.getIsConsumerStarted())) {
-			__inject__(TimeHelper.class).pause(1000l * 15);
-		}
-		
+	public void create_userAccount() throws Exception{		
 		ScopeType scopeType = new ScopeType().setCode("MINISTERE").setName("Ministère");
 		__inject__(ScopeTypeBusiness.class).create(scopeType);
 		Scope scope = new Scope().setIdentifier("21").setType(scopeType);
@@ -420,7 +440,7 @@ public class BusinessIntegrationTestKeycloak extends AbstractBusinessArquillianI
 		
 		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields("user,account,"+User.FIELD_FUNCTIONS));
 		userAccount01.getUser().addFunctionsByCodes("CE");
-		__inject__(UserAccountBusiness.class).update(userAccount01,new Properties().setFields("functions"));
+		__inject__(UserAccountBusiness.class).update(userAccount01,new Properties().setFields("user.functions"));
 		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_USER+","+User.FIELD_FUNCTIONS));
 		assertThat(userAccount01).isNotNull();
 		assertThat(userAccount01.getUser().getFunctions()).isNotNull();
@@ -429,25 +449,73 @@ public class BusinessIntegrationTestKeycloak extends AbstractBusinessArquillianI
 		
 		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_USER+","+User.FIELD_FUNCTIONS));
 		userAccount01.getUser().setFunctions(null);
-		__inject__(UserAccountBusiness.class).update(userAccount01,new Properties().setFields("functions"));
+		userAccount01.setFunctions(null);
+		__inject__(UserAccountBusiness.class).update(userAccount01,new Properties().setFields("user.functions"));
 		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields(UserAccount.FIELD_USER+","+User.FIELD_FUNCTIONS));
 		assertThat(userAccount01).isNotNull();
 		assertThat(userAccount01.getUser().getFunctions()).isNull();
 		
-		UserResource userResource = __inject__(KeycloakHelper.class).getUsersResource().get(userAccount.getIdentifier());
-		UserRepresentation userRepresentation = userResource.toRepresentation();
-		Map<String,List<String>> attributes = userRepresentation.getAttributes();
-		assertThat(attributes).contains(
-				new AbstractMap.SimpleEntry<String, List<String>>("MINISTERE",(List<String>)CollectionHelper.listOf("21"))
-				).hasSize(1);
-		
-		if(Boolean.TRUE.equals(Topic.MAIL.getIsConsumerStarted())) {
-			__inject__(TimeHelper.class).pause(1000l * 25);
-			stopServersKafkaAndZookeeper();	
-		}else {
-			
-		}
+		assertThat(userAccount01.getScopes()).isNull();
+		userAccount01.addScopesByIdentifiers("21");
+		__inject__(UserAccountBusiness.class).update(userAccount01,new Properties().setFields("scopes"));
+		userAccount01 = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields("identifier,scopes"));
+		assertThat(userAccount01.getScopes()).isNotNull();
+		assertThat(userAccount01.getScopes()).hasSize(1);
+		assertThat(userAccount01.getScopes().stream().map(Scope::getIdentifier).collect(Collectors.toList())).containsOnly("21");
 	}
+	
+	@Test
+	public void update_userAccount_functionality_profile() throws Exception{
+		FunctionType functionType = new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__());
+		__inject__(FunctionTypeBusiness.class).create(functionType);
+		__inject__(FunctionBusiness.class).create(new Function().setCode("CONTROLEUR_FINANCIER").setName(__getRandomName__()).setType(functionType).setIsProfileCreatableOnCreate(Boolean.FALSE));
+		__inject__(FunctionBusiness.class).create(new Function().setCode("CE").setName(__getRandomName__()).setType(functionType).setIsProfileCreatableOnCreate(Boolean.FALSE));
+		
+		UserAccount userAccount = new UserAccount();
+		userAccount.getUser(Boolean.TRUE).setFirstName("Zadi").setLastNames("Paul-François").setElectronicMailAddress(__getRandomElectronicMailAddress__())
+		.addFunctionsByCodes("CONTROLEUR_FINANCIER");
+		userAccount.getAccount(Boolean.TRUE).setIdentifier(__getRandomCode__());		
+		__inject__(UserAccountBusiness.class).create(userAccount);
+		userAccount = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields("user.functions"));
+		assertThat(userAccount).isNotNull();
+		assertThat(userAccount.getUser()).isNotNull();
+		assertThat(userAccount.getUser().getFunctions().stream().map(Function::getCode).collect(Collectors.toList())).containsExactlyInAnyOrder("CONTROLEUR_FINANCIER");
+		
+		userAccount.getUser().setFirstName("Konan");
+		userAccount.getUser().setFunctions(null);
+		__inject__(UserAccountBusiness.class).update(userAccount,new Properties().setFields("user.functions"));
+		userAccount = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields("user.functions"));
+		assertThat(userAccount).isNotNull();
+		assertThat(userAccount.getUser()).isNotNull();
+		assertThat(userAccount.getUser().getFirstName()).isEqualTo("Konan");
+		assertThat(userAccount.getUser().getLastNames()).isEqualTo("Paul-François");
+		assertThat(userAccount.getUser().getFunctions()).isNull();
+		
+		userAccount.getUser().setFirstName("Abou");
+		userAccount.getUser().setLastNames("Gérard");
+		userAccount.getUser().setElectronicMailAddress("newmail@mail.com");
+		userAccount.getUser().addFunctionsByCodes("CONTROLEUR_FINANCIER");
+		__inject__(UserAccountBusiness.class).update(userAccount,new Properties().setFields("user.functions"));
+		userAccount = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields("user.functions"));
+		assertThat(userAccount).isNotNull();
+		assertThat(userAccount.getUser()).isNotNull();
+		assertThat(userAccount.getUser().getFirstName()).isEqualTo("Abou");
+		assertThat(userAccount.getUser().getLastNames()).isEqualTo("Gérard");
+		assertThat(userAccount.getUser().getElectronicMailAddress()).isEqualTo("newmail@mail.com");
+		assertThat(userAccount.getUser().getFunctions().stream().map(Function::getCode).collect(Collectors.toList())).containsExactlyInAnyOrder("CONTROLEUR_FINANCIER");
+		
+		userAccount.getUser().addFunctionsByCodes("CE");
+		__inject__(UserAccountBusiness.class).update(userAccount,new Properties().setFields("user.functions"));
+		userAccount = __inject__(UserAccountBusiness.class).findBySystemIdentifier(userAccount.getIdentifier(),new Properties().setFields("user.functions"));
+		assertThat(userAccount).isNotNull();
+		assertThat(userAccount.getUser()).isNotNull();
+		assertThat(userAccount.getUser().getFirstName()).isEqualTo("Abou");
+		assertThat(userAccount.getUser().getLastNames()).isEqualTo("Gérard");
+		assertThat(userAccount.getUser().getElectronicMailAddress()).isEqualTo("newmail@mail.com");
+		assertThat(userAccount.getUser().getFunctions().stream().map(Function::getCode).collect(Collectors.toList())).containsExactlyInAnyOrder("CONTROLEUR_FINANCIER","CE");
+		
+	}
+	
 	/*
 	@Test
 	public void create_userAccountProfile() throws Exception{
@@ -580,4 +648,12 @@ public class BusinessIntegrationTestKeycloak extends AbstractBusinessArquillianI
 				,interim.getUser(),interim.getAccount(),interim).addObjects(userAccountInterim).execute();
 	}
 	*/
+	
+	@org.jboss.arquillian.container.test.api.Deployment
+	public static WebArchive createArchive(){
+		return new WebArchiveBuilder().execute()
+				.addAsResource("ci/gouv/dgbf/system/usermanagement/server/business/impl/integration/section.json")
+				.addAsResource("ci/gouv/dgbf/system/usermanagement/server/business/impl/integration/program.json")
+				; 
+	}
 }
