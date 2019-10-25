@@ -7,6 +7,7 @@ import java.util.Collection;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.cyk.utility.__kernel__.collection.CollectionHelper;
+import org.cyk.utility.__kernel__.configuration.ConfigurationHelper;
 import org.cyk.utility.__kernel__.instance.InstanceGetter;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.__kernel__.string.StringHelper;
@@ -22,6 +23,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeHierarchies;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeHierarchy;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.VariableName;
 
 @ApplicationScoped
 public class ScopeBusinessImpl extends AbstractBusinessIdentifiedByStringImpl<Scope, ScopePersistence,ScopeHierarchy,ScopeHierarchies,ScopeHierarchyPersistence,ScopeHierarchyBusiness> implements ScopeBusiness,Serializable {
@@ -34,7 +36,8 @@ public class ScopeBusinessImpl extends AbstractBusinessIdentifiedByStringImpl<Sc
 			return this;
 		Collection<Scope> scopes = null;
 		for(ScopeType scopeType : scopeTypes) {
-			Collection<Scope> __scopes__ = InstanceGetter.getInstance().getFromUniformResourceIdentifier(Scope.class,(Object)scopeType.getCode(), "code");
+			Collection<Scope> __scopes__ = InstanceGetter.getInstance().getFromUniformResourceIdentifier(Scope.class,(Object)scopeType.getCode()
+					, ConfigurationHelper.getValueAsString(VariableName.getScopeFieldCode(scopeType)));
 			if(CollectionHelper.isEmpty(__scopes__))
 				continue;
 			if(scopes == null)

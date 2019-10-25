@@ -6,13 +6,12 @@ import java.util.Collection;
 import javax.enterprise.context.ApplicationScoped;
 
 import org.cyk.utility.__kernel__.DependencyInjection;
-import org.cyk.utility.array.ArrayInstanceTwoDimensionString;
 import org.cyk.utility.__kernel__.collection.CollectionHelper;
+import org.cyk.utility.array.ArrayInstanceTwoDimensionString;
 import org.cyk.utility.file.excel.FileExcelSheetDataArrayReader;
 import org.cyk.utility.server.business.AbstractApplicationScopeLifeCycleListenerImplementation;
 
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionTypeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.PrivilegeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.PrivilegeTypeBusiness;
@@ -20,14 +19,11 @@ import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.Profi
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeTypeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.PrivilegeTypePersistence;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ScopeTypePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Function;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Privilege;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.PrivilegeType;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ProfileType;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
 
 @ApplicationScoped
@@ -124,47 +120,15 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 		__logInfo__("Creating "+privileges.size()+" privileges");
 		//__inject__(PrivilegeBusiness.class).saveByBatch(privileges,100);
 		__inject__(PrivilegeBusiness.class).createMany(privileges);
-		/*
-		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
-		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("ministère");
-		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
-		arrayInstance = reader.execute().getOutput();
-		Collection<Scope> sections = new ArrayList<>();
-		ScopeType scopeTypeSection = __inject__(ScopeTypePersistence.class).readByBusinessIdentifier("SECTION");
-		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount(); index = index + 1)
-			sections.add(new Scope().setIdentifier(arrayInstance.get(index, 0)).setType(scopeTypeSection));
-		__logInfo__("Creating "+sections.size()+" section");
-		*/
+		
 		try {
 			__inject__(ScopeBusiness.class).import_(null);
 		} catch (Exception exception) {
 			exception.printStackTrace();
 		}
-		/*
-		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
-		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("programme");
-		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
-		arrayInstance = reader.execute().getOutput();
-		Collection<Scope> ugps = new ArrayList<>();
-		ScopeType scopeTypeUgp = __inject__(ScopeTypePersistence.class).readByBusinessIdentifier("UGP");
-		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount(); index = index + 1)
-			ugps.add(new Scope().setIdentifier(arrayInstance.get(index, 0)).setType(scopeTypeUgp));
-		__logInfo__("Creating "+ugps.size()+" ugp");
-		__inject__(ScopeBusiness.class).saveByBatch(ugps,100);
 		
 		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
-		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("unité administrative");
-		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
-		arrayInstance = reader.execute().getOutput();
-		Collection<Scope> uas = new ArrayList<>();
-		ScopeType scopeTypeUa = __inject__(ScopeTypePersistence.class).readByBusinessIdentifier("UA");
-		for(Integer index  = 0; index < arrayInstance.getFirstDimensionElementCount() && index < 100; index = index + 1)
-			uas.add(new Scope().setIdentifier(arrayInstance.get(index, 0)).setType(scopeTypeUa));
-		__logInfo__("Creating "+uas.size()+" ua");
-		__inject__(ScopeBusiness.class).saveByBatch(uas,100);
-		*/
-		reader = DependencyInjection.inject(FileExcelSheetDataArrayReader.class);
-		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("type de fonction");
+		reader.setWorkbookInputStream(getClass().getResourceAsStream("data.xlsx")).setSheetName("type fonction");
 		reader.getRowInterval(Boolean.TRUE).getLow(Boolean.TRUE).setValue(1);
 		arrayInstance = reader.execute().getOutput();
 		Collection<FunctionType> functionTypes = new ArrayList<>();

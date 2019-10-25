@@ -1,124 +1,396 @@
 {
 	"section": [
 		{
-			"code": "221",
-			"gouvernementCode": "10072018",
-			"gouvernementUUID": "d59663ab-f8eb-48ae-b826-ffd5591f23e8",
-			"libelle": "Ministère de la Justice",
-			"natureSectionLibelle": "",
-			"natureSectionUUID": "",
-			"sectionTypeNumero": "22",
-			"sectionTypeUUID": "fe926516-7012-405d-9862-aab0b961a2a6",
-			"sigle": "MJ",
-			"uuid": "a753aae1-5add-4f04-a912-ee612e704573"
+			"categorieSectionCode": "I",
+			"libelleCourt": "REPRESENTATION NATIONALE",
+			"libelleLong": "REPRESENTATION NATIONALE",
+			"numero": "01",
+			"uuid": "40bf55eb-9528-403d-a21c-4ae9a7a78ae3"
 		},
 		{
-			"code": "240",
-			"gouvernementCode": "10072018",
-			"gouvernementUUID": "d59663ab-f8eb-48ae-b826-ffd5591f23e8",
-			"libelle": "Ministère des infrastructures",
-			"natureSectionLibelle": "",
-			"natureSectionUUID": "",
-			"sectionTypeNumero": "24",
-			"sectionTypeUUID": "979efa64-deef-4db9-8873-7808fb423035",
-			"sigle": "MI",
-			"uuid": "4b7daba5-bddd-4a0f-9d9f-1a4d646071fe"
+			"categorieSectionCode": "I",
+			"libelleCourt": "SENAT",
+			"libelleLong": "SENAT",
+			"numero": "02",
+			"uuid": "01122a89-031e-493a-83f5-9b09473fcd9c"
 		},
 		{
-			"code": "250",
-			"gouvernementCode": "10072018",
-			"gouvernementUUID": "d59663ab-f8eb-48ae-b826-ffd5591f23e8",
-			"libelle": "Ministère de la défense",
-			"natureSectionLibelle": "",
-			"natureSectionUUID": "",
-			"sectionTypeNumero": "25",
-			"sectionTypeUUID": "a069b7ed-5193-400e-975a-847be9cd4600",
-			"sigle": "MD",
-			"uuid": "25b08aa7-7219-4f1a-983f-8dc878b1c38c"
+			"categorieSectionCode": "I",
+			"libelleCourt": "PRESIDENCE DE LA REPUBLIQUE",
+			"libelleLong": "PRESIDENCE DE LA REPUBLIQUE",
+			"numero": "03",
+			"uuid": "dc0ef53d-3409-4cf3-b24a-b01cb57d481b"
 		},
 		{
-			"code": "300",
-			"gouvernementCode": "10072018",
-			"gouvernementUUID": "d59663ab-f8eb-48ae-b826-ffd5591f23e8",
-			"libelle": "Ministère du Budget",
-			"natureSectionLibelle": "",
-			"natureSectionUUID": "",
-			"sectionTypeNumero": "30",
-			"sectionTypeUUID": "c878b8bb-3a66-4a49-b575-18c0e174668a",
-			"sigle": "MB",
-			"uuid": "5ffad6a1-164b-4bba-b13e-80190a1786de"
+			"categorieSectionCode": "I",
+			"libelleCourt": "CONSEIL ECONOMIQUE, SOCIAL, ENVIRONNEMENTAL ET CULTUREL",
+			"libelleLong": "CONSEIL ECONOMIQUE ET SOCIALE",
+			"numero": "05",
+			"uuid": "81d7ccd9-655f-4574-986e-e7b474482f18"
 		},
 		{
-			"code": "220",
-			"gouvernementCode": "10072018",
-			"gouvernementUUID": "d59663ab-f8eb-48ae-b826-ffd5591f23e8",
-			"libelle": "Ministère de la Justice de la diaspora",
-			"natureSectionLibelle": "",
-			"natureSectionUUID": "",
-			"sectionTypeNumero": "22",
-			"sectionTypeUUID": "fe926516-7012-405d-9862-aab0b961a2a6",
-			"sigle": "MJD",
-			"uuid": "f42c4188-5712-4bba-a86d-1a74730a03e3"
+			"categorieSectionCode": "I",
+			"libelleCourt": "CONSEIL CONSTITUTIONNEL",
+			"libelleLong": "CONSEIL CONSTITUTIONNEL",
+			"numero": "06",
+			"uuid": "630b15ae-0e9c-48fd-8d4b-6e979ca18224"
 		},
 		{
-			"code": "222",
-			"gouvernementCode": "10072018",
-			"gouvernementUUID": "d59663ab-f8eb-48ae-b826-ffd5591f23e8",
-			"libelle": "Ministère de la Justice",
-			"natureSectionLibelle": "",
-			"natureSectionUUID": "",
-			"sectionTypeNumero": "22",
-			"sectionTypeUUID": "fe926516-7012-405d-9862-aab0b961a2a6",
-			"sigle": "MJ",
-			"uuid": "98a5b080-84d7-4fc7-b159-34ddf429e1eb"
+			"categorieSectionCode": "I",
+			"libelleCourt": "GRANDE CHANCELLERIE",
+			"libelleLong": "GRANDE CHANCELLERIE",
+			"numero": "07",
+			"uuid": "5dd94529-595c-400d-ba18-e5e0998f6272"
 		},
 		{
-			"code": "251",
-			"gouvernementCode": "15102019",
-			"gouvernementUUID": "d91bdf25-41da-4867-9cef-d5bb02637e4d",
-			"libelle": "Ministère délégué",
-			"natureSectionLibelle": "",
-			"natureSectionUUID": "",
-			"sectionTypeNumero": "25",
-			"sectionTypeUUID": "a069b7ed-5193-400e-975a-847be9cd4600",
-			"sigle": "min",
-			"uuid": "1e78d823-53d0-4434-a94a-440b4a959125"
+			"categorieSectionCode": "I",
+			"libelleCourt": "PRIMATURE ET SERVICES RATTACHES",
+			"libelleLong": "PRIMATURE ",
+			"numero": "08",
+			"uuid": "b36b02bc-7940-4260-8d7a-e325fcf10cb9"
 		},
 		{
-			"code": "253",
-			"gouvernementCode": "15102019",
-			"gouvernementUUID": "d91bdf25-41da-4867-9cef-d5bb02637e4d",
-			"libelle": "shdgsghf",
-			"natureSectionLibelle": "",
-			"natureSectionUUID": "",
-			"sectionTypeNumero": "25",
-			"sectionTypeUUID": "a069b7ed-5193-400e-975a-847be9cd4600",
-			"sigle": "fdghf",
-			"uuid": "ed9c9d5a-1c8d-4cf9-b3fe-d69c2409246e"
+			"categorieSectionCode": "I",
+			"libelleCourt": "MEDIATEUR DE LA REPUBLIQUE",
+			"libelleLong": "MEDIATURE",
+			"numero": "09",
+			"uuid": "f472c6f8-5e62-44f3-9ef2-bf44a8dc9d1d"
 		},
 		{
-			"code": "220",
-			"gouvernementCode": "15082019",
-			"gouvernementUUID": "47dbbd97-6760-4e1a-a275-15cf83f467b8",
-			"libelle": "Ministère de la Justice",
-			"natureSectionLibelle": "",
-			"natureSectionUUID": "",
-			"sectionTypeNumero": "22",
-			"sectionTypeUUID": "fe926516-7012-405d-9862-aab0b961a2a6",
-			"sigle": "MJ",
-			"uuid": "e96075f5-a7ef-4d31-b825-927246c36887"
+			"categorieSectionCode": "I",
+			"libelleCourt": "COMMISSION ELECTORALE INDEPENDANTE",
+			"libelleLong": "COMM. ELECT. INDEPENDANTE",
+			"numero": "10",
+			"uuid": "c9fa4f5f-3366-4658-afaf-e307d5c0a445"
 		},
 		{
-			"code": "222",
-			"gouvernementCode": "15082019",
-			"gouvernementUUID": "47dbbd97-6760-4e1a-a275-15cf83f467b8",
-			"libelle": "Ministère de la Justice",
-			"natureSectionLibelle": "",
-			"natureSectionUUID": "",
-			"sectionTypeNumero": "22",
-			"sectionTypeUUID": "fe926516-7012-405d-9862-aab0b961a2a6",
-			"sigle": "MJ",
-			"uuid": "840bda3a-dbf6-4c73-aa61-20376364b822"
+			"categorieSectionCode": "I",
+			"libelleCourt": "CHAMBRE NATIONALE DES ROIS ET CHEFS TRADITIONNELS",
+			"libelleLong": "CHAMBRE DES ROIS",
+			"numero": "11",
+			"uuid": "06485a73-d205-453c-bfb9-8b29b98c430a"
+		},
+		{
+			"categorieSectionCode": "I",
+			"libelleCourt": "COUR SUPREME",
+			"libelleLong": "COUR SUPREME",
+			"numero": "13",
+			"uuid": "5ae8dce8-ae17-40ef-ae54-9161eb3eaec1"
+		},
+		{
+			"categorieSectionCode": "I",
+			"libelleCourt": "COUR DE CASSATION",
+			"libelleLong": "COUR DE CASSATION",
+			"numero": "14",
+			"uuid": "d905903b-2f9e-404c-a882-d8d40543fcb3"
+		},
+		{
+			"categorieSectionCode": "I",
+			"libelleCourt": "COUR DES COMPTES",
+			"libelleLong": "COUR DES COMPTES",
+			"numero": "15",
+			"uuid": "b711a15b-3969-4837-9f09-907ee5fdb985"
+		},
+		{
+			"categorieSectionCode": "I",
+			"libelleCourt": "PARQUET GENERAL",
+			"libelleLong": "PARQUET GENERAL",
+			"numero": "16",
+			"uuid": "fa92770e-7747-416a-8ef3-d97ee11490d9"
+		},
+		{
+			"categorieSectionCode": "I",
+			"libelleCourt": "PARQUET GENERAL PRES LA COUR DES COMPTES",
+			"libelleLong": "PARQUET PRES LA COUR DES COMPTES",
+			"numero": "17",
+			"uuid": "ca1c941c-c6e2-4280-9018-95119097c251"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DES AFFAIRES ETRANGÈRES",
+			"libelleLong": "MIN. AFFAIRES ETRANGERES",
+			"numero": "21",
+			"uuid": "8299d505-a7a5-49e2-bfb2-b5c0ec89e8af"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DE L'ECONOMIE ET DES FINANCES",
+			"libelleLong": "MIN. ECONOMIE & FINANCES",
+			"numero": "22",
+			"uuid": "8a28185c-3313-45a4-9763-0937f09007a1"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DE L'INTÉRIEUR ET DE LA SECURITE",
+			"libelleLong": "MIN. DE L'INTERIEUR",
+			"numero": "23",
+			"uuid": "041ca20d-794f-48d7-a674-0205ad9cc66b"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "SECRETARIAT D'ETAT AUPRES DU GARDE DES SCEAUX, MINISTRE DE LA JUSTICE ET DES DROITS DE L'HOMME, CHARGE DES DROITS DE L'HOMME",
+			"libelleLong": "SECR. ETAT DROITS DE L'HOMME",
+			"numero": "25",
+			"uuid": "3af1991c-cfb2-408d-8b8d-8a5a5c673c7e"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE D'ETAT, MINISTÈRE DE LA DEFENSE",
+			"libelleLong": "MIN. DEFENSE",
+			"numero": "26",
+			"uuid": "4cb86217-521e-4e18-b3fc-fcdb30faf1ed"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "SECRETARIAT D'ETAT AUPRES DU PREMIER MINISTRE, CHARGE DU BUDGET ET DU PORTEFEUILLE DE L'ETAT",
+			"libelleLong": "MIN DU BUDGET & PORTFEUILLE",
+			"numero": "27",
+			"uuid": "9bd587fa-bf76-441e-b6c0-f067111f2b68"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DU PLAN ET DU DÉVELOPPEMENT",
+			"libelleLong": "MIN. PLAN & DEVELOPPEMENT",
+			"numero": "28",
+			"uuid": "d348dc3e-4ff7-4bf1-9b08-dfed7a5d7207"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DE L'AGRICULTURE ET DU DEVELOPPEMENT RURAL",
+			"libelleLong": "MIN. DE L'AGRO & DEV RURAL",
+			"numero": "29",
+			"uuid": "a03db33e-2b3e-495a-a4d7-5d430b3d796e"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DE L'EQUIPEMENT ET DE L'ENTRETIEN ROUTIER",
+			"libelleLong": "MIN. INFRASTRUCTURES ECONOMIQUES",
+			"numero": "30",
+			"uuid": "8065811c-2d3a-4203-9bea-21121aed1983"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DE L'EDUCATION NATIONALE, DE L' ENSEIGNEMENT TECHNIQUE ET DE LA FORMATION PROFESSIONNELLE ",
+			"libelleLong": "MIN. EDUCATION NATIONALE ",
+			"numero": "31",
+			"uuid": "64d62662-78d7-4db8-a132-5b02927d0aab"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DE L'ENSEIGNEMENT SUPÉRIEUR ET DE LA RECHERCHE SCIENTIFIQUE ",
+			"libelleLong": "MIN. ENSEIG SUPERIEUR ET DE LA RECH. SC.",
+			"numero": "33",
+			"uuid": "2c8ffc6a-2264-4f7f-9a0c-f3a03e614686"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DE LA SANTÉ ET DE L'HYGIENE PUBLIQUE",
+			"libelleLong": "MIN. SANTE & HYG PUBLIQUE",
+			"numero": "35",
+			"uuid": "c3821010-af2d-44c4-9ca3-a4e4638daefa"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DE LA COMMUNICATION ET DES MEDIAS",
+			"libelleLong": "MIN. DE LA COMMUNICATION ",
+			"numero": "36",
+			"uuid": "a902c061-4123-428f-b3a5-05840c527bce"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DE LA FONCTION PUBLIQUE",
+			"libelleLong": "MIN. FONCT. PUB ",
+			"numero": "37",
+			"uuid": "e81484f7-efe7-43b5-8653-e3093bc1aad5"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DU PÉTROLE, DE L'ENERGIE ET DES ENERGIES RENOUVELABLES",
+			"libelleLong": "MIN. PETROLE & ENERGIE",
+			"numero": "38",
+			"uuid": "aeaa90db-dfaf-4836-9d78-42f2bf21bc92"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DE L'INTÉGRATION AFRICAINE ET DES IVOIRIENS DE L'EXTERIEUR",
+			"libelleLong": "MIN. INTÉGRATION AFRICAINE & IV EXT",
+			"numero": "39",
+			"uuid": "72c2f957-2fff-46ce-8fed-039819171893"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DES TRANSPORTS",
+			"libelleLong": "MIN. TRANSPORTS",
+			"numero": "40",
+			"uuid": "f85c9ba3-87e3-48de-a3f7-6037ae6e5a20"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTERE DE LA MODERNISATION  DE L'ADMINISTRATION ET DE L'INOVATION DU SERVICE PUBLIC",
+			"libelleLong": "MIN MODERNISATION DE L'ADMINISTRAT°",
+			"numero": "42",
+			"uuid": "1cd26d34-3345-4412-ac8d-b8040ffd74a2"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTERE DE L'ENVIRONNEMENT ET DU DEVELOPPEMENT DURABLE",
+			"libelleLong": "MM. ENV & DEV DURABLE",
+			"numero": "43",
+			"uuid": "5e787f54-49b3-4f87-9b31-70e0d56874b0"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DES SPORTS",
+			"libelleLong": "MIN. SPORTS & LOISIRS",
+			"numero": "44",
+			"uuid": "055bd7c1-ccd5-4763-aedd-80f3b30f50e1"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DES EAUX ET FORÊTS",
+			"libelleLong": "MIN. EAUX & FORÊTS",
+			"numero": "45",
+			"uuid": "5f6d3025-807d-4c1d-a64c-09de11cd4618"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DE LA CULTURE ET DE LA FRANCOPHONIE",
+			"libelleLong": "MIN. CULTURE & FRANCOPHONIE",
+			"numero": "46",
+			"uuid": "9de84ffe-29ef-445f-acd3-3625a4c0ecd5"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DU COMMERCE, DE L'INDUSTRIE ET DE LA PROMOTION DES PME",
+			"libelleLong": "MIN. COMMERCE & INDUSTRIE",
+			"numero": "47",
+			"uuid": "ff2f27fe-bfb6-4ce6-8d26-7c87c243c411"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DES MINES ET DE LA GEOLOGIE",
+			"libelleLong": "MIN. MINES",
+			"numero": "48",
+			"uuid": "fc84afa6-506f-4b38-a71c-4ac895602a59"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "SECRETARIAT D'ETAT AUPRES DU MINISTRE DU COMMERCE, DE L'INDUSTRIE ET DE LA PROMOTION DES PME, CHARGE DE LA PROMOTION DES PME",
+			"libelleLong": "SECR. ETAT PROMOTION DES PME",
+			"numero": "49",
+			"uuid": "5cbf8411-275b-47be-b104-1bc29769a306"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DU TOURISME ET DES LOISIRS",
+			"libelleLong": "MIN. DU TOURISME ",
+			"numero": "50",
+			"uuid": "b767d928-0772-484e-a035-3c3a05a41aa3"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DES RESSOURCES ANIMALES ET HALIEUTIQUES",
+			"libelleLong": "MIN. PROD ANIMAL & RESS HALIEUTIQ",
+			"numero": "51",
+			"uuid": "73cc7e4a-8d3e-4707-97d1-b1b5fe20e0e5"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DE LA FEMME,DE LA FAMILLE ET DE L'ENFANT ",
+			"libelleLong": "MIN.FEMME, FAMILLE & ENFANT",
+			"numero": "52",
+			"uuid": "7bb32b92-bf3f-4b99-bb9c-eb2263ff571f"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTERE DE L'ECONOMIE NUMERIQUE ET DE LA POSTE",
+			"libelleLong": "MM. ECO NUM & POSTE",
+			"numero": "56",
+			"uuid": "4b9e5eca-6369-42d8-9c10-e1fe07e1fc09"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTERE DE LA PROMOTION DE LA JEUNESSE ET DE L'EMPLOI DES JEUNES",
+			"libelleLong": "MIN JEUNESSE &  EMPLOI JEUNE",
+			"numero": "57",
+			"uuid": "e5e7b0ac-5d47-4ea7-9525-9ccfc18816f1"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DE LA CONSTRUCTION, DU LOGEMENT ET DE L'URBANISME",
+			"libelleLong": "MIN. CONSTRUCTION & URBANISME",
+			"numero": "58",
+			"uuid": "6df78d9e-47a9-4a6e-85da-5bc36d765d7a"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTERE DE L'ARTISANAT",
+			"libelleLong": "MM. ARTISINAT",
+			"numero": "60",
+			"uuid": "20e04f0f-8761-43b9-8f16-d23ea07f6f0e"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "SECRETARIAT D'ETAT AUPRES DU PREMIER MINISTRE CHARGE DE LA PROMOTION DE L'INVESTISSEMENT PRIVE",
+			"libelleLong": "SECR. ETAT PROMOTION DE L'INV PRIVE",
+			"numero": "61",
+			"uuid": "38177cea-6112-438d-ada2-a3043290a9e9"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DE L'EMPLOI ET DE LA PROTECTION SOCIALE",
+			"libelleLong": "MIN. EMPLOI & PROTECTION SOCIALE",
+			"numero": "62",
+			"uuid": "56ddd189-f6a7-4c63-9093-b1cf32ab6a3a"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DE L'ASSAINISSEMENT ET DE LA SALUBRITE",
+			"libelleLong": "MIN ASSAINISSEMENT & SALUBRITE",
+			"numero": "66",
+			"uuid": "48a807ea-57c8-4dbc-a02e-04c10da8aaf2"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTERE DE LA SOLIDARITE,DE LA COHESION SOCIALE ET DE LA LUTTE CONTRE LA PAUVRETE",
+			"libelleLong": "MM.SOLIDARITE",
+			"numero": "69",
+			"uuid": "08da46fe-82f5-4453-b19f-e4cef567832f"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTERE DE L'HYDRAULIQUE",
+			"libelleLong": "MM. HYDRAULIQUE",
+			"numero": "77",
+			"uuid": "c96ba73d-6557-4bee-b44f-f32b76183208"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTERE DE LA VILLE",
+			"libelleLong": "MIM.VILLE",
+			"numero": "78",
+			"uuid": "4abe3738-faf0-4d15-9c1c-104b72b53b3c"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "SECRETARIAT D'ETAT CHARGE DU SERVICE CIVIQUE",
+			"libelleLong": "SECR. ETAT SERVICE CIVIQUE",
+			"numero": "79",
+			"uuid": "c01ebaf2-32b9-45f8-97d1-53db240f3b22"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "MINISTÈRE DE LA JUSTICE ET DES DROITS DE L'HOMME",
+			"libelleLong": "MIN. JUSTICE  &  DROIT DE L'HOMME",
+			"numero": "80",
+			"uuid": "df60b6c2-ddb4-4386-9978-ce7620847107"
+		},
+		{
+			"categorieSectionCode": "M",
+			"libelleCourt": "Ministre auprès du Président de la République, chargé des Relations avec les Institutions de la République",
+			"libelleLong": "MIN. RELAT. INST. REPUBLIQUE",
+			"numero": "81",
+			"uuid": "f3b1fbc8-39c4-4f70-bbf7-5d71df6877ff"
 		}
 	]
 }

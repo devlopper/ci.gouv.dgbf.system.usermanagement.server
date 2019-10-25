@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.cyk.utility.__kernel__.collection.CollectionHelper;
+import org.cyk.utility.__kernel__.configuration.ConfigurationHelper;
 import org.cyk.utility.__kernel__.instance.InstanceGetter;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.persistence.PersistenceFunctionCreator;
@@ -20,6 +21,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeHierarchies;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeHierarchy;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.VariableName;
 
 @ApplicationScoped
 public class ScopePersistenceImpl extends AbstractPersistenceIdentifiedByStringImpl<Scope,ScopeHierarchy,ScopeHierarchies,ScopeHierarchyPersistence> implements ScopePersistence,Serializable {
@@ -62,7 +64,15 @@ public class ScopePersistenceImpl extends AbstractPersistenceIdentifiedByStringI
 		if(CollectionHelper.isEmpty(scopeTypes))
 			return;
 		for(ScopeType scopeType : scopeTypes) {
-			Collection<Scope> __scopes__ = InstanceGetter.getInstance().getFromUniformResourceIdentifier(Scope.class,(Object)scopeType.getCode(), "code","libelle");
+			Collection<Scope> __scopes__ = null;
+			try {
+				__scopes__ = InstanceGetter.getInstance().getFromUniformResourceIdentifier(Scope.class,(Object)scopeType.getCode()
+						, ConfigurationHelper.getValueAsString(VariableName.getScopeFieldCode(scopeType))
+						,ConfigurationHelper.getValueAsString(VariableName.getScopeFieldName(scopeType)));
+			} catch (Exception exception) {
+				exception.printStackTrace();
+				continue;
+			}
 			if(CollectionHelper.isEmpty(__scopes__))
 				continue;
 			for(Scope index : scopes) {
