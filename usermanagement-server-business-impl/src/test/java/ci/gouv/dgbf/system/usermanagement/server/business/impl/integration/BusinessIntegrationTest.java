@@ -11,6 +11,7 @@ import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.__kernel__.configuration.ConfigurationHelper;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.__kernel__.test.arquillian.archive.builder.WebArchiveBuilder;
+import org.cyk.utility.__kernel__.variable.VariableHelper;
 import org.cyk.utility.server.business.test.TestBusinessCreate;
 import org.cyk.utility.server.business.test.arquillian.AbstractBusinessArquillianIntegrationTest;
 import org.cyk.utility.server.persistence.query.filter.Filter;
@@ -66,14 +67,14 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	@Test
 	public void import_scope() throws Exception{
 		__inject__(ScopeTypeBusiness.class).createMany(List.of(new ScopeType().setCode("SECTION").setName("Section"),new ScopeType().setCode("PROGRAM").setName("Program")));
-		ConfigurationHelper.setClassUniformResourceIdentifier(Scope.class,"SECTION", getClass().getResource("section.json"));
-		ConfigurationHelper.setFieldName(Scope.class,"SECTION", "code", "code");
-		ConfigurationHelper.setFieldName(Scope.class,"SECTION", "libelle", "name");
-		ConfigurationHelper.setFieldName(Scope.class,"SECTION", "uuid", "link");
-		ConfigurationHelper.setClassUniformResourceIdentifier(Scope.class,"PROGRAM", getClass().getResource("program.json"));
-		ConfigurationHelper.setFieldName(Scope.class,"PROGRAM", "code", "code");
-		ConfigurationHelper.setFieldName(Scope.class,"PROGRAM", "libelle", "name");
-		ConfigurationHelper.setFieldName(Scope.class,"PROGRAM", "uuid", "link");
+		VariableHelper.writeClassUniformResourceIdentifier(Scope.class,"SECTION", getClass().getResource("section.json"));
+		VariableHelper.writeFieldName(Scope.class,"SECTION", "code", "code");
+		VariableHelper.writeFieldName(Scope.class,"SECTION", "libelle", "name");
+		VariableHelper.writeFieldName(Scope.class,"SECTION", "uuid", "link");
+		VariableHelper.writeClassUniformResourceIdentifier(Scope.class,"PROGRAM", getClass().getResource("program.json"));
+		VariableHelper.writeFieldName(Scope.class,"PROGRAM", "code", "code");
+		VariableHelper.writeFieldName(Scope.class,"PROGRAM", "libelle", "name");
+		VariableHelper.writeFieldName(Scope.class,"PROGRAM", "uuid", "link");
 		
 		__inject__(ScopeBusiness.class).import_(null);
 		
@@ -86,14 +87,14 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	@Test
 	public void import_scope_twice() throws Exception{
 		__inject__(ScopeTypeBusiness.class).createMany(List.of(new ScopeType().setCode("SECTION").setName("Section"),new ScopeType().setCode("PROGRAM").setName("Program")));
-		ConfigurationHelper.setClassUniformResourceIdentifier(Scope.class,"SECTION", getClass().getResource("section.json"));
-		ConfigurationHelper.setFieldName(Scope.class,"SECTION", "code", "code");
-		ConfigurationHelper.setFieldName(Scope.class,"SECTION", "libelle", "name");
-		ConfigurationHelper.setFieldName(Scope.class,"SECTION", "uuid", "link");
-		ConfigurationHelper.setClassUniformResourceIdentifier(Scope.class,"PROGRAM", getClass().getResource("program.json"));
-		ConfigurationHelper.setFieldName(Scope.class,"PROGRAM", "code", "code");
-		ConfigurationHelper.setFieldName(Scope.class,"PROGRAM", "libelle", "name");
-		ConfigurationHelper.setFieldName(Scope.class,"PROGRAM", "uuid", "link");
+		VariableHelper.writeClassUniformResourceIdentifier(Scope.class,"SECTION", getClass().getResource("section.json"));
+		VariableHelper.writeFieldName(Scope.class,"SECTION", "code", "code");
+		VariableHelper.writeFieldName(Scope.class,"SECTION", "libelle", "name");
+		VariableHelper.writeFieldName(Scope.class,"SECTION", "uuid", "link");
+		VariableHelper.writeClassUniformResourceIdentifier(Scope.class,"PROGRAM", getClass().getResource("program.json"));
+		VariableHelper.writeFieldName(Scope.class,"PROGRAM", "code", "code");
+		VariableHelper.writeFieldName(Scope.class,"PROGRAM", "libelle", "name");
+		VariableHelper.writeFieldName(Scope.class,"PROGRAM", "uuid", "link");
 		
 		__inject__(ScopeBusiness.class).import_(null);
 		__inject__(ScopeBusiness.class).import_(null);

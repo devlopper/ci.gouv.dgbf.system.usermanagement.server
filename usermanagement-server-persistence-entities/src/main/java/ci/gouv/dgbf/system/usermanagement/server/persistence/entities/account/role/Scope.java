@@ -2,7 +2,6 @@ package ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.r
 
 import java.io.Serializable;
 
-import javax.json.bind.annotation.JsonbProperty;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -35,38 +34,21 @@ public class Scope extends AbstractIdentifiedByStringAndLinkedByStringAndNamed<S
 		return this;
 	}
 	
-	@Override @JsonbProperty(value="code")
 	public Scope setIdentifier(String identifier) {
 		return (Scope) super.setIdentifier(identifier);
 	}
 	
-	@Override @JsonbProperty(value="code")
-	public String getIdentifier() {
-		return super.getIdentifier();
-	}
-	
-	@Override @JsonbProperty(value="uuid")
-	public String getLink() {
-		return super.getLink();
-	}
-	
-	@Override @JsonbProperty(value="uuid")
-	public Scope setLink(String link) {
-		return (Scope) super.setLink(link);
-	}
-	
-	@Override @JsonbProperty(value="libelle")
-	public String getName() {
-		return super.getName();
-	}
-	
-	@Override @JsonbProperty(value="libelle")
 	public Scope setName(String name) {
 		return (Scope) super.setName(name);
 	}
 	
 	/**/
 
+	@Override
+	public String toString() {
+		return type+":"+code+":"+name;
+	}
+	
 	public static final String FIELD_TYPE = "type";
 	public static final String FIELD_CODE = "code";
 	

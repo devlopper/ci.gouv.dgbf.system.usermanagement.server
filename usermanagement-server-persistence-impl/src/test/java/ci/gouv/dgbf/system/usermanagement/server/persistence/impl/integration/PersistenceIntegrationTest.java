@@ -9,8 +9,11 @@ import java.util.stream.Collectors;
 
 import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.__kernel__.configuration.ConfigurationHelper;
+import org.cyk.utility.__kernel__.instance.InstanceGetter;
 import org.cyk.utility.__kernel__.properties.Properties;
+import org.cyk.utility.__kernel__.protocol.http.HttpClientGetter;
 import org.cyk.utility.__kernel__.test.arquillian.archive.builder.WebArchiveBuilder;
+import org.cyk.utility.__kernel__.variable.VariableHelper;
 import org.cyk.utility.server.persistence.query.filter.Filter;
 import org.cyk.utility.server.persistence.test.TestPersistenceCreate;
 import org.cyk.utility.server.persistence.test.arquillian.AbstractPersistenceArquillianIntegrationTest;
@@ -81,14 +84,18 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Test
 	public void read_scope_many() throws Exception{
-		ConfigurationHelper.setClassUniformResourceIdentifier(Scope.class,"SECTION", getClass().getResource("section.json"));
-		ConfigurationHelper.setFieldName(Scope.class,"SECTION", "code", "code");
-		ConfigurationHelper.setFieldName(Scope.class,"SECTION", "libelle", "name");
-		ConfigurationHelper.setFieldName(Scope.class,"SECTION", "uuid", "link");
-		ConfigurationHelper.setClassUniformResourceIdentifier(Scope.class,"PROGRAM", getClass().getResource("program.json"));
-		ConfigurationHelper.setFieldName(Scope.class,"PROGRAM", "code", "code");
-		ConfigurationHelper.setFieldName(Scope.class,"PROGRAM", "libelle", "name");
-		ConfigurationHelper.setFieldName(Scope.class,"PROGRAM", "uuid", "link");
+		System.out.println("PersistenceIntegrationTest.read_scope_many() : "+InstanceGetter.getInstance());
+		System.out.println("EntitiesUnitTestIntegration.get() : "+HttpClientGetter.getInstance());
+		//System.out.println("EntitiesUnitTestIntegration.get() : "+HttpClientGetter.getInstance().get());
+		
+		VariableHelper.writeClassUniformResourceIdentifier(Scope.class,"SECTION", getClass().getResource("section.json"));
+		VariableHelper.writeFieldName(Scope.class,"SECTION", "code", "code");
+		VariableHelper.writeFieldName(Scope.class,"SECTION", "name", "libelle");
+		VariableHelper.writeFieldName(Scope.class,"SECTION", "link", "uuid");
+		VariableHelper.writeClassUniformResourceIdentifier(Scope.class,"PROGRAM", getClass().getResource("program.json"));
+		VariableHelper.writeFieldName(Scope.class,"PROGRAM", "code", "code");
+		VariableHelper.writeFieldName(Scope.class,"PROGRAM", "name", "libelle");
+		VariableHelper.writeFieldName(Scope.class,"PROGRAM", "link", "uuid");
 		
 		userTransaction.begin();
 		ScopeType scopeType = new ScopeType().setCode("SECTION").setName(__getRandomName__());
@@ -111,14 +118,14 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	
 	@Test
 	public void read_scope_one() throws Exception{
-		ConfigurationHelper.setClassUniformResourceIdentifier(Scope.class,"SECTION", getClass().getResource("section.json"));
-		ConfigurationHelper.setFieldName(Scope.class,"SECTION", "code", "code");
-		ConfigurationHelper.setFieldName(Scope.class,"SECTION", "libelle", "name");
-		ConfigurationHelper.setFieldName(Scope.class,"SECTION", "uuid", "link");
-		ConfigurationHelper.setClassUniformResourceIdentifier(Scope.class,"PROGRAM", getClass().getResource("program.json"));
-		ConfigurationHelper.setFieldName(Scope.class,"PROGRAM", "code", "code");
-		ConfigurationHelper.setFieldName(Scope.class,"PROGRAM", "libelle", "name");
-		ConfigurationHelper.setFieldName(Scope.class,"PROGRAM", "uuid", "link");
+		VariableHelper.writeClassUniformResourceIdentifier(Scope.class,"SECTION", getClass().getResource("section.json"));
+		VariableHelper.writeFieldName(Scope.class,"SECTION", "code", "code");
+		VariableHelper.writeFieldName(Scope.class,"SECTION", "libelle", "name");
+		VariableHelper.writeFieldName(Scope.class,"SECTION", "uuid", "link");
+		VariableHelper.writeClassUniformResourceIdentifier(Scope.class,"PROGRAM", getClass().getResource("program.json"));
+		VariableHelper.writeFieldName(Scope.class,"PROGRAM", "code", "code");
+		VariableHelper.writeFieldName(Scope.class,"PROGRAM", "libelle", "name");
+		VariableHelper.writeFieldName(Scope.class,"PROGRAM", "uuid", "link");
 		
 		userTransaction.begin();
 		ScopeType scopeType = new ScopeType().setCode("SECTION").setName(__getRandomName__());
