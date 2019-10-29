@@ -392,5 +392,19 @@
 			"numero": "81",
 			"uuid": "f3b1fbc8-39c4-4f70-bbf7-5d71df6877ff"
 		}
+	],
+	"programme": [
+		{
+			"code": "01",
+			"libelle": "Lutte contre la pauvreté"
+		},
+		{
+			"code": "02",
+			"libelle": "Alphabétisation de la jeune fille"
+		},
+		{
+			"code": "03",
+			"libelle": "Sécurité et défense de la nation"
+		}
 	]
 }

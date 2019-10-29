@@ -9,11 +9,10 @@ import java.util.stream.Collectors;
 
 import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.__kernel__.configuration.ConfigurationHelper;
-import org.cyk.utility.__kernel__.instance.InstanceGetter;
 import org.cyk.utility.__kernel__.properties.Properties;
-import org.cyk.utility.__kernel__.protocol.http.HttpClientGetter;
+import org.cyk.utility.__kernel__.protocol.http.HttpHelper;
 import org.cyk.utility.__kernel__.test.arquillian.archive.builder.WebArchiveBuilder;
-import org.cyk.utility.__kernel__.variable.VariableHelper;
+import org.cyk.utility.__kernel__.variable.VariableName;
 import org.cyk.utility.server.persistence.query.filter.Filter;
 import org.cyk.utility.server.persistence.test.TestPersistenceCreate;
 import org.cyk.utility.server.persistence.test.arquillian.AbstractPersistenceArquillianIntegrationTest;
@@ -63,10 +62,25 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 
 public class PersistenceIntegrationTest extends AbstractPersistenceArquillianIntegrationTest {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Override
 	protected void __listenBefore__() {
 		super.__listenBefore__();
+		System.setProperty(VariableName.buildClassUniformResourceIdentifier(Scope.class,"SECTION"), "http://localhost:10000/section");
+		System.setProperty(VariableName.buildFieldName(Scope.class, (Object)"SECTION", Scope.FIELD_CODE), "numero");
+		System.setProperty(VariableName.buildFieldName(Scope.class, (Object)"SECTION", Scope.FIELD_NAME), "libelleLong");
+		System.setProperty(VariableName.buildFieldName(Scope.class, (Object)"SECTION", Scope.FIELD_LINK), "uuid");
+		
+		System.setProperty(VariableName.buildClassUniformResourceIdentifier(Scope.class,"PROGRAM"), "http://localhost:10000/programme");
+		System.setProperty(VariableName.buildFieldName(Scope.class,(Object)"PROGRAM", Scope.FIELD_CODE),"code");
+		System.setProperty(VariableName.buildFieldName(Scope.class,(Object)"PROGRAM", Scope.FIELD_NAME),"libelle");
+		System.setProperty(VariableName.buildFieldName(Scope.class,(Object)"PROGRAM", Scope.FIELD_LINK),"uuid");
+	}
+	
+	@Override
+	protected void __listenAfter__() {
+		super.__listenAfter__();
+		HttpHelper.clear();
 		ConfigurationHelper.clear();
 	}
 	
@@ -83,70 +97,62 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	}
 	
 	@Test
-	public void read_scope_many() throws Exception{
-		System.out.println("PersistenceIntegrationTest.read_scope_many() : "+InstanceGetter.getInstance());
-		System.out.println("EntitiesUnitTestIntegration.get() : "+HttpClientGetter.getInstance());
-		//System.out.println("EntitiesUnitTestIntegration.get() : "+HttpClientGetter.getInstance().get());
-		
-		VariableHelper.writeClassUniformResourceIdentifier(Scope.class,"SECTION", getClass().getResource("section.json"));
-		VariableHelper.writeFieldName(Scope.class,"SECTION", "code", "code");
-		VariableHelper.writeFieldName(Scope.class,"SECTION", "name", "libelle");
-		VariableHelper.writeFieldName(Scope.class,"SECTION", "link", "uuid");
-		VariableHelper.writeClassUniformResourceIdentifier(Scope.class,"PROGRAM", getClass().getResource("program.json"));
-		VariableHelper.writeFieldName(Scope.class,"PROGRAM", "code", "code");
-		VariableHelper.writeFieldName(Scope.class,"PROGRAM", "name", "libelle");
-		VariableHelper.writeFieldName(Scope.class,"PROGRAM", "link", "uuid");
-		
+	public void read_scope_many() throws Exception{			
 		userTransaction.begin();
 		ScopeType scopeType = new ScopeType().setCode("SECTION").setName(__getRandomName__());
 		__inject__(ScopeTypePersistence.class).create(scopeType);
-		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("221"));
-		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("240"));
-		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("250"));
-		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("300"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("01"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("02"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("03"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("04"));
 		scopeType = new ScopeType().setCode("PROGRAM").setName(__getRandomName__());
 		__inject__(ScopeTypePersistence.class).create(scopeType);
-		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("221"));
-		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("2"));
-		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("3"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("01"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("02"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("03"));
 		userTransaction.commit();
 		Collection<Scope> scopes = __inject__(ScopePersistence.class).read();
 		assertThat(scopes).isNotNull();
-		assertThat(scopes.stream().map(Scope::getName).collect(Collectors.toList())).containsAnyOf("Ministère de la Justice","Ministère des infrastructures"
-				,"Ministère de la défense","Ministère du Budget","Lutte contre la pauvreté","Alphabétisation de la jeune fille","Sécurité et défense de la nation");
+		assertThat(scopes.stream().map(Scope::getName).collect(Collectors.toList())).containsAnyOf("REPRESENTATION NATIONALE","SENAT"
+				,"PRESIDENCE DE LA REPUBLIQUE","CONSEIL ECONOMIQUE ET SOCIALE","Lutte contre la pauvreté","Alphabetisation de la jeune fille","Securite et defense de la nation");
 	}
 	
 	@Test
 	public void read_scope_one() throws Exception{
-		VariableHelper.writeClassUniformResourceIdentifier(Scope.class,"SECTION", getClass().getResource("section.json"));
-		VariableHelper.writeFieldName(Scope.class,"SECTION", "code", "code");
-		VariableHelper.writeFieldName(Scope.class,"SECTION", "libelle", "name");
-		VariableHelper.writeFieldName(Scope.class,"SECTION", "uuid", "link");
-		VariableHelper.writeClassUniformResourceIdentifier(Scope.class,"PROGRAM", getClass().getResource("program.json"));
-		VariableHelper.writeFieldName(Scope.class,"PROGRAM", "code", "code");
-		VariableHelper.writeFieldName(Scope.class,"PROGRAM", "libelle", "name");
-		VariableHelper.writeFieldName(Scope.class,"PROGRAM", "uuid", "link");
-		
 		userTransaction.begin();
 		ScopeType scopeType = new ScopeType().setCode("SECTION").setName(__getRandomName__());
 		__inject__(ScopeTypePersistence.class).create(scopeType);
-		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("221"));
-		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("240"));
-		__inject__(ScopePersistence.class).create(new Scope().setIdentifier("250").setType(scopeType).setCode("250"));
-		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("300"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("01"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("02"));
+		__inject__(ScopePersistence.class).create(new Scope().setIdentifier("03").setType(scopeType).setCode("03"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("04"));
 		scopeType = new ScopeType().setCode("PROGRAM").setName(__getRandomName__());
 		__inject__(ScopeTypePersistence.class).create(scopeType);
-		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("221"));
-		__inject__(ScopePersistence.class).create(new Scope().setIdentifier("2").setType(scopeType).setCode("2"));
-		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("3"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("01"));
+		__inject__(ScopePersistence.class).create(new Scope().setIdentifier("02").setType(scopeType).setCode("02"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("03"));
 		userTransaction.commit();
-		Scope scope = __inject__(ScopePersistence.class).readBySystemIdentifier("250");
+		Scope scope = __inject__(ScopePersistence.class).readBySystemIdentifier("03");
 		assertThat(scope).isNotNull();
-		assertThat(scope.getName()).isEqualTo("Ministère de la défense");
+		assertThat(scope.getName()).isEqualTo("PRESIDENCE DE LA REPUBLIQUE");
 		
-		scope = __inject__(ScopePersistence.class).readBySystemIdentifier("2");
+		scope = __inject__(ScopePersistence.class).readBySystemIdentifier("02");
 		assertThat(scope).isNotNull();
-		assertThat(scope.getName()).isEqualTo("Alphabétisation de la jeune fille");
+		assertThat(scope.getName()).isEqualTo("Alphabetisation de la jeune fille");
+	}
+	
+	@Test
+	public void read_scope_one_program() throws Exception{
+		userTransaction.begin();
+		ScopeType scopeType = new ScopeType().setCode("PROGRAM").setName(__getRandomName__());
+		__inject__(ScopeTypePersistence.class).create(scopeType);
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("01"));
+		__inject__(ScopePersistence.class).create(new Scope().setIdentifier("02").setType(scopeType).setCode("02"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("03"));
+		userTransaction.commit();
+		Scope scope = __inject__(ScopePersistence.class).readBySystemIdentifier("02");
+		assertThat(scope).isNotNull();
+		assertThat(scope.getName()).isEqualTo("Alphabetisation de la jeune fille");
 	}
 	
 	@Test
@@ -760,7 +766,7 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	public static WebArchive createArchive(){
 		return new WebArchiveBuilder().execute()
 				.addAsResource("ci/gouv/dgbf/system/usermanagement/server/persistence/impl/integration/section.json")
-				.addAsResource("ci/gouv/dgbf/system/usermanagement/server/persistence/impl/integration/program.json")
+				.addAsResource("ci/gouv/dgbf/system/usermanagement/server/persistence/impl/integration/programme.json")
 				; 
 	}
 }

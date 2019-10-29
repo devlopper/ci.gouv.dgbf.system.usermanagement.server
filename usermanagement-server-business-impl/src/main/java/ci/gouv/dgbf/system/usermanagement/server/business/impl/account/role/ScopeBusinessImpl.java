@@ -35,8 +35,6 @@ public class ScopeBusinessImpl extends AbstractBusinessIdentifiedByStringImpl<Sc
 		Collection<Scope> scopes = null;
 		for(ScopeType scopeType : scopeTypes) {
 			Collection<Scope> __scopes__ = RestHelper.getMany(Scope.class,scopeType.getCode());
-					//InstanceGetter.getInstance().getFromUniformResourceIdentifier(Scope.class,(Object)scopeType.getCode()
-					//, ConfigurationHelper.getValueAsString(VariableName.getScopeFieldCode(scopeType)));
 			if(CollectionHelper.isEmpty(__scopes__))
 				continue;
 			if(scopes == null)

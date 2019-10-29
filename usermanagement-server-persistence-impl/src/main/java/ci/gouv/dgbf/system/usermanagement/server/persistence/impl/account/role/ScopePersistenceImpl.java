@@ -65,9 +65,6 @@ public class ScopePersistenceImpl extends AbstractPersistenceIdentifiedByStringI
 			Collection<Scope> __scopes__ = null;
 			try {
 				__scopes__ = RestHelper.getMany(Scope.class,scopeType.getCode());
-				//InstanceGetter.getInstance().getFromUniformResourceIdentifier(Scope.class,(Object)scopeType.getCode()
-				//		, ConfigurationHelper.getValueAsString(VariableName.getScopeFieldCode(scopeType))
-				//		,ConfigurationHelper.getValueAsString(VariableName.getScopeFieldName(scopeType)));
 			} catch (Exception exception) {
 				exception.printStackTrace();
 				continue;

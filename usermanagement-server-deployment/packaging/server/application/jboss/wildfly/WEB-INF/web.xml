@@ -26,28 +26,23 @@
 	<!--  -->
 	
 	<context-param>
-		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope|SECTION|uri</param-name>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-SECTION-uri</param-name>
 		<param-value>http://localhost:3000/section</param-value>
 	</context-param>
 	
 	<context-param>
-		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope|SECTION|uri|code</param-name>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-SECTION-code</param-name>
 		<param-value>numero</param-value>
 	</context-param>
 	
 	<context-param>
-		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope|SECTION|uri|name</param-name>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-SECTION-name</param-name>
 		<param-value>libelleLong</param-value>
 	</context-param>
 	
 	<context-param>
-		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope|SECTION|numero</param-name>
-		<param-value>code</param-value>
-	</context-param>
-	
-	<context-param>
-		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope|SECTION|libelleLong</param-name>
-		<param-value>name</param-value>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-SECTION-link</param-name>
+		<param-value>uuid</param-value>
 	</context-param>
 	
 	<!-- Swagger -->

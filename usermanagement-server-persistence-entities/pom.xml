@@ -14,6 +14,10 @@
 	<artifactId>usermanagement-server-persistence-entities</artifactId>
 	<packaging>jar</packaging>
 	
+	<properties>
+		<org.mock-server.mockserver-maven-plugin.configuration.initializationClass>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.MockServerExpectationInitializer</org.mock-server.mockserver-maven-plugin.configuration.initializationClass>
+	</properties>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.cyk.jee.utility.server.persistence</groupId>

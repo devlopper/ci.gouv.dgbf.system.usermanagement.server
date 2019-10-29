@@ -2,6 +2,7 @@ package ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.r
 
 import java.io.Serializable;
 
+import javax.json.bind.annotation.JsonbProperty;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -27,7 +28,7 @@ public class Scope extends AbstractIdentifiedByStringAndLinkedByStringAndNamed<S
 	private static final long serialVersionUID = 1L;
 	
 	@ManyToOne @JoinColumn(name=COLUMN_TYPE) @NotNull private ScopeType type;
-	@Column(name=COLUMN_CODE) @NotNull private String code;
+	@Column(name=COLUMN_CODE) @NotNull @JsonbProperty private String code;
 	
 	public Scope setTypeFromCode(String code) {
 		__setFromBusinessIdentifier__(FIELD_TYPE, code);
