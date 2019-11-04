@@ -69,6 +69,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	private static final long serialVersionUID = 1L;
 
 	private String realmName;
+	@Deprecated
 	@Getter @Setter @Accessors(chain=true) private Keycloak client;
 	
 	private Boolean __isEnable__;
@@ -76,6 +77,8 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	@Override
 	protected void __listenPostConstruct__() {
 		super.__listenPostConstruct__();
+		client = org.cyk.utility.__kernel__.security.keycloak.KeycloakClientGetter.getInstance().get();
+		/*
 		__isEnable__ = ConfigurationHelper.is(VariableName.SECURITY_DELEGATE_SYSTEM_IS_ENABLE);
 		if(Boolean.TRUE.equals(__isEnable__)) {
 			String url = ValueHelper.returnOrThrowIfBlank("keycloak server url",ConfigurationHelper.getValueAsString("keycloak.server.url")); 
@@ -95,6 +98,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 		}else {
 			System.out.println("********************************************** KEYCLOAK INTEGRATION HAS NOT BEEN ENABLE ***********************************************");
 		}
+		*/
 	}
 	
 	@Override

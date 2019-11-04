@@ -26,7 +26,9 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 
 public interface KeycloakHelper extends Helper {
 
+	@Deprecated
 	KeycloakHelper setClient(Keycloak client);
+	@Deprecated
 	Keycloak getClient();
 	
 	RealmResource getRealmResource();
