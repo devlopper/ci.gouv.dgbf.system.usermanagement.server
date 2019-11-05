@@ -27,10 +27,7 @@ import org.cyk.utility.__kernel__.string.StringHelper;
 import org.cyk.utility.__kernel__.value.ValueHelper;
 import org.cyk.utility.__kernel__.variable.VariableName;
 import org.cyk.utility.helper.AbstractHelper;
-import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
-import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.ClientResource;
 import org.keycloak.admin.client.resource.ClientsResource;
 import org.keycloak.admin.client.resource.RealmResource;
@@ -77,6 +74,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	@Override
 	protected void __listenPostConstruct__() {
 		super.__listenPostConstruct__();
+		__isEnable__ = ConfigurationHelper.is(VariableName.KEYCLOAK_ENABLED);
 		client = org.cyk.utility.__kernel__.security.keycloak.KeycloakClientGetter.getInstance().get();
 		/*
 		__isEnable__ = ConfigurationHelper.is(VariableName.SECURITY_DELEGATE_SYSTEM_IS_ENABLE);
