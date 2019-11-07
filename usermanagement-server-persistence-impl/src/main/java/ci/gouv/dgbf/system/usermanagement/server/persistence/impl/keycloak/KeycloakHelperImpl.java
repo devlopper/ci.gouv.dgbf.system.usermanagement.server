@@ -65,7 +65,6 @@ import lombok.experimental.Accessors;
 public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper,Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private String realmName;
 	@Deprecated
 	@Getter @Setter @Accessors(chain=true) private Keycloak client;
 	
@@ -74,7 +73,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	@Override
 	protected void __listenPostConstruct__() {
 		super.__listenPostConstruct__();
-		__isEnable__ = ConfigurationHelper.is(VariableName.KEYCLOAK_ENABLED);
+		__isEnable__ = ConfigurationHelper.is(VariableName.SECURITY_DELEGATE_SYSTEM_IS_ENABLE);
 		client = org.cyk.utility.__kernel__.security.keycloak.KeycloakClientGetter.getInstance().get();
 		/*
 		__isEnable__ = ConfigurationHelper.is(VariableName.SECURITY_DELEGATE_SYSTEM_IS_ENABLE);
@@ -101,7 +100,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	
 	@Override
 	public RealmResource getRealmResource() {
-		return getClient().realm(realmName);
+		return org.cyk.utility.__kernel__.security.keycloak.KeycloakHelper.getRealmResource();
 	}
 	
 	@Override
@@ -493,7 +492,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	@Override
 	public ClientResource getClientResource(String identifier) {
 		try {
-			return getClient().realm(realmName).clients().get(identifier);
+			return org.cyk.utility.__kernel__.security.keycloak.KeycloakHelper.getRealmResource().clients().get(identifier);
 		} catch (Exception exception) {
 			__logWarning__(String.format("Identifier <<%s>> not found. %s", identifier,exception.toString()));
 		}
@@ -506,7 +505,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 			ClientRepresentation clientRepresentation = new ClientRepresentation();
 			clientRepresentation.setId(service.getIdentifier());
 			clientRepresentation.setRootUrl(service.getUrl());
-			getClient().realm(realmName).clients().create(clientRepresentation);
+			org.cyk.utility.__kernel__.security.keycloak.KeycloakHelper.getRealmResource().clients().create(clientRepresentation);
 		}
 		return this;
 	}
@@ -579,7 +578,7 @@ public class KeycloakHelperImpl extends AbstractHelper implements KeycloakHelper
 	@Override
 	public KeycloakHelper createRolePolicy(Service service,Profile profile) {
 		if(Boolean.TRUE.equals(__isEnable__)) {
-			ClientResource clientResource = getClient().realm(realmName).clients().get(service.getIdentifier());
+			ClientResource clientResource = org.cyk.utility.__kernel__.security.keycloak.KeycloakHelper.getRealmResource().clients().get(service.getIdentifier());
 			RolePolicyRepresentation rolePolicyRepresentation = new RolePolicyRepresentation();
 			rolePolicyRepresentation.setId(service.getIdentifier()+profile.getIdentifier());
 			rolePolicyRepresentation.setName(profile.getCode());

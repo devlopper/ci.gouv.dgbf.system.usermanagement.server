@@ -15,7 +15,17 @@
 	
 	<context-param>
 		<param-name>cyk.variable.system.name</param-name>
-		<param-value>Gestion des acteurs</param-value>
+		<param-value>SIIBC Gestion des acteurs</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.system.host</param-name>
+		<param-value>${cyk.variable.system.host}</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.system.port</param-name>
+		<param-value>${cyk.variable.system.port}</param-value>
 	</context-param>
 	
 	<context-param>
@@ -23,21 +33,112 @@
 		<param-value>${jboss-web.context-root}</param-value>
 	</context-param>	
 	
-	<!--  -->
+	<!-- 	Section  -->
 	
 	<context-param>
-		<param-name>cyk.parameter.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope_uri</param-name>
-		<param-value>http://localhost:3000/sections</param-value>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-SECTION-uri</param-name>
+		<param-value>${cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-SECTION-uri}</param-value>
 	</context-param>
 	
 	<context-param>
-		<param-name>cyk.parameter.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope.code</param-name>
-		<param-value>identifier</param-value>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-SECTION-code</param-name>
+		<param-value>numero</param-value>
 	</context-param>
 	
 	<context-param>
-		<param-name>cyk.parameter.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope.libelle</param-name>
-		<param-value>name</param-value>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-SECTION-name</param-name>
+		<param-value>libelleLong</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-SECTION-link</param-name>
+		<param-value>uuid</param-value>
+	</context-param>
+	
+	<!-- 	UGP  -->
+	
+	<context-param>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UGP-uri</param-name>
+		<param-value>${cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UGP-uri}</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UGP-code</param-name>
+		<param-value>code</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UGP-name</param-name>
+		<param-value>libelleLong</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UGP-link</param-name>
+		<param-value>uuid</param-value>
+	</context-param>
+	
+	<!-- 	UA  -->
+	
+	<context-param>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UA-uri</param-name>
+		<param-value>${cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UA-uri}</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UA-code</param-name>
+		<param-value>codeUA</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UA-name</param-name>
+		<param-value>libelleLong</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UA-link</param-name>
+		<param-value>uuid</param-value>
+	</context-param>
+	
+	<!-- Keycloak -->
+	
+	<context-param>
+		<param-name>cyk.variable.security.delegate.system.is.enable</param-name>
+		<param-value>${cyk.variable.security.delegate.system.is.enable}</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.keycloak.enabled</param-name>
+		<param-value>${cyk.variable.keycloak.enabled}</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.keycloak.client.identifier</param-name>
+		<param-value>${cyk.variable.keycloak.client.identifier}</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.keycloak.client.secret</param-name>
+		<param-value>${cyk.variable.keycloak.client.secret}</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.keycloak.credential.password</param-name>
+		<param-value>${cyk.variable.keycloak.credential.password}</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.keycloak.credential.username</param-name>
+		<param-value>${cyk.variable.keycloak.credential.username}</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.keycloak.realm.name</param-name>
+		<param-value>${cyk.variable.keycloak.realm.name}</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.keycloak.server.url</param-name>
+		<param-value>${cyk.variable.keycloak.server.url}</param-value>
 	</context-param>
 	
 	<!-- Swagger -->
@@ -49,7 +150,7 @@
 	
 	<context-param>
 		<param-name>cyk.variable.swagger.bean.config.resource.package</param-name>
-		<param-value>ci.gouv.dgbf.system.usermanagement.server.representation.api</param-value>
+		<param-value>org.cyk.utility.server.representation.impl,ci.gouv.dgbf.system.usermanagement.server.representation.api</param-value>
 	</context-param>
 		
 </web-app>

@@ -66,15 +66,9 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 	@Override
 	protected void __listenBefore__() {
 		super.__listenBefore__();
-		System.setProperty(VariableName.buildClassUniformResourceIdentifier(Scope.class,"SECTION"), "http://localhost:10000/section");
-		System.setProperty(VariableName.buildFieldName(Scope.class, (Object)"SECTION", Scope.FIELD_CODE), "numero");
-		System.setProperty(VariableName.buildFieldName(Scope.class, (Object)"SECTION", Scope.FIELD_NAME), "libelleLong");
-		System.setProperty(VariableName.buildFieldName(Scope.class, (Object)"SECTION", Scope.FIELD_LINK), "uuid");
-		
-		System.setProperty(VariableName.buildClassUniformResourceIdentifier(Scope.class,"PROGRAM"), "http://localhost:10000/programme");
-		System.setProperty(VariableName.buildFieldName(Scope.class,(Object)"PROGRAM", Scope.FIELD_CODE),"code");
-		System.setProperty(VariableName.buildFieldName(Scope.class,(Object)"PROGRAM", Scope.FIELD_NAME),"libelle");
-		System.setProperty(VariableName.buildFieldName(Scope.class,(Object)"PROGRAM", Scope.FIELD_LINK),"uuid");
+		setProperties(Scope.class, "SECTION", "numero", "libelleLong", "uuid");
+		setProperties(Scope.class, "UGP", "code", "libelleLong", "uuid");
+		setProperties(Scope.class, "UA", "codeUA", "libelleLong", "uuid");
 	}
 	
 	@Override
@@ -105,16 +99,20 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("02"));
 		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("03"));
 		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("04"));
-		scopeType = new ScopeType().setCode("PROGRAM").setName(__getRandomName__());
+		scopeType = new ScopeType().setCode("UGP").setName(__getRandomName__());
 		__inject__(ScopeTypePersistence.class).create(scopeType);
-		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("01"));
-		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("02"));
-		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("03"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("220670000"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("220680000"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("220690000"));
+		scopeType = new ScopeType().setCode("UA").setName(__getRandomName__());
+		__inject__(ScopeTypePersistence.class).create(scopeType);
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("011212010001"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("011111010002"));
 		userTransaction.commit();
 		Collection<Scope> scopes = __inject__(ScopePersistence.class).read();
 		assertThat(scopes).isNotNull();
 		assertThat(scopes.stream().map(Scope::getName).collect(Collectors.toList())).containsAnyOf("REPRESENTATION NATIONALE","SENAT"
-				,"PRESIDENCE DE LA REPUBLIQUE","CONSEIL ECONOMIQUE ET SOCIALE","Lutte contre la pauvreté","Alphabetisation de la jeune fille","Securite et defense de la nation");
+				,"PRESIDENCE DE LA REPUBLIQUE","CONSEIL ECONOMIQUE ET SOCIALE","ECONOMIE NUMERIQUE ET POSTE","PROMOTION DE LA JEUNESSE ","Unité administrative 1","Direction du Budget de l'Etat");
 	}
 	
 	@Test
@@ -126,35 +124,29 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("02"));
 		__inject__(ScopePersistence.class).create(new Scope().setIdentifier("03").setType(scopeType).setCode("03"));
 		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("04"));
-		scopeType = new ScopeType().setCode("PROGRAM").setName(__getRandomName__());
+		scopeType = new ScopeType().setCode("UGP").setName(__getRandomName__());
 		__inject__(ScopeTypePersistence.class).create(scopeType);
-		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("01"));
-		__inject__(ScopePersistence.class).create(new Scope().setIdentifier("02").setType(scopeType).setCode("02"));
-		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("03"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("220670000"));
+		__inject__(ScopePersistence.class).create(new Scope().setIdentifier("220680000").setType(scopeType).setCode("220680000"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("220690000"));
+		scopeType = new ScopeType().setCode("UA").setName(__getRandomName__());
+		__inject__(ScopeTypePersistence.class).create(scopeType);
+		__inject__(ScopePersistence.class).create(new Scope().setIdentifier("011212010001").setType(scopeType).setCode("011212010001"));
+		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("011111010002"));
 		userTransaction.commit();
 		Scope scope = __inject__(ScopePersistence.class).readBySystemIdentifier("03");
 		assertThat(scope).isNotNull();
 		assertThat(scope.getName()).isEqualTo("PRESIDENCE DE LA REPUBLIQUE");
 		
-		scope = __inject__(ScopePersistence.class).readBySystemIdentifier("02");
+		scope = __inject__(ScopePersistence.class).readBySystemIdentifier("220680000");
 		assertThat(scope).isNotNull();
-		assertThat(scope.getName()).isEqualTo("Alphabetisation de la jeune fille");
-	}
-	
-	@Test
-	public void read_scope_one_program() throws Exception{
-		userTransaction.begin();
-		ScopeType scopeType = new ScopeType().setCode("PROGRAM").setName(__getRandomName__());
-		__inject__(ScopeTypePersistence.class).create(scopeType);
-		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("01"));
-		__inject__(ScopePersistence.class).create(new Scope().setIdentifier("02").setType(scopeType).setCode("02"));
-		__inject__(ScopePersistence.class).create(new Scope().setType(scopeType).setCode("03"));
-		userTransaction.commit();
-		Scope scope = __inject__(ScopePersistence.class).readBySystemIdentifier("02");
+		assertThat(scope.getName()).isEqualTo("EMPLOI DES JEUNES");
+		
+		scope = __inject__(ScopePersistence.class).readBySystemIdentifier("011212010001");
 		assertThat(scope).isNotNull();
-		assertThat(scope.getName()).isEqualTo("Alphabetisation de la jeune fille");
+		assertThat(scope.getName()).isEqualTo("Direction du Budget de l'Etat");
 	}
-	
+
 	@Test
 	public void create_functionType() throws Exception{
 		__inject__(TestPersistenceCreate.class).addObjects(new FunctionType().setCode(__getRandomCode__()).setName(__getRandomName__())).execute();
@@ -762,11 +754,21 @@ public class PersistenceIntegrationTest extends AbstractPersistenceArquillianInt
 				,interim.getUser(),interim.getAccount(),interim).addObjects(userAccountInterim).execute();
 	}
 	
+	/**/
+	
+	private void setProperties(Class<?> klass,Object classifier,String code,String name,String link) {		
+		System.setProperty(VariableName.buildClassUniformResourceIdentifier(klass,classifier), "http://localhost:10000/"+classifier.toString().toLowerCase());
+		System.setProperty(VariableName.buildFieldName(Scope.class, classifier, Scope.FIELD_CODE), code);
+		System.setProperty(VariableName.buildFieldName(Scope.class, classifier, Scope.FIELD_NAME), name);
+		System.setProperty(VariableName.buildFieldName(Scope.class, classifier, Scope.FIELD_LINK), link);
+	}
+	
 	@org.jboss.arquillian.container.test.api.Deployment
 	public static WebArchive createArchive(){
 		return new WebArchiveBuilder().execute()
 				.addAsResource("ci/gouv/dgbf/system/usermanagement/server/persistence/impl/integration/section.json")
-				.addAsResource("ci/gouv/dgbf/system/usermanagement/server/persistence/impl/integration/programme.json")
+				.addAsResource("ci/gouv/dgbf/system/usermanagement/server/persistence/impl/integration/ugp.json")
+				.addAsResource("ci/gouv/dgbf/system/usermanagement/server/persistence/impl/integration/ua.json")
 				; 
 	}
 }

@@ -37,7 +37,8 @@
 		<profile>
 			<id>deployment.common</id>
 			<properties>
-				<cyk.parameter.system.name>Gestion des acteurs</cyk.parameter.system.name>
+				<cyk.variable.system.name>SIIBC > Gestion des acteurs</cyk.variable.system.name>
+				<cyk.variable.system.version>0.1.0</cyk.variable.system.version>
 			</properties>
 		</profile>
 		
@@ -57,6 +58,7 @@
 				<data.source.password>GESTION_ACTEUR</data.source.password>
 				<jboss-web.context-root></jboss-web.context-root>
 				<swagger.json>/api/swagger.json</swagger.json>
+				<cyk.variable.system.port>8081</cyk.variable.system.port>
 			</properties>
 		</profile>
 		
@@ -70,6 +72,36 @@
 				<data.source.password>GESTION_ACTEUR</data.source.password>
 				<jboss-web.context-root></jboss-web.context-root>
 				<swagger.json>/api/swagger.json</swagger.json>
+				<cyk.variable.system.host>10.3.4.20</cyk.variable.system.host>
+				<cyk.variable.system.port>31805</cyk.variable.system.port>
+				
+				<cyk.variable.security.delegate.system.is.enable>true</cyk.variable.security.delegate.system.is.enable>
+				<cyk.variable.keycloak.enabled>true</cyk.variable.keycloak.enabled>
+				<cyk.variable.keycloak.client.identifier>admin-cli</cyk.variable.keycloak.client.identifier>
+				<cyk.variable.keycloak.client.secret>b235602b-e5c9-4ddb-bfe5-aaaf79dacb71</cyk.variable.keycloak.client.secret>
+				<cyk.variable.keycloak.credential.password>admin</cyk.variable.keycloak.credential.password>
+				<cyk.variable.keycloak.credential.username>admin</cyk.variable.keycloak.credential.username>				
+				<cyk.variable.keycloak.realm.name>SIB</cyk.variable.keycloak.realm.name>
+				<cyk.variable.keycloak.server.url>http://10.3.4.20:31000/auth</cyk.variable.keycloak.server.url>
+			</properties>
+		</profile>
+		
+		<profile>
+			<id>json.server.local</id>
+			<properties>
+				<json.server.host>http://localhost:3000</json.server.host>
+				<cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-SECTION-uri>${json.server.host}/section</cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-SECTION-uri>
+				<cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UGP-uri>${json.server.host}/ugp</cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UGP-uri>
+				<cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UA-uri>${json.server.host}/ua</cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UA-uri>
+			</properties>
+		</profile>
+		
+		<profile>
+			<id>json.server.remote</id>
+			<properties>
+				<cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-SECTION-uri>http://10.3.4.20:32201/sib/classification-administrative/api/v1/sections-types</cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-SECTION-uri>
+				<cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UGP-uri>http://10.3.4.20:32202/sib/classification-par-programme/api/v1/unites-gestions-performances</cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UGP-uri>
+				<cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UA-uri>http://10.3.4.20:32201/sib/classification-administrative/api/v1/unites-administratives/</cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UA-uri>
 			</properties>
 		</profile>
 	</profiles>

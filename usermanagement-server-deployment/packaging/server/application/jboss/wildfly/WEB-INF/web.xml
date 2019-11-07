@@ -19,15 +19,25 @@
 	</context-param>
 	
 	<context-param>
+		<param-name>cyk.variable.system.host</param-name>
+		<param-value>${cyk.variable.system.host}</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.system.port</param-name>
+		<param-value>${cyk.variable.system.port}</param-value>
+	</context-param>
+	
+	<context-param>
 		<param-name>cyk.variable.system.web.context</param-name>
 		<param-value>${jboss-web.context-root}</param-value>
 	</context-param>	
 	
-	<!--  -->
+	<!-- 	Section  -->
 	
 	<context-param>
 		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-SECTION-uri</param-name>
-		<param-value>http://localhost:3000/section</param-value>
+		<param-value>${cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-SECTION-uri}</param-value>
 	</context-param>
 	
 	<context-param>
@@ -42,6 +52,50 @@
 	
 	<context-param>
 		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-SECTION-link</param-name>
+		<param-value>uuid</param-value>
+	</context-param>
+	
+	<!-- 	UGP  -->
+	
+	<context-param>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UGP-uri</param-name>
+		<param-value>${cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UGP-uri}</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UGP-code</param-name>
+		<param-value>code</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UGP-name</param-name>
+		<param-value>libelleLong</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UGP-link</param-name>
+		<param-value>uuid</param-value>
+	</context-param>
+	
+	<!-- 	UA  -->
+	
+	<context-param>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UA-uri</param-name>
+		<param-value>${cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UA-uri}</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UA-code</param-name>
+		<param-value>codeUA</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UA-name</param-name>
+		<param-value>libelleLong</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>cyk.variable.ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope-UA-link</param-name>
 		<param-value>uuid</param-value>
 	</context-param>
 	

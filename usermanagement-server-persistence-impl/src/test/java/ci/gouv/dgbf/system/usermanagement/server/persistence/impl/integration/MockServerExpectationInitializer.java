@@ -16,8 +16,12 @@ public class MockServerExpectationInitializer implements ExpectationInitializer 
 		.respond(response().withStatusCode(200).withBody(ClassHelper.getResourceContentAsString(MockServerExpectationInitializer.class,"section.json")));
 		
 		mockServerClient
-		.when(request().withMethod("GET").withPath("/programme"))
-		.respond(response().withStatusCode(200).withBody(ClassHelper.getResourceContentAsString(MockServerExpectationInitializer.class,"programme.json")));
+		.when(request().withMethod("GET").withPath("/ugp"))
+		.respond(response().withStatusCode(200).withBody(ClassHelper.getResourceContentAsString(MockServerExpectationInitializer.class,"ugp.json")));
+		
+		mockServerClient
+		.when(request().withMethod("GET").withPath("/ua"))
+		.respond(response().withStatusCode(200).withBody(ClassHelper.getResourceContentAsString(MockServerExpectationInitializer.class,"ua.json")));
 	}
 		
 }
