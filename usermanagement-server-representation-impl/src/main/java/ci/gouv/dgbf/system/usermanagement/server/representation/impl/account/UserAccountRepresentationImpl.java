@@ -23,10 +23,9 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Us
 import ci.gouv.dgbf.system.usermanagement.server.persistence.impl.keycloak.KeycloakHelper;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.UserAccountRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountDtoCollection;
 
 @ApplicationScoped
-public class UserAccountRepresentationImpl extends AbstractRepresentationEntityImpl<UserAccount,UserAccountBusiness,UserAccountDto,UserAccountDtoCollection> implements UserAccountRepresentation,Serializable {
+public class UserAccountRepresentationImpl extends AbstractRepresentationEntityImpl<UserAccountDto> implements UserAccountRepresentation,Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Override

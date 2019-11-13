@@ -11,12 +11,10 @@ import javax.ws.rs.core.Response;
 
 import org.cyk.utility.server.representation.RepresentationEntity;
 
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.UserAccountDtoCollection;
 
 @Path(UserAccountRepresentation.PATH)
-public interface UserAccountRepresentation extends RepresentationEntity<UserAccount,UserAccountDto,UserAccountDtoCollection> {
+public interface UserAccountRepresentation extends RepresentationEntity<UserAccountDto> {
 	
 	@POST
 	@Path("/__internal__/data/import")

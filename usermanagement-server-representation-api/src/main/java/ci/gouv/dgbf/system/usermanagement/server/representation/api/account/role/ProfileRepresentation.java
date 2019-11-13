@@ -8,12 +8,10 @@ import javax.ws.rs.core.Response;
 
 import org.cyk.utility.server.representation.RepresentationEntity;
 
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role.ProfileDtoCollection;
 
 @Path(ProfileRepresentation.PATH)
-public interface ProfileRepresentation extends RepresentationEntity<Profile,ProfileDto,ProfileDtoCollection> {
+public interface ProfileRepresentation extends RepresentationEntity<ProfileDto> {
 	
 	@POST
 	@Path("/__internal__/data/export")

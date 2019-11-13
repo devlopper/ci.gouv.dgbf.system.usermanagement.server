@@ -6,14 +6,11 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.cyk.utility.server.representation.AbstractRepresentationEntityImpl;
 
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ServiceBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Service;
 import ci.gouv.dgbf.system.usermanagement.server.representation.api.account.ServiceRepresentation;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.ServiceDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.ServiceDtoCollection;
 
 @ApplicationScoped
-public class ServiceRepresentationImpl extends AbstractRepresentationEntityImpl<Service,ServiceBusiness,ServiceDto,ServiceDtoCollection> implements ServiceRepresentation,Serializable {
+public class ServiceRepresentationImpl extends AbstractRepresentationEntityImpl<ServiceDto> implements ServiceRepresentation,Serializable {
 	private static final long serialVersionUID = 1L;
 
 }

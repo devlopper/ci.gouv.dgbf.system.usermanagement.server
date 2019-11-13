@@ -9,12 +9,10 @@ import javax.ws.rs.core.Response;
 
 import org.cyk.utility.server.representation.RepresentationEntity;
 
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.Account;
 import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.AccountDto;
-import ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.AccountDtoCollection;
 
 @Path(AccountRepresentation.PATH)
-public interface AccountRepresentation extends RepresentationEntity<Account, AccountDto, AccountDtoCollection> {
+public interface AccountRepresentation extends RepresentationEntity<AccountDto> {
 
 	@POST
 	@Path(PATH_UPDATE_PASSWORD_EMAIL_BY_PRINCIPAL_NAME)
