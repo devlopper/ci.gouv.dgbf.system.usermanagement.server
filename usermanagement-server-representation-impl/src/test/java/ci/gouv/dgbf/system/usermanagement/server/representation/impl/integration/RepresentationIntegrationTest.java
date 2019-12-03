@@ -136,17 +136,17 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		__inject__(ProfileRepresentation.class).createOne(new ProfileDto().setCode("p03").setName(__getRandomName__()));
 		__inject__(ProfileRepresentation.class).createOne(new ProfileDto().setCode("p04").setName(__getRandomName__()));
 		
-		Collection<ProfileFunctionDto> profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(Boolean.FALSE,null,null,null
+		Collection<ProfileFunctionDto> profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(null,Boolean.FALSE,null,null,null
 				,__inject__(FilterDto.class).useKlass(ProfileFunction.class).addField(ProfileFunction.FIELD_PROFILE, Arrays.asList("p01"))).getEntity();
 		assertThat(profileFunctions).isNull();
 		
 		__inject__(ProfileFunctionRepresentation.class).createOne(new ProfileFunctionDto().setProfile(new ProfileDto().setCode("p01")).setFunction(new FunctionDto().setCode("f01")));
-		profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(Boolean.FALSE,null,null,ProfileFunction.FIELD_FUNCTION
+		profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(null,Boolean.FALSE,null,null,ProfileFunction.FIELD_FUNCTION
 				,__inject__(FilterDto.class).useKlass(ProfileFunction.class).addField(ProfileFunction.FIELD_PROFILE, Arrays.asList("p01"))).getEntity();
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01");
 
-		profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(Boolean.FALSE,null,null,ProfileFunction.FIELD_PROFILE
+		profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(null,Boolean.FALSE,null,null,ProfileFunction.FIELD_PROFILE
 				,__inject__(FilterDto.class).useKlass(ProfileFunction.class).addField(ProfileFunction.FIELD_FUNCTION, Arrays.asList("f01"))).getEntity();
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getProfile().getCode())).containsOnly("p01");
@@ -154,26 +154,26 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		__inject__(ProfileFunctionRepresentation.class).createOne(new ProfileFunctionDto().setProfile(new ProfileDto().setCode("p02")).setFunction(new FunctionDto().setCode("f02")));
 		__inject__(ProfileFunctionRepresentation.class).createOne(new ProfileFunctionDto().setProfile(new ProfileDto().setCode("p02")).setFunction(new FunctionDto().setCode("f03")));
 		
-		profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(Boolean.FALSE,null,null,ProfileFunction.FIELD_FUNCTION
+		profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(null,Boolean.FALSE,null,null,ProfileFunction.FIELD_FUNCTION
 				,__inject__(FilterDto.class).useKlass(ProfileFunction.class).addField(ProfileFunction.FIELD_PROFILE, Arrays.asList("p01"))).getEntity();
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f01");
-		profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(Boolean.FALSE,null,null,ProfileFunction.FIELD_FUNCTION
+		profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(null,Boolean.FALSE,null,null,ProfileFunction.FIELD_FUNCTION
 				,__inject__(FilterDto.class).useKlass(ProfileFunction.class).addField(ProfileFunction.FIELD_PROFILE, Arrays.asList("p02"))).getEntity();
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getFunction().getCode())).containsOnly("f02","f03");
 		
-		profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(Boolean.FALSE,null,null,ProfileFunction.FIELD_PROFILE
+		profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(null,Boolean.FALSE,null,null,ProfileFunction.FIELD_PROFILE
 				,__inject__(FilterDto.class).useKlass(ProfileFunction.class).addField(ProfileFunction.FIELD_FUNCTION, Arrays.asList("f01"))).getEntity();
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getProfile().getCode())).containsOnly("p01");
 		
-		profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(Boolean.FALSE,null,null,ProfileFunction.FIELD_PROFILE
+		profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(null,Boolean.FALSE,null,null,ProfileFunction.FIELD_PROFILE
 				,__inject__(FilterDto.class).useKlass(ProfileFunction.class).addField(ProfileFunction.FIELD_FUNCTION, Arrays.asList("f02"))).getEntity();
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getProfile().getCode())).containsOnly("p02");
 		
-		profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(Boolean.FALSE,null,null,ProfileFunction.FIELD_PROFILE
+		profileFunctions = (Collection<ProfileFunctionDto>) __inject__(ProfileFunctionRepresentation.class).getMany(null,Boolean.FALSE,null,null,ProfileFunction.FIELD_PROFILE
 				,__inject__(FilterDto.class).useKlass(ProfileFunction.class).addField(ProfileFunction.FIELD_FUNCTION, Arrays.asList("f03"))).getEntity();
 		assertThat(profileFunctions).isNotEmpty();
 		assertThat(profileFunctions.stream().map(x -> x.getProfile().getCode())).containsOnly("p02");

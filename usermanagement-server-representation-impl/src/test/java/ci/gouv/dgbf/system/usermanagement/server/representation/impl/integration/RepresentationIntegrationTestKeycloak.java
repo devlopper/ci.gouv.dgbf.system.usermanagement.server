@@ -32,7 +32,7 @@ public class RepresentationIntegrationTestKeycloak extends AbstractRepresentatio
 		__inject__(KeycloakHelper.class).createUserAccount("Yao", "Constant", "m@mail.com", "yao", "123", null, null);
 		__inject__(UserAccountRepresentation.class).importFromKeycloak();
 		@SuppressWarnings("unchecked")
-		Collection<UserAccountDto> userAccounts = (Collection<UserAccountDto>) __inject__(UserAccountRepresentation.class).getMany(Boolean.FALSE, null, null, null, null).getEntity();
+		Collection<UserAccountDto> userAccounts = (Collection<UserAccountDto>) __inject__(UserAccountRepresentation.class).getMany(null,Boolean.FALSE, null, null, null, null).getEntity();
 		assertThat(userAccounts).isNotNull();
 		assertThat(userAccounts.stream().map(x -> x.getAccount().getIdentifier())).containsExactlyInAnyOrder("u01","cyk","yao");		
 	}
