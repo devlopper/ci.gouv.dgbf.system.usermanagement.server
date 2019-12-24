@@ -30,6 +30,7 @@ import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.Profi
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileTypeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeTypeBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeTypeProfileBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.impl.ApplicationScopeLifeCycleListener;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
@@ -49,6 +50,7 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Resource;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeTypeProfile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Service;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ServiceResource;
 
@@ -64,7 +66,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 				,new ProfileType().setCode(ProfileType.CODE_UTILISATEUR).setName("Utilisateur")));
 	}
 	
-	@Test
+	//@Test
 	public void import_scope() throws Exception{
 		__inject__(ScopeTypeBusiness.class).createMany(List.of(new ScopeType().setCode("SECTION").setName("Section"),new ScopeType().setCode("PROGRAM").setName("Program")));
 		VariableHelper.writeClassUniformResourceIdentifier(Scope.class,"SECTION", getClass().getResource("section.json"));
@@ -84,7 +86,7 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 				,"Ministère de la défense","Ministère du Budget","Lutte contre la pauvreté","Alphabétisation de la jeune fille","Sécurité et défense de la nation");
 	}
 	
-	@Test
+	//@Test
 	public void import_scope_twice() throws Exception{
 		__inject__(ScopeTypeBusiness.class).createMany(List.of(new ScopeType().setCode("SECTION").setName("Section"),new ScopeType().setCode("PROGRAM").setName("Program")));
 		VariableHelper.writeClassUniformResourceIdentifier(Scope.class,"SECTION", getClass().getResource("section.json"));
@@ -103,6 +105,24 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 		assertThat(scopes).isNotNull();
 		assertThat(scopes.stream().map(Scope::getName).collect(Collectors.toList())).containsAnyOf("Ministère de la Justice","Ministère des infrastructures"
 				,"Ministère de la défense","Ministère du Budget","Lutte contre la pauvreté","Alphabétisation de la jeune fille","Sécurité et défense de la nation");
+	}
+	
+	@Test
+	public void create_scopeType() {
+		__inject__(ScopeTypeBusiness.class).create(new ScopeType().setCode("st1").setName("st"));
+		__inject__(ScopeTypeBusiness.class).create(new ScopeType().setCode("st2").setName("st"));
+		__inject__(ProfileBusiness.class).createMany(List.of(new Profile().setCode("p1").setName("n").setTypeFromCode(ProfileType.CODE_SYSTEM),
+				new Profile().setCode("p2").setName("n").setTypeFromCode(ProfileType.CODE_SYSTEM)));
+		__inject__(ScopeTypeProfileBusiness.class).create(new ScopeTypeProfile().setScopeTypeFromCode("st2").setProfileFromCode("p1")
+				.setProfileOfTypeUserCreatableOnScopeCreate(Boolean.TRUE));
+		
+		ScopeType scopeType = __inject__(ScopeTypeBusiness.class).findByBusinessIdentifier("st1",new Properties().setFields(ScopeType.FIELD_PROFILES));
+		assertThat(scopeType).isNotNull();
+		assertThat(scopeType.getProfiles()).isNull();
+		scopeType = __inject__(ScopeTypeBusiness.class).findByBusinessIdentifier("st2",new Properties().setFields(ScopeType.FIELD_PROFILES));
+		assertThat(scopeType).isNotNull();
+		assertThat(scopeType.getProfiles()).isNotNull();
+		assertThat(scopeType.getProfiles().stream().map(Profile::getCode).collect(Collectors.toList())).containsExactlyInAnyOrder("p1");
 	}
 	
 	@Test

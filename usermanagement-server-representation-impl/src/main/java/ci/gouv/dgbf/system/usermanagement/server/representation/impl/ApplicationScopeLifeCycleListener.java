@@ -5,7 +5,7 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.cyk.utility.__kernel__.AbstractApplicationScopeLifeCycleListener;
 import org.cyk.utility.server.representation.AbstractRepresentationFunctionReaderImpl;
-import org.cyk.utility.server.representation.impl.DataLoader;
+import org.cyk.utility.server.representation.DataLoader;
 
 @ApplicationScoped
 public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeLifeCycleListener implements Serializable {

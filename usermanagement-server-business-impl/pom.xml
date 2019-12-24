@@ -32,6 +32,7 @@
 			<id>org.cyk.test</id>
 			<properties>
 				<org.cyk.test.classes>ci.gouv.dgbf.system.usermanagement.server.business.impl.integration.DataSourceDefinition</org.cyk.test.classes>
+				<org.cyk.test.jboss.deployment.structure.file>jboss-deployment-structure.xml</org.cyk.test.jboss.deployment.structure.file>
 			</properties>
 			<dependencies>
 				<dependency>

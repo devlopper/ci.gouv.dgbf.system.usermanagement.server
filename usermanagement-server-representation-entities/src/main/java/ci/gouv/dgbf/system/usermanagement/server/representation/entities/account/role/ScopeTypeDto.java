@@ -1,6 +1,7 @@
 package ci.gouv.dgbf.system.usermanagement.server.representation.entities.account.role;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -15,6 +16,8 @@ import lombok.experimental.Accessors;
 public class ScopeTypeDto extends AbstractIdentifiedByStringAndCodedAndNamedImpl implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	private ArrayList<ProfileDto> profiles;
+	
 	@Override
 	public ScopeTypeDto setCode(String code) {
 		return (ScopeTypeDto) super.setCode(code);

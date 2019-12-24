@@ -11,6 +11,7 @@
     	<!-- Where we can do it -->
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeTypeHierarchy</class>
+    	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeTypeProfile</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope</class>
     	<class>ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeHierarchy</class>
     	
