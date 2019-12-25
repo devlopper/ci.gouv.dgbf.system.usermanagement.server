@@ -109,6 +109,22 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	
 	@Test
 	public void create_scopeType() {
+		__inject__(ProfileBusiness.class).createMany(List.of(new Profile().setCode("p1").setName("n").setTypeFromCode(ProfileType.CODE_SYSTEM),
+				new Profile().setCode("p2").setName("n").setTypeFromCode(ProfileType.CODE_SYSTEM)));
+		__inject__(ScopeTypeBusiness.class).create(new ScopeType().setCode("st1").setName("st"));
+		__inject__(ScopeTypeBusiness.class).create(new ScopeType().setCode("st2").setName("st").addProfilesByCodes("p1"));
+		
+		ScopeType scopeType = __inject__(ScopeTypeBusiness.class).findByBusinessIdentifier("st1",new Properties().setFields(ScopeType.FIELD_PROFILES));
+		assertThat(scopeType).isNotNull();
+		assertThat(scopeType.getProfiles()).isNull();
+		scopeType = __inject__(ScopeTypeBusiness.class).findByBusinessIdentifier("st2",new Properties().setFields(ScopeType.FIELD_PROFILES));
+		assertThat(scopeType).isNotNull();
+		assertThat(scopeType.getProfiles()).isNotNull();
+		assertThat(scopeType.getProfiles().stream().map(Profile::getCode).collect(Collectors.toList())).containsExactlyInAnyOrder("p1");
+	}
+	
+	//@Test
+	public void create_scope() {
 		__inject__(ScopeTypeBusiness.class).create(new ScopeType().setCode("st1").setName("st"));
 		__inject__(ScopeTypeBusiness.class).create(new ScopeType().setCode("st2").setName("st"));
 		__inject__(ProfileBusiness.class).createMany(List.of(new Profile().setCode("p1").setName("n").setTypeFromCode(ProfileType.CODE_SYSTEM),

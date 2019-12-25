@@ -35,9 +35,10 @@ public class ScopeTypeProfile extends AbstractIdentifiableSystemScalarStringImpl
 	
 	/**/
 	
-	public ScopeTypeProfile(ScopeType scopeType,Profile profile) {
+	public ScopeTypeProfile(ScopeType scopeType,Profile profile,Boolean profileOfTypeUserCreatableOnScopeCreate) {
 		this.scopeType = scopeType;
 		this.profile = profile;
+		this.profileOfTypeUserCreatableOnScopeCreate = profileOfTypeUserCreatableOnScopeCreate;
 	}
 	
 	public ScopeTypeProfile setScopeTypeFromCode(String code) {
