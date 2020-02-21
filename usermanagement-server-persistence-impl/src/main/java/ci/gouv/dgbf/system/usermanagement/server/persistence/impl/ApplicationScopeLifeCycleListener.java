@@ -32,8 +32,8 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeHierarchy;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeTypeFunction;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeTypeHierarchy;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeTypeProfile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Service;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ServiceResource;
 
@@ -44,7 +44,7 @@ public class ApplicationScopeLifeCycleListener extends AbstractApplicationScopeL
 	@Override
 	public void __initialize__(Object object) {
 		PersistableClassesGetter.COLLECTION.set(List.of(UserAccountInterim.class,UserAccountInterimModel.class,UserAccountFunctionScope.class,UserAccountScope.class
-				,UserAccountProfile.class,UserAccount.class,UserFunction.class,User.class,Account.class,ScopeTypeProfile.class,ProfilePrivilege.class,ProfileFunction.class,Profile.class
+				,UserAccountProfile.class,UserAccount.class,UserFunction.class,User.class,Account.class,ScopeTypeFunction.class,ProfilePrivilege.class,ProfileFunction.class,Profile.class
 				,ProfileType.class,FunctionScope.class,Function.class,FunctionType.class,ScopeHierarchy.class,Scope.class,ScopeTypeHierarchy.class,ScopeType.class
 				,PrivilegeHierarchy.class,Privilege.class,PrivilegeTypeHierarchy.class,PrivilegeType.class,ServiceResource.class,Service.class,Resource.class));
 		__inject__(org.cyk.utility.server.persistence.impl.ApplicationScopeLifeCycleListener.class).initialize(null);

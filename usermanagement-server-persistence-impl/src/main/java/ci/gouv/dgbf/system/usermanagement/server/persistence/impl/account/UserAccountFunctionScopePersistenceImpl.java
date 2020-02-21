@@ -5,12 +5,12 @@ import java.util.Collection;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.cyk.utility.__kernel__.persistence.query.QueryContext;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
 import org.cyk.utility.server.persistence.PersistenceFunctionCreator;
 import org.cyk.utility.server.persistence.PersistenceFunctionModifier;
 import org.cyk.utility.server.persistence.PersistenceFunctionRemover;
-import org.cyk.utility.server.persistence.query.PersistenceQuery;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountFunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
@@ -54,10 +54,10 @@ public class UserAccountFunctionScopePersistenceImpl extends AbstractPersistence
 	}
 	
 	@Override
-	protected Object[] __getQueryParameters__(PersistenceQuery query, Properties properties, Object... objects) {
-		if(query.isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readByUserAccount))
+	protected Object[] __getQueryParameters__(QueryContext queryContext, Properties properties, Object... objects) {
+		if(queryContext.getQuery().isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readByUserAccount))
 			return new Object[]{UserAccountFunctionScope.FIELD_USER_ACCOUNT, objects[0]};
-		return super.__getQueryParameters__(query, properties, objects);
+		return super.__getQueryParameters__(queryContext, properties, objects);
 	}
 	
 }

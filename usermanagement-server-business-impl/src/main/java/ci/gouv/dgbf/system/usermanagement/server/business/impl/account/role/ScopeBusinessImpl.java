@@ -11,17 +11,23 @@ import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.__kernel__.rest.RestHelper;
 import org.cyk.utility.__kernel__.string.StringHelper;
 import org.cyk.utility.server.business.BusinessEntity;
+import org.cyk.utility.server.business.BusinessFunctionCreator;
 import org.cyk.utility.server.business.hierarchy.AbstractBusinessIdentifiedByStringImpl;
 
+import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.FunctionScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeHierarchyBusiness;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ScopeHierarchyPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ScopePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ScopeTypeFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ScopeTypePersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.FunctionScope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeHierarchies;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeHierarchy;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeTypeFunction;
 
 @ApplicationScoped
 public class ScopeBusinessImpl extends AbstractBusinessIdentifiedByStringImpl<Scope, ScopePersistence,ScopeHierarchy,ScopeHierarchies,ScopeHierarchyPersistence,ScopeHierarchyBusiness> implements ScopeBusiness,Serializable {
@@ -52,6 +58,22 @@ public class ScopeBusinessImpl extends AbstractBusinessIdentifiedByStringImpl<Sc
 		}
 		saveByBatch(scopes,100);
 		return this;
+	}
+	
+	@Override
+	protected void __listenExecuteCreateAfter__(Scope scope, Properties properties, BusinessFunctionCreator function) {
+		super.__listenExecuteCreateAfter__(scope, properties, function);
+		Collection<ScopeTypeFunction> scopeTypeFunctions = __inject__(ScopeTypeFunctionPersistence.class).readByScopeTypes(scope.getType());
+		if(CollectionHelper.isNotEmpty(scopeTypeFunctions)) {
+			for(ScopeTypeFunction index : scopeTypeFunctions) {
+				if(index.getFunctionCreatableOnScopeCreate()) {
+					FunctionScope functionScope = __inject__(FunctionScopePersistence.class).readByFunctionByScope(index.getFunction(), scope);
+					if(functionScope == null) {
+						__inject__(FunctionScopeBusiness.class).create(new FunctionScope().setFunction(index.getFunction()).setScope(scope));
+					}
+				}
+			}
+		}
 	}
 	
 }

@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import org.cyk.utility.server.persistence.query.filter.FilterDto;
+import org.cyk.utility.__kernel__.persistence.query.filter.FilterDto;
 import org.cyk.utility.server.representation.test.TestRepresentationCreate;
 import org.junit.Test;
 
@@ -98,15 +98,15 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("f01").setName(__getRandomName__()).setType(new FunctionTypeDto().setCode("c01")).setIsProfileCreatableOnCreate(Boolean.FALSE));
 		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("f02").setName(__getRandomName__()).setType(new FunctionTypeDto().setCode("c01")).setIsProfileCreatableOnCreate(Boolean.FALSE));
 		__inject__(FunctionRepresentation.class).createOne(new FunctionDto().setCode("f03").setName(__getRandomName__()).setType(new FunctionTypeDto().setCode("c01")).setIsProfileCreatableOnCreate(Boolean.FALSE));
-		assertThat(__inject__(ProfileFunctionRepresentation.class).count(null).getEntity()).isEqualTo(0l);
+		assertThat(__inject__(ProfileFunctionRepresentation.class).count(null,null).getEntity()).isEqualTo(0l);
 		__inject__(ProfileRepresentation.class).createOne(new ProfileDto().setCode("p01").setName(__getRandomName__()).addFunctionsByCodes("f01","f03"));
-		assertThat(__inject__(ProfileFunctionRepresentation.class).count(null).getEntity()).isEqualTo(2l);
+		assertThat(__inject__(ProfileFunctionRepresentation.class).count(null,null).getEntity()).isEqualTo(2l);
 		__inject__(ProfileRepresentation.class).createOne(new ProfileDto().setCode("p02").setName(__getRandomName__()).addFunctionsByCodes("f01","f02","f03"));
-		assertThat(__inject__(ProfileFunctionRepresentation.class).count(null).getEntity()).isEqualTo(5l);
+		assertThat(__inject__(ProfileFunctionRepresentation.class).count(null,null).getEntity()).isEqualTo(5l);
 		__inject__(ProfileRepresentation.class).updateOne(new ProfileDto().setCode("p02").setName(__getRandomName__()).addFunctionsByCodes("f02"),Profile.FIELD_FUNCTIONS);
-		assertThat(__inject__(ProfileFunctionRepresentation.class).count(null).getEntity()).isEqualTo(3l);
+		assertThat(__inject__(ProfileFunctionRepresentation.class).count(null,null).getEntity()).isEqualTo(3l);
 		__inject__(ProfileRepresentation.class).deleteOne(new ProfileDto().setCode("p01"));
-		assertThat(__inject__(ProfileFunctionRepresentation.class).count(null).getEntity()).isEqualTo(1l);
+		assertThat(__inject__(ProfileFunctionRepresentation.class).count(null,null).getEntity()).isEqualTo(1l);
 	}
 	
 	@Test
@@ -251,9 +251,9 @@ public class RepresentationIntegrationTest extends AbstractRepresentationArquill
 		
 		userAccount.getUser().addFunctionsByCodes("CE");
 		assertThat(userAccount.getUser().getFunctions().stream().map(FunctionDto::getCode).collect(Collectors.toList())).containsOnly("ASSISTANT_SAISIE","CE");
-		assertThat(__inject__(UserFunctionRepresentation.class).count(null).getEntity()).isEqualTo(1l);
+		assertThat(__inject__(UserFunctionRepresentation.class).count(null,null).getEntity()).isEqualTo(1l);
 		__inject__(UserAccountRepresentation.class).updateOne(userAccount, "user.functions");
-		assertThat(__inject__(UserFunctionRepresentation.class).count(null).getEntity()).isEqualTo(2l);
+		assertThat(__inject__(UserFunctionRepresentation.class).count(null,null).getEntity()).isEqualTo(2l);
 		userAccount = (UserAccountDto) __inject__(UserAccountRepresentation.class).getOne(userAccount.getIdentifier(),null,UserAccount.FIELD_PROFILES+","+UserAccount.FIELD_FUNCTION_SCOPES+",functions,user,identifier").getEntity();
 		assertThat(userAccount.getUser()).isNotNull();
 		assertThat(userAccount.getUser().getFunctions()).isNotNull();

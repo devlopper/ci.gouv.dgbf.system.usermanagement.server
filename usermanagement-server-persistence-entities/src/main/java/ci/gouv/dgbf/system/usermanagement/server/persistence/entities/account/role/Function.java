@@ -11,6 +11,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.cyk.utility.__kernel__.instance.InstanceGetter;
+import org.cyk.utility.__kernel__.string.StringHelper;
 import org.cyk.utility.server.persistence.jpa.AbstractIdentifiedByStringAndCodedAndNamed;
 
 import lombok.Getter;
@@ -41,6 +43,13 @@ public class Function extends AbstractIdentifiedByStringAndCodedAndNamed impleme
 	@Override
 	public Function setName(String name) {
 		return (Function) super.setName(name);
+	}
+	
+	public Function setTypeFromCode(String code) {
+		if(StringHelper.isBlank(code))
+			return this;
+		this.type = InstanceGetter.getInstance().getByBusinessIdentifier(FunctionType.class, code);
+		return this;
 	}
 	
 	/**/

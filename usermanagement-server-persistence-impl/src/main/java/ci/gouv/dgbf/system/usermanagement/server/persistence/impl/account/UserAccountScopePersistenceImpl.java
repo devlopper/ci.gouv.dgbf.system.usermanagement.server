@@ -9,7 +9,7 @@ import javax.enterprise.context.ApplicationScoped;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
-import org.cyk.utility.server.persistence.query.PersistenceQueryContext;
+import org.cyk.utility.__kernel__.persistence.query.QueryContext;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
@@ -73,7 +73,7 @@ public class UserAccountScopePersistenceImpl extends AbstractPersistenceEntityIm
 	/**/
 
 	@Override
-	protected Object[] __getQueryParameters__(PersistenceQueryContext queryContext, Properties properties,Object... objects) {
+	protected Object[] __getQueryParameters__(QueryContext queryContext, Properties properties,Object... objects) {
 		if(queryContext.getQuery().isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readByUserAccountsIdentifiers)) {	
 			return new Object[]{"userAccountsIdentifiers",objects[0]};
 		}

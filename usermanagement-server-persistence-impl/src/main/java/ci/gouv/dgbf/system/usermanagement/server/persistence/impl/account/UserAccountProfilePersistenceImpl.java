@@ -10,7 +10,7 @@ import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.array.ArrayHelper;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
-import org.cyk.utility.server.persistence.query.PersistenceQueryContext;
+import org.cyk.utility.__kernel__.persistence.query.QueryContext;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountProfilePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.UserAccount;
@@ -59,7 +59,7 @@ public class UserAccountProfilePersistenceImpl extends AbstractPersistenceEntity
 	}
 	
 	@Override
-	protected Object[] __getQueryParameters__(PersistenceQueryContext queryContext, Properties properties,Object... objects) {
+	protected Object[] __getQueryParameters__(QueryContext queryContext, Properties properties,Object... objects) {
 		if(queryContext.getQuery().isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readByUserAccount))
 			return new Object[]{UserAccountProfile.FIELD_USER_ACCOUNT, objects[0]};
 		

@@ -8,13 +8,13 @@ import javax.enterprise.context.ApplicationScoped;
 import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
-import org.cyk.utility.server.persistence.query.PersistenceQueryContext;
+import org.cyk.utility.__kernel__.persistence.query.QueryContext;
 
-import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ScopeTypeProfilePersistence;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeTypeProfile;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ScopeTypeFunctionPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeTypeFunction;
 
 @ApplicationScoped
-public class ScopeTypeProfilePersistenceImpl extends AbstractPersistenceEntityImpl<ScopeTypeProfile> implements ScopeTypeProfilePersistence,Serializable {
+public class ScopeTypeFunctionPersistenceImpl extends AbstractPersistenceEntityImpl<ScopeTypeFunction> implements ScopeTypeFunctionPersistence,Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private String readByScopeTypesCodes;
@@ -22,11 +22,11 @@ public class ScopeTypeProfilePersistenceImpl extends AbstractPersistenceEntityIm
 	@Override
 	protected void __listenPostConstructPersistenceQueries__() {
 		super.__listenPostConstructPersistenceQueries__();
-		addQueryCollectInstances(readByScopeTypesCodes, "SELECT scopeTypeProfile FROM ScopeTypeProfile scopeTypeProfile WHERE scopeTypeProfile.scopeType.code IN :scopeTypesCodes");
+		addQueryCollectInstances(readByScopeTypesCodes, "SELECT scopeTypeFunction FROM ScopeTypeFunction scopeTypeFunction WHERE scopeTypeFunction.scopeType.code IN :scopeTypesCodes");
 	}
 	
 	@Override
-	public Collection<ScopeTypeProfile> readByScopeTypesCodes(Collection<String> codes, Properties properties) {
+	public Collection<ScopeTypeFunction> readByScopeTypesCodes(Collection<String> codes, Properties properties) {
 		if(CollectionHelper.isEmpty(codes))
 			return null;
 		if(properties == null)
@@ -36,7 +36,7 @@ public class ScopeTypeProfilePersistenceImpl extends AbstractPersistenceEntityIm
 	}
 
 	@Override
-	protected Object[] __getQueryParameters__(PersistenceQueryContext queryContext, Properties properties,Object... objects) {
+	protected Object[] __getQueryParameters__(QueryContext queryContext, Properties properties,Object... objects) {
 		if(queryContext.getQuery().isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readByScopeTypesCodes)) {
 			return new Object[]{"scopeTypesCodes",objects[0]};
 		}

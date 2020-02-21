@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response.Status;
 import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.__kernel__.value.ValueUsageType;
-import org.cyk.utility.server.persistence.query.filter.Filter;
+import org.cyk.utility.__kernel__.persistence.query.filter.Filter;
 import org.cyk.utility.server.representation.AbstractRepresentationEntityImpl;
 import org.keycloak.representations.idm.UserRepresentation;
 

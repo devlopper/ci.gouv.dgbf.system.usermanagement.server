@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
 public class ScopeTypeDto extends AbstractIdentifiedByStringAndCodedAndNamedImpl implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private ArrayList<ProfileDto> profiles;
+	private ArrayList<FunctionDto> functions;
 	
 	@Override
 	public ScopeTypeDto setCode(String code) {

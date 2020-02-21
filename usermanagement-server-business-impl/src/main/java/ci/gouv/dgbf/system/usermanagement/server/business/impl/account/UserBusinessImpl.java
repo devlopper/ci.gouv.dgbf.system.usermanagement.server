@@ -15,7 +15,7 @@ import org.cyk.utility.server.business.AbstractBusinessEntityImpl;
 import org.cyk.utility.server.business.BusinessFunctionCreator;
 import org.cyk.utility.server.business.BusinessFunctionModifier;
 import org.cyk.utility.server.business.BusinessFunctionRemover;
-import org.cyk.utility.server.persistence.query.filter.Filter;
+import org.cyk.utility.__kernel__.persistence.query.filter.Filter;
 
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.UserFunctionBusiness;

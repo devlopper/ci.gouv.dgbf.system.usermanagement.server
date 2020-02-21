@@ -13,7 +13,7 @@ import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.__kernel__.collection.CollectionHelper;
 import org.cyk.utility.server.business.test.TestBusinessCreate;
 import org.cyk.utility.server.business.test.arquillian.AbstractBusinessArquillianIntegrationTestWithDefaultDeployment;
-import org.cyk.utility.server.persistence.query.filter.Filter;
+import org.cyk.utility.__kernel__.persistence.query.filter.Filter;
 import org.cyk.utility.stream.distributed.Topic;
 import org.cyk.utility.system.node.SystemNodeServer;
 import org.cyk.utility.time.TimeHelper;

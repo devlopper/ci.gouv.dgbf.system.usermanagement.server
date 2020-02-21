@@ -10,7 +10,7 @@ import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
 import org.cyk.utility.server.persistence.PersistenceFunctionCreator;
 import org.cyk.utility.server.persistence.PersistenceFunctionRemover;
-import org.cyk.utility.server.persistence.query.PersistenceQueryContext;
+import org.cyk.utility.__kernel__.persistence.query.QueryContext;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ServiceResourcePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Resource;
@@ -53,7 +53,7 @@ public class ServiceResourcePersistenceImpl extends AbstractPersistenceEntityImp
 	}
 	
 	@Override
-	protected Object[] __getQueryParameters__(PersistenceQueryContext queryContext, Properties properties, Object... objects) {
+	protected Object[] __getQueryParameters__(QueryContext queryContext, Properties properties, Object... objects) {
 		if(queryContext.getQuery().isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readByServiceByResource))
 			return new Object[]{"service", objects[0],"resource",objects[1]};
 		return super.__getQueryParameters__(queryContext, properties, objects);

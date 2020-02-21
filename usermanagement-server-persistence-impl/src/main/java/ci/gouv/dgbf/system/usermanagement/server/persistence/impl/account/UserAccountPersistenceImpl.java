@@ -16,7 +16,7 @@ import org.cyk.utility.server.persistence.PersistenceFunctionCreator;
 import org.cyk.utility.server.persistence.PersistenceFunctionModifier;
 import org.cyk.utility.server.persistence.PersistenceFunctionReader;
 import org.cyk.utility.server.persistence.PersistenceFunctionRemover;
-import org.cyk.utility.server.persistence.query.PersistenceQueryContext;
+import org.cyk.utility.__kernel__.persistence.query.QueryContext;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountFunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserAccountPersistence;
@@ -159,7 +159,7 @@ public class UserAccountPersistenceImpl extends AbstractPersistenceEntityImpl<Us
 	}
 	
 	@Override
-	protected Object[] __getQueryParameters__(PersistenceQueryContext queryContext, Properties properties,Object... objects) {
+	protected Object[] __getQueryParameters__(QueryContext queryContext, Properties properties,Object... objects) {
 		if(queryContext.getQuery().isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readByAccountIdentifier))
 			return new Object[]{"accountIdentifier", queryContext.getFilterByKeysValue(UserAccount.FIELD_ACCOUNT+"."+Account.FIELD_IDENTIFIER)};
 		if(queryContext.getQuery().isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readWhereAccountIdentifierOrFirstUserFirstNameOrUserLastnamesContains))

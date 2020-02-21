@@ -13,7 +13,7 @@ import org.cyk.utility.server.persistence.AbstractPersistenceEntityImpl;
 import org.cyk.utility.server.persistence.PersistenceFunctionCreator;
 import org.cyk.utility.server.persistence.PersistenceFunctionReader;
 import org.cyk.utility.server.persistence.PersistenceFunctionRemover;
-import org.cyk.utility.server.persistence.query.PersistenceQueryContext;
+import org.cyk.utility.__kernel__.persistence.query.QueryContext;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileServiceResourcePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Profile;
@@ -69,7 +69,7 @@ public class ProfileServiceResourcePersistenceImpl extends AbstractPersistenceEn
 	}
 	
 	@Override
-	protected Object[] __getQueryParameters__(PersistenceQueryContext queryContext, Properties properties,Object... objects) {
+	protected Object[] __getQueryParameters__(QueryContext queryContext, Properties properties,Object... objects) {
 		if(queryContext.getQuery().isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readByProfilesCodes)) {
 			if(__inject__(ArrayHelper.class).isEmpty(objects))
 				objects = new Object[] {queryContext.getFilterByKeysValue(ProfileFunction.FIELD_PROFILE)};

@@ -12,10 +12,10 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @XmlRootElement @Getter @Setter @Accessors(chain=true) @NoArgsConstructor
-public class ScopeTypeProfileDto extends AbstractIdentifiableSystemScalarStringImpl implements Serializable {
+public class ScopeTypeFunctionDto extends AbstractIdentifiableSystemScalarStringImpl implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private ProfileDto profile;
+	private FunctionDto function;
 	private ScopeTypeDto scopeType;
 	
 }

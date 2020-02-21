@@ -9,49 +9,49 @@ import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.server.persistence.PersistenceEntity;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeTypeProfile;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeTypeFunction;
 
-public interface ScopeTypeProfilePersistence extends PersistenceEntity<ScopeTypeProfile> {
+public interface ScopeTypeFunctionPersistence extends PersistenceEntity<ScopeTypeFunction> {
 
-	Collection<ScopeTypeProfile> readByScopeTypesCodes(Collection<String> scopeTypesCodes,Properties properties);
+	Collection<ScopeTypeFunction> readByScopeTypesCodes(Collection<String> scopeTypesCodes,Properties properties);
 	
-	default Collection<ScopeTypeProfile> readByScopeTypesCodes(Collection<String> scopeTypesCodes) {
+	default Collection<ScopeTypeFunction> readByScopeTypesCodes(Collection<String> scopeTypesCodes) {
 		if(CollectionHelper.isEmpty(scopeTypesCodes))
 			return null;
 		return readByScopeTypesCodes(scopeTypesCodes, null);
 	}
 	
-	default Collection<ScopeTypeProfile> readByScopeTypesCodes(Properties properties,String...scopeTypesCodes) {
+	default Collection<ScopeTypeFunction> readByScopeTypesCodes(Properties properties,String...scopeTypesCodes) {
 		if(ArrayHelper.isEmpty(scopeTypesCodes))
 			return null;
 		return readByScopeTypesCodes(CollectionHelper.listOf(scopeTypesCodes), properties);
 	}
 	
-	default Collection<ScopeTypeProfile> readByScopeTypesCodes(String...scopeTypesCodes) {
+	default Collection<ScopeTypeFunction> readByScopeTypesCodes(String...scopeTypesCodes) {
 		if(ArrayHelper.isEmpty(scopeTypesCodes))
 			return null;
 		return readByScopeTypesCodes(CollectionHelper.listOf(scopeTypesCodes), null);
 	}
 	
-	default Collection<ScopeTypeProfile> readByScopeTypes(Collection<ScopeType> scopeTypes,Properties properties) {
+	default Collection<ScopeTypeFunction> readByScopeTypes(Collection<ScopeType> scopeTypes,Properties properties) {
 		if(CollectionHelper.isEmpty(scopeTypes))
 			return null;
 		return readByScopeTypesCodes(scopeTypes.stream().map(ScopeType::getCode).collect(Collectors.toList()), properties);
 	}
 	
-	default Collection<ScopeTypeProfile> readByScopeTypes(Collection<ScopeType> scopeTypes) {
+	default Collection<ScopeTypeFunction> readByScopeTypes(Collection<ScopeType> scopeTypes) {
 		if(CollectionHelper.isEmpty(scopeTypes))
 			return null;
 		return readByScopeTypes(scopeTypes, null);
 	}
 	
-	default Collection<ScopeTypeProfile> readByScopeTypes(Properties properties,ScopeType...scopeTypes) {
+	default Collection<ScopeTypeFunction> readByScopeTypes(Properties properties,ScopeType...scopeTypes) {
 		if(ArrayHelper.isEmpty(scopeTypes))
 			return null;
 		return readByScopeTypes(CollectionHelper.listOf(scopeTypes), properties);
 	}
 	
-	default Collection<ScopeTypeProfile> readByScopeTypes(ScopeType...scopeTypes) {
+	default Collection<ScopeTypeFunction> readByScopeTypes(ScopeType...scopeTypes) {
 		if(ArrayHelper.isEmpty(scopeTypes))
 			return null;
 		return readByScopeTypes(CollectionHelper.listOf(scopeTypes), null);

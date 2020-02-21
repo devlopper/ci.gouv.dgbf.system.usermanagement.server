@@ -11,7 +11,7 @@ import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.array.ArrayHelper;
 import org.cyk.utility.server.persistence.PersistenceFunctionReader;
 import org.cyk.utility.server.persistence.jpa.hierarchy.AbstractPersistenceIdentifiedByStringAndCodedImpl;
-import org.cyk.utility.server.persistence.query.PersistenceQueryContext;
+import org.cyk.utility.__kernel__.persistence.query.QueryContext;
 
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.PrivilegeHierarchyPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.PrivilegePersistence;
@@ -89,7 +89,7 @@ public class PrivilegePersistenceImpl extends AbstractPersistenceIdentifiedByStr
 	}
 	
 	@Override
-	protected Object[] __getQueryParameters__(PersistenceQueryContext queryContext, Properties properties,Object... objects) {
+	protected Object[] __getQueryParameters__(QueryContext queryContext, Properties properties,Object... objects) {
 		if(queryContext.getQuery().isIdentifierEqualsToOrQueryDerivedFromQueryIdentifierEqualsTo(readByProfilesIdentifiers)) {
 			if(__inject__(ArrayHelper.class).isEmpty(objects)) {
 				objects = new Object[] {queryContext.getFilterByKeysValue(Privilege.FIELD_PROFILES)};

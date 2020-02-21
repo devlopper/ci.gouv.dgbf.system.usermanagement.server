@@ -13,7 +13,7 @@ import org.cyk.utility.__kernel__.properties.Properties;
 import org.cyk.utility.__kernel__.protocol.http.HttpHelper;
 import org.cyk.utility.__kernel__.test.arquillian.archive.builder.WebArchiveBuilder;
 import org.cyk.utility.__kernel__.variable.VariableName;
-import org.cyk.utility.server.persistence.query.filter.Filter;
+import org.cyk.utility.__kernel__.persistence.query.filter.Filter;
 import org.cyk.utility.server.persistence.test.TestPersistenceCreate;
 import org.cyk.utility.server.persistence.test.arquillian.AbstractPersistenceArquillianIntegrationTest;
 import org.jboss.shrinkwrap.api.spec.WebArchive;

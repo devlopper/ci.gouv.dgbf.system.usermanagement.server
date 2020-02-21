@@ -3,6 +3,7 @@ package ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.r
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -24,7 +25,7 @@ import lombok.experimental.Accessors;
 public class ScopeType extends AbstractIdentifiedByStringAndCodedAndNamed<ScopeType> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Transient private Collection<Profile> profiles;
+	@Transient private Collection<Function> functions;
 	
 	@Override
 	public ScopeType addParents(ScopeType... parents) {
@@ -46,38 +47,41 @@ public class ScopeType extends AbstractIdentifiedByStringAndCodedAndNamed<ScopeT
 		return (ScopeType) super.setName(name);
 	}
 	
-	public ScopeType addProfiles(Collection<Profile> profiles) {
-		if(CollectionHelper.isEmpty(profiles))
+	public ScopeType addFunctions(Collection<Function> functions) {
+		if(CollectionHelper.isEmpty(functions))
 			return this;
-		if(this.profiles == null)
-			this.profiles = new ArrayList<>();
-		this.profiles.addAll(profiles);
+		Collection<Function> __functions__ = functions.stream().filter(x -> x != null).collect(Collectors.toList());
+		if(CollectionHelper.isEmpty(__functions__))
+			return this;
+		if(this.functions == null)
+			this.functions = new ArrayList<>();
+		this.functions.addAll(__functions__);
 		return this;
 	}
 	
-	public ScopeType addProfiles(Profile...profiles) {
-		if(ArrayHelper.isEmpty(profiles))
+	public ScopeType addFunctions(Function...functions) {
+		if(ArrayHelper.isEmpty(functions))
 			return this;
-		return addProfiles(CollectionHelper.listOf(profiles));
+		return addFunctions(CollectionHelper.listOf(functions));
 	}
 	
-	public ScopeType addProfilesByCodes(Collection<String> profilesCodes) {
-		if(CollectionHelper.isEmpty(profilesCodes))
+	public ScopeType addFunctionsByCodes(Collection<String> functionsCodes) {
+		if(CollectionHelper.isEmpty(functionsCodes))
 			return this;
-		for(String index : profilesCodes)
-			addProfiles(InstanceGetter.getInstance().getByBusinessIdentifier(Profile.class, index));
+		for(String index : functionsCodes)
+			addFunctions(InstanceGetter.getInstance().getByBusinessIdentifier(Function.class, index));
 		return this;
 	}
 	
-	public ScopeType addProfilesByCodes(String...profilesCodes) {
-		if(ArrayHelper.isEmpty(profilesCodes))
+	public ScopeType addFunctionsByCodes(String...functionsCodes) {
+		if(ArrayHelper.isEmpty(functionsCodes))
 			return this;
-		return addProfilesByCodes(CollectionHelper.listOf(profilesCodes));
+		return addFunctionsByCodes(CollectionHelper.listOf(functionsCodes));
 	}
 	
 	/**/
 
-	public static final String FIELD_PROFILES = "profiles";
+	public static final String FIELD_FUNCTIONS = "functions";
 	
 	public static final String TABLE_NAME = "typ"+Scope.TABLE_NAME;
 	

@@ -14,7 +14,7 @@ import org.cyk.utility.__kernel__.test.arquillian.archive.builder.WebArchiveBuil
 import org.cyk.utility.__kernel__.variable.VariableHelper;
 import org.cyk.utility.server.business.test.TestBusinessCreate;
 import org.cyk.utility.server.business.test.arquillian.AbstractBusinessArquillianIntegrationTest;
-import org.cyk.utility.server.persistence.query.filter.Filter;
+import org.cyk.utility.__kernel__.persistence.query.filter.Filter;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 
@@ -30,10 +30,10 @@ import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.Profi
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ProfileTypeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeTypeBusiness;
-import ci.gouv.dgbf.system.usermanagement.server.business.api.account.role.ScopeTypeProfileBusiness;
 import ci.gouv.dgbf.system.usermanagement.server.business.impl.ApplicationScopeLifeCycleListener;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.UserFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionPersistence;
+import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.FunctionScopePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfileFunctionPersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.api.account.role.ProfilePrivilegePersistence;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.User;
@@ -50,7 +50,6 @@ import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.ro
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Resource;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Scope;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeType;
-import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ScopeTypeProfile;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.Service;
 import ci.gouv.dgbf.system.usermanagement.server.persistence.entities.account.role.ServiceResource;
 
@@ -109,36 +108,34 @@ public class BusinessIntegrationTest extends AbstractBusinessArquillianIntegrati
 	
 	@Test
 	public void create_scopeType() {
-		__inject__(ProfileBusiness.class).createMany(List.of(new Profile().setCode("p1").setName("n").setTypeFromCode(ProfileType.CODE_SYSTEM),
-				new Profile().setCode("p2").setName("n").setTypeFromCode(ProfileType.CODE_SYSTEM)));
+		__inject__(FunctionTypeBusiness.class).createMany(List.of(new FunctionType().setCode("t").setName("n")));
+		__inject__(FunctionBusiness.class).createMany(List.of(new Function().setCode("f1").setName("n").setTypeFromCode("t"),
+				new Function().setCode("f2").setName("n").setTypeFromCode("t")));
 		__inject__(ScopeTypeBusiness.class).create(new ScopeType().setCode("st1").setName("st"));
-		__inject__(ScopeTypeBusiness.class).create(new ScopeType().setCode("st2").setName("st").addProfilesByCodes("p1"));
+		__inject__(ScopeTypeBusiness.class).create(new ScopeType().setCode("st2").setName("st").addFunctionsByCodes("f1"));
 		
-		ScopeType scopeType = __inject__(ScopeTypeBusiness.class).findByBusinessIdentifier("st1",new Properties().setFields(ScopeType.FIELD_PROFILES));
+		ScopeType scopeType = __inject__(ScopeTypeBusiness.class).findByBusinessIdentifier("st1",new Properties().setFields(ScopeType.FIELD_FUNCTIONS));
 		assertThat(scopeType).isNotNull();
-		assertThat(scopeType.getProfiles()).isNull();
-		scopeType = __inject__(ScopeTypeBusiness.class).findByBusinessIdentifier("st2",new Properties().setFields(ScopeType.FIELD_PROFILES));
+		assertThat(scopeType.getFunctions()).isNull();
+		scopeType = __inject__(ScopeTypeBusiness.class).findByBusinessIdentifier("st2",new Properties().setFields(ScopeType.FIELD_FUNCTIONS));
 		assertThat(scopeType).isNotNull();
-		assertThat(scopeType.getProfiles()).isNotNull();
-		assertThat(scopeType.getProfiles().stream().map(Profile::getCode).collect(Collectors.toList())).containsExactlyInAnyOrder("p1");
+		assertThat(scopeType.getFunctions()).isNotNull();
+		assertThat(scopeType.getFunctions().stream().map(Function::getCode).collect(Collectors.toList())).containsExactlyInAnyOrder("f1");
 	}
 	
-	//@Test
+	@Test
 	public void create_scope() {
+		__inject__(FunctionTypeBusiness.class).createMany(List.of(new FunctionType().setCode("t").setName("n")));
+		__inject__(FunctionBusiness.class).createMany(List.of(new Function().setCode("f1").setName("n").setTypeFromCode("t"),
+				new Function().setCode("f2").setName("n").setTypeFromCode("t")));
 		__inject__(ScopeTypeBusiness.class).create(new ScopeType().setCode("st1").setName("st"));
-		__inject__(ScopeTypeBusiness.class).create(new ScopeType().setCode("st2").setName("st"));
-		__inject__(ProfileBusiness.class).createMany(List.of(new Profile().setCode("p1").setName("n").setTypeFromCode(ProfileType.CODE_SYSTEM),
-				new Profile().setCode("p2").setName("n").setTypeFromCode(ProfileType.CODE_SYSTEM)));
-		__inject__(ScopeTypeProfileBusiness.class).create(new ScopeTypeProfile().setScopeTypeFromCode("st2").setProfileFromCode("p1")
-				.setProfileOfTypeUserCreatableOnScopeCreate(Boolean.TRUE));
+		__inject__(ScopeTypeBusiness.class).create(new ScopeType().setCode("st2").setName("st").addFunctionsByCodes("f1"));
 		
-		ScopeType scopeType = __inject__(ScopeTypeBusiness.class).findByBusinessIdentifier("st1",new Properties().setFields(ScopeType.FIELD_PROFILES));
-		assertThat(scopeType).isNotNull();
-		assertThat(scopeType.getProfiles()).isNull();
-		scopeType = __inject__(ScopeTypeBusiness.class).findByBusinessIdentifier("st2",new Properties().setFields(ScopeType.FIELD_PROFILES));
-		assertThat(scopeType).isNotNull();
-		assertThat(scopeType.getProfiles()).isNotNull();
-		assertThat(scopeType.getProfiles().stream().map(Profile::getCode).collect(Collectors.toList())).containsExactlyInAnyOrder("p1");
+		assertThat(__inject__(FunctionScopePersistence.class).count()).isEqualTo(0l);
+		__inject__(ScopeBusiness.class).createMany(List.of(new Scope().setTypeFromCode("st1").setCode("s1")));
+		assertThat(__inject__(FunctionScopePersistence.class).count()).isEqualTo(0l);
+		__inject__(ScopeBusiness.class).createMany(List.of(new Scope().setTypeFromCode("st2").setCode("s2")));
+		assertThat(__inject__(FunctionScopePersistence.class).count()).isEqualTo(1l);
 	}
 	
 	@Test
